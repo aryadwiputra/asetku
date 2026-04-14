@@ -1,0 +1,62 @@
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:155
+* @route '/organizations/onboarding/asset-code'
+*/
+export const update = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update.url(options),
+    method: 'post',
+})
+
+update.definition = {
+    methods: ["post"],
+    url: '/organizations/onboarding/asset-code',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:155
+* @route '/organizations/onboarding/asset-code'
+*/
+update.url = (options?: RouteQueryOptions) => {
+    return update.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:155
+* @route '/organizations/onboarding/asset-code'
+*/
+update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: update.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:155
+* @route '/organizations/onboarding/asset-code'
+*/
+const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:155
+* @route '/organizations/onboarding/asset-code'
+*/
+updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+update.form = updateForm
+
+const assetCode = {
+    update: Object.assign(update, update),
+}
+
+export default assetCode
