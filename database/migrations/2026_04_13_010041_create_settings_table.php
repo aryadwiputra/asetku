@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
+            $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
+            $table->string('key');
             $table->longText('value')->nullable();
             $table->string('type')->default('string');
             $table->boolean('is_encrypted')->default(false);
             $table->timestamps();
+
+            $table->unique(['organization_id', 'key']);
         });
     }
 

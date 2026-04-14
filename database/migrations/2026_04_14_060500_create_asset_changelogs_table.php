@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notification_preferences', function (Blueprint $table) {
+        Schema::create('asset_changelogs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('type_key');
-            $table->json('channels');
+            $table->foreignId('asset_id')->constrained('assets')->cascadeOnDelete();
+            $table->foreignId('changed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('changed_at')->nullable();
+            $table->json('changes')->nullable();
             $table->timestamps();
 
-            $table->unique(['organization_id', 'user_id', 'type_key']);
+            $table->index('organization_id');
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notification_preferences');
+        Schema::dropIfExists('asset_changelogs');
     }
 };

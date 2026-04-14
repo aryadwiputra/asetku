@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('media_uploads', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('title')->nullable();
             $table->string('original_name');
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->unsignedInteger('total_chunks');
             $table->timestamp('expires_at')->nullable()->index();
             $table->timestamps();
+
+            $table->index('organization_id');
         });
     }
 

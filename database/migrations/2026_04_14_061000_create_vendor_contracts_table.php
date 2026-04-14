@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('type');
+        Schema::create('vendor_contracts', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
-            $table->morphs('notifiable');
-            $table->text('data');
-            $table->timestamp('read_at')->nullable();
+            $table->string('vendor_name');
+            $table->string('contract_number')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->unsignedInteger('sla_response_hours')->nullable();
+            $table->unsignedInteger('sla_resolution_hours')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->index('organization_id');
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('vendor_contracts');
     }
 };

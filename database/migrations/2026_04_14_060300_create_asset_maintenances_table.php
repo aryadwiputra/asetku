@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('media_assets', function (Blueprint $table) {
+        Schema::create('asset_maintenances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
-            $table->string('title')->nullable();
-            $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('asset_id')->constrained('assets')->cascadeOnDelete();
+            $table->timestamp('performed_at')->nullable();
+            $table->string('description');
+            $table->string('vendor')->nullable();
+            $table->decimal('cost', 15, 2)->nullable();
+            $table->string('status')->default('completed');
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->index('organization_id');
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('media_assets');
+        Schema::dropIfExists('asset_maintenances');
     }
 };

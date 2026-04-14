@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notification_preferences', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('type_key');
-            $table->json('channels');
+            $table->string('name');
+            $table->string('code');
             $table->timestamps();
 
-            $table->unique(['organization_id', 'user_id', 'type_key']);
+            $table->unique(['organization_id', 'code']);
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notification_preferences');
+        Schema::dropIfExists('branches');
     }
 };
