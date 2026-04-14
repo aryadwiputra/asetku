@@ -3,6 +3,7 @@ import LocaleController from './LocaleController'
 import OrganizationController from './OrganizationController'
 import OrganizationSwitchController from './OrganizationSwitchController'
 import OrganizationImportTemplateController from './OrganizationImportTemplateController'
+import OrganizationManagementController from './OrganizationManagementController'
 import OrganizationOnboardingController from './OrganizationOnboardingController'
 import BranchController from './BranchController'
 import UserController from './UserController'
@@ -20,6 +21,7 @@ const Controllers = {
     OrganizationController: Object.assign(OrganizationController, OrganizationController),
     OrganizationSwitchController: Object.assign(OrganizationSwitchController, OrganizationSwitchController),
     OrganizationImportTemplateController: Object.assign(OrganizationImportTemplateController, OrganizationImportTemplateController),
+    OrganizationManagementController: Object.assign(OrganizationManagementController, OrganizationManagementController),
     OrganizationOnboardingController: Object.assign(OrganizationOnboardingController, OrganizationOnboardingController),
     BranchController: Object.assign(BranchController, BranchController),
     UserController: Object.assign(UserController, UserController),

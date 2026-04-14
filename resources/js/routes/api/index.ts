@@ -83,7 +83,7 @@ healthForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 health.form = healthForm
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 export const docs = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +97,7 @@ docs.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 docs.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ docs.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 docs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -114,7 +114,7 @@ docs.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 docs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -123,7 +123,7 @@ docs.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 const docsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ const docsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 docsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ docsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:22
+* @see routes/web.php:23
 * @route '/api/docs'
 */
 docsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

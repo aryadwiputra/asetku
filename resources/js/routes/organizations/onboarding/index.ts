@@ -87,7 +87,7 @@ profile.form = profileForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 export const plan = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -102,7 +102,7 @@ plan.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 plan.url = (options?: RouteQueryOptions) => {
@@ -111,7 +111,7 @@ plan.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 plan.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -121,7 +121,7 @@ plan.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 plan.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -131,7 +131,7 @@ plan.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 const planForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ const planForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 planForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -151,7 +151,7 @@ planForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
-* @see app/Http/Controllers/OrganizationOnboardingController.php:97
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
 * @route '/organizations/onboarding/plan'
 */
 planForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -168,7 +168,7 @@ plan.form = planForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 export const locale = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -183,7 +183,7 @@ locale.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 locale.url = (options?: RouteQueryOptions) => {
@@ -192,7 +192,7 @@ locale.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 locale.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -202,7 +202,7 @@ locale.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 locale.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -212,7 +212,7 @@ locale.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 const localeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -222,7 +222,7 @@ const localeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 localeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -232,7 +232,7 @@ localeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
-* @see app/Http/Controllers/OrganizationOnboardingController.php:121
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
 * @route '/organizations/onboarding/locale'
 */
 localeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -249,7 +249,7 @@ locale.form = localeForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 export const assetCode = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -264,7 +264,7 @@ assetCode.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 assetCode.url = (options?: RouteQueryOptions) => {
@@ -273,7 +273,7 @@ assetCode.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 assetCode.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -283,7 +283,7 @@ assetCode.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 assetCode.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -293,7 +293,7 @@ assetCode.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 const assetCodeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -303,7 +303,7 @@ const assetCodeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> 
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 assetCodeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -313,7 +313,7 @@ assetCodeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =>
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
-* @see app/Http/Controllers/OrganizationOnboardingController.php:146
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
 * @route '/organizations/onboarding/asset-code'
 */
 assetCodeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -330,7 +330,7 @@ assetCode.form = assetCodeForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 export const importMethod = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -345,7 +345,7 @@ importMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 importMethod.url = (options?: RouteQueryOptions) => {
@@ -354,7 +354,7 @@ importMethod.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 importMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -364,7 +364,7 @@ importMethod.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 importMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -374,7 +374,7 @@ importMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -384,7 +384,7 @@ const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 importMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -394,7 +394,7 @@ importMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'>
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
-* @see app/Http/Controllers/OrganizationOnboardingController.php:170
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
 * @route '/organizations/onboarding/import'
 */
 importMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
