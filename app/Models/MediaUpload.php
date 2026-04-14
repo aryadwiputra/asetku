@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 
 class MediaUpload extends Model
 {
+    use BelongsToOrganization;
+
     public $incrementing = false;
 
     protected $keyType = 'string';
@@ -15,6 +18,7 @@ class MediaUpload extends Model
      */
     protected $fillable = [
         'id',
+        'organization_id',
         'user_id',
         'title',
         'original_name',

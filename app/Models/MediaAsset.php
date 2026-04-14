@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
@@ -13,7 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaAsset extends Model implements HasMedia
 {
-    use InteractsWithMedia, LogsActivity;
+    use BelongsToOrganization, InteractsWithMedia, LogsActivity;
 
     /**
      * @var list<string>

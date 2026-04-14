@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
+use App\Models\Organization;
 use App\Models\Setting;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Throwable;
 
 class SettingsService
 {
-    private const CACHE_KEY = 'settings:all';
-
     private const CACHE_TTL_SECONDS = 3600;
 
     /**
@@ -19,6 +19,8 @@ class SettingsService
      */
     public function get(string $key, mixed $default = null): mixed
     {
+        $this->ensureOrganizationContext();
+
         $all = $this->getAllCached();
 
         if (array_key_exists($key, $all)) {
@@ -33,6 +35,8 @@ class SettingsService
      */
     public function set(string $key, mixed $value, string $type = 'string', bool $encrypted = false): void
     {
+        $this->ensureOrganizationContext();
+
         $prepared = $this->prepareForStorage($value, $type, $encrypted);
 
         if ($prepared['value'] === null) {
@@ -60,7 +64,7 @@ class SettingsService
     public function forgetCache(): void
     {
         try {
-            $this->cache()->forget(self::CACHE_KEY);
+            $this->cache()->forget($this->cacheKey());
         } catch (Throwable) {
             // If Redis is down, we still want the app to function using DB reads.
         }
@@ -73,6 +77,8 @@ class SettingsService
      */
     public function all(): array
     {
+        $this->ensureOrganizationContext();
+
         return $this->getAllCached();
     }
 
@@ -82,12 +88,48 @@ class SettingsService
     private function getAllCached(): array
     {
         try {
-            return $this->cache()->remember(self::CACHE_KEY, self::CACHE_TTL_SECONDS, function (): array {
+            return $this->cache()->remember($this->cacheKey(), self::CACHE_TTL_SECONDS, function (): array {
                 return $this->loadAllFromDatabase();
             });
         } catch (Throwable) {
             return $this->loadAllFromDatabase();
         }
+    }
+
+    private function cacheKey(): string
+    {
+        $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+
+        return 'settings:all:'.($organizationId === null ? 'global' : (string) $organizationId);
+    }
+
+    private function ensureOrganizationContext(): void
+    {
+        $context = app(OrganizationContext::class);
+
+        if ($context->currentOrganizationId() !== null) {
+            return;
+        }
+
+        $userOrganizationId = Auth::user()?->organization_id;
+
+        if ($userOrganizationId !== null) {
+            $context->setCurrentOrganizationId((int) $userOrganizationId);
+
+            return;
+        }
+
+        if (Organization::query()->count() !== 1) {
+            return;
+        }
+
+        $organizationId = Organization::query()->value('id');
+
+        if ($organizationId === null) {
+            return;
+        }
+
+        $context->setCurrentOrganizationId((int) $organizationId);
     }
 
     /**
