@@ -30,7 +30,7 @@ export default function ShowUser({ user, activities }: Props) {
         <>
             <Head title={user.name} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="grid gap-6 lg:grid-cols-3">
                     {/* Profile Card */}
                     <Card className="lg:col-span-1">

@@ -89,8 +89,8 @@ export default function RolesIndex({ roles }: Props) {
         <>
             <Head title={t('roles.title')} />
 
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="flex items-center justify-between">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                             <Shield className="h-5 w-5 text-primary" />
@@ -104,7 +104,7 @@ export default function RolesIndex({ roles }: Props) {
                     </div>
 
                     <Can permission="role.create">
-                        <Button onClick={() => router.visit(RoleController.create.url())}>
+                        <Button onClick={() => router.visit(RoleController.create.url())} className="w-full sm:w-auto">
                             <Plus className="mr-1 h-4 w-4" />
                             {t('roles.actions.new')}
                         </Button>

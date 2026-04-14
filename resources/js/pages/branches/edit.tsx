@@ -40,7 +40,7 @@ export default function EditBranch({ branch }: Props) {
         <>
             <Head title={`Edit ${branch.name}`} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title="Edit branch" description={branch.name} />
 
                 <Form

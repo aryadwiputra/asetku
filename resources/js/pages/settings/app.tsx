@@ -49,7 +49,7 @@ export default function AppSettings({ settings }: Props) {
 
             <h1 className="sr-only">{t('settings.app.title')}</h1>
 
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="flex items-start justify-between">
                     <Heading
                         title={t('settings.app.title')}

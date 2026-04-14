@@ -58,7 +58,7 @@ export default function OrganizationsIndex({ organizations, currentOrganizationI
         <>
             <Head title="Organizations" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
                     title="Organizations"
@@ -86,21 +86,20 @@ export default function OrganizationsIndex({ organizations, currentOrganizationI
                                     className="pl-9"
                                 />
                             </div>
-
-                        <div className="flex items-center justify-between gap-3 sm:justify-end">
-                            <div className="text-sm text-muted-foreground">
-                                {activeCount} total
+                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                                <div className="text-sm text-muted-foreground">
+                                    {activeCount} total
+                                </div>
+                                {orgAbilities.organizations.create && (
+                                    <Link href={onboardingProfile()}>
+                                        <Button type="button" className="w-full sm:w-auto">
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            New
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
-                            {orgAbilities.organizations.create && (
-                                <Link href={onboardingProfile()}>
-                                    <Button type="button">
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        New
-                                    </Button>
-                                </Link>
-                            )}
                         </div>
-                    </div>
 
                         {current && (
                             <>

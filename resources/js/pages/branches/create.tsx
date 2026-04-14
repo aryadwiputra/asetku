@@ -25,7 +25,7 @@ export default function CreateBranch() {
         <>
             <Head title="New Branch" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title="Create branch" description="Add a new branch and optional map location." />
 
                 <Form {...BranchController.store.form()} className="max-w-2xl space-y-6">

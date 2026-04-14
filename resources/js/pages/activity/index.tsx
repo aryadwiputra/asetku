@@ -155,7 +155,7 @@ export default function ActivityIndex({ activities, log_names, events }: Props) 
         <>
             <Head title={t('activity.title')} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading title={t('activity.title')} description={t('activity.description')} />
 
                 <Card>

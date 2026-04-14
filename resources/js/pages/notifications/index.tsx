@@ -86,14 +86,14 @@ export default function NotificationsIndex({ filter, notifications }: Props) {
         <>
             <Head title={t('notifications.title')} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <Heading
                         title={t('notifications.title')}
                         description={t('notifications.description')}
                     />
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Button
                             variant="outline"
                             onClick={() =>
@@ -103,6 +103,7 @@ export default function NotificationsIndex({ filter, notifications }: Props) {
                                     { preserveScroll: true },
                                 )
                             }
+                            className="w-full sm:w-auto"
                         >
                             <Check className="mr-2 h-4 w-4" />
                             {t('notifications.actions.mark_all_read')}
@@ -238,4 +239,3 @@ NotificationsIndex.layout = {
         },
     ],
 };
-
