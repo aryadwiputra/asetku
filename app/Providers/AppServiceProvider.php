@@ -6,6 +6,7 @@ use App\Listeners\ApplyNotificationPreferences;
 use App\Models\MediaAsset;
 use App\Policies\MediaAssetPolicy;
 use App\Policies\RolePolicy;
+use App\Services\OrganizationContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(OrganizationContext::class, fn (): OrganizationContext => new OrganizationContext);
     }
 
     /**
