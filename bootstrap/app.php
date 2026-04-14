@@ -24,9 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
-        $middleware->web(append: [
-            HandleAppearance::class,
+        $middleware->web(prepend: [
             SetCurrentOrganization::class,
+        ], append: [
+            HandleAppearance::class,
             ApplyAppSettings::class,
             ApplyLocale::class,
             CheckDatabaseMaintenance::class,
@@ -34,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->api(append: [
+        $middleware->api(prepend: [
             SetCurrentOrganization::class,
         ]);
     })

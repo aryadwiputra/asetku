@@ -23,9 +23,17 @@ test('branch can be created and listed within current organization', function ()
         ])
         ->assertRedirect();
 
-    expect(Branch::query()->where('code', 'JKT')->exists())->toBeTrue();
+    $branch = Branch::query()->where('code', 'JKT')->firstOrFail();
 
     $this->actingAs($user)
         ->get(route('branches.index'))
+        ->assertSuccessful();
+
+    $this->actingAs($user)
+        ->get(route('branches.show', $branch))
+        ->assertSuccessful();
+
+    $this->actingAs($user)
+        ->get(route('branches.edit', $branch))
         ->assertSuccessful();
 });
