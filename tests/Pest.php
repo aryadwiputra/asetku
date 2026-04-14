@@ -68,7 +68,11 @@ function asRole(string $role, array $attributes = []): User
     $user->assignRole($role);
 
     test()->actingAs($user);
-    app(OrganizationContext::class)->setCurrentOrganizationId((int) $user->organization_id);
+    $organizationId = $user->current_organization_id ?? $user->organization_id;
+
+    if ($organizationId !== null) {
+        app(OrganizationContext::class)->setCurrentOrganizationId((int) $organizationId);
+    }
 
     return $user;
 }

@@ -19,6 +19,35 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $organizationId = $user->current_organization_id ?? $user->organization_id;
+
+            if ($organizationId === null) {
+                $organization = Organization::factory()->create();
+
+                $organizationId = $organization->id;
+
+                $user->forceFill([
+                    'current_organization_id' => $organizationId,
+                    'organization_id' => $user->organization_id ?? $organizationId,
+                ])->saveQuietly();
+            }
+
+            $alreadyAttached = $user->organizations()->whereKey($organizationId)->exists();
+
+            if ($alreadyAttached) {
+                return;
+            }
+
+            $user->organizations()->attach($organizationId, [
+                'role' => 'Member',
+                'is_active' => true,
+            ]);
+        });
+    }
+
     /**
      * Define the model's default state.
      *
@@ -26,8 +55,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+
         return [
-            'organization_id' => app(OrganizationContext::class)->currentOrganizationId() ?? Organization::factory(),
+            'organization_id' => $organizationId,
+            'current_organization_id' => $organizationId,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
@@ -40,6 +72,27 @@ class UserFactory extends Factory
             'avatar_path' => null,
             'is_active' => true,
         ];
+    }
+
+    public function inOrganization(?Organization $organization = null, string $role = 'Member', bool $active = true): static
+    {
+        return $this->afterCreating(function (User $user) use ($organization, $role, $active): void {
+            $resolvedOrganization = $organization ?? Organization::factory()->create();
+
+            $user->organizations()->syncWithoutDetaching([
+                $resolvedOrganization->id => [
+                    'role' => $role,
+                    'is_active' => $active,
+                ],
+            ]);
+
+            if ($user->current_organization_id === null) {
+                $user->forceFill([
+                    'current_organization_id' => $resolvedOrganization->id,
+                    'organization_id' => $user->organization_id ?? $resolvedOrganization->id,
+                ])->saveQuietly();
+            }
+        });
     }
 
     /**

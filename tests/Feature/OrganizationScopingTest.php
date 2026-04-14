@@ -59,8 +59,8 @@ test('notification preferences are scoped per organization', function () {
     $organizationA = Organization::factory()->create(['slug' => 'org-a']);
     $organizationB = Organization::factory()->create(['slug' => 'org-b']);
 
-    $userA = User::factory()->create(['organization_id' => $organizationA->id]);
-    $userB = User::factory()->create(['organization_id' => $organizationB->id]);
+    $userA = User::factory()->inOrganization($organizationA)->create();
+    $userB = User::factory()->inOrganization($organizationB)->create();
 
     app(OrganizationContext::class)->setCurrentOrganizationId($organizationA->id);
     NotificationPreference::query()->create([
@@ -83,7 +83,7 @@ test('notification preferences are scoped per organization', function () {
 
 test('database notifications are stored and scoped by organization', function () {
     $organization = Organization::factory()->create(['slug' => 'org-a']);
-    $user = User::factory()->create(['organization_id' => $organization->id]);
+    $user = User::factory()->inOrganization($organization)->create();
 
     app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
 

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Organization;
+use App\Models\OrganizationGroup;
 use App\Models\User;
 use App\Services\OrganizationContext;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,10 +21,19 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolePermissionSeeder::class);
 
+        $group = OrganizationGroup::query()->firstOrCreate(
+            ['slug' => 'default-group'],
+            ['name' => 'Default Group', 'description' => null],
+        );
+
         $organization = Organization::query()->firstOrCreate(
             ['slug' => 'default'],
-            ['name' => 'Default Organization'],
+            ['name' => 'Default Organization', 'organization_group_id' => $group->id],
         );
+
+        if ($organization->organization_group_id === null) {
+            $organization->forceFill(['organization_group_id' => $group->id])->saveQuietly();
+        }
 
         app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
 
@@ -37,23 +47,19 @@ class DatabaseSeeder extends Seeder
             ['branch_id' => $branch->id, 'name' => 'General', 'description' => null],
         );
 
-        $superAdmin = User::factory()->create([
+        $superAdmin = User::factory()->inOrganization($organization, role: 'Owner')->create([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
-            'organization_id' => $organization->id,
         ]);
         $superAdmin->assignRole('super-admin');
 
-        $admin = User::factory()->create([
+        $admin = User::factory()->inOrganization($organization, role: 'Admin')->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
-            'organization_id' => $organization->id,
         ]);
         $admin->assignRole('admin');
 
-        $users = User::factory(10)->create([
-            'organization_id' => $organization->id,
-        ]);
+        $users = User::factory(10)->inOrganization($organization, role: 'Member')->create();
         $users->each(fn (User $user) => $user->assignRole('user'));
 
         try {

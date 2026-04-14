@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Branch;
 use App\Models\Organization;
+use App\Services\OrganizationContext;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +26,10 @@ class BranchFactory extends Factory
      */
     public function definition(): array
     {
+        $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+
         return [
-            'organization_id' => Organization::factory(),
+            'organization_id' => $organizationId ?? Organization::factory(),
             'name' => fake()->city(),
             'code' => fake()->unique()->bothify('BR-###'),
         ];
