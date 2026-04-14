@@ -14,13 +14,20 @@ declare module '@inertiajs/core' {
                 timezone: string;
                 asset_code_prefix: string;
                 asset_code_format: string;
+                is_active: boolean;
             } | null;
             organizations: Array<{
                 id: number;
                 name: string;
                 slug: string;
                 role: string | null;
+                is_active: boolean;
             }>;
+            orgRole: string | null;
+            orgAbilities: {
+                organizations: { create: boolean; update: boolean; deactivate: boolean };
+                branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
+            };
             permissions: string[];
             roles: string[];
             features: string[];

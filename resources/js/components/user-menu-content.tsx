@@ -33,7 +33,7 @@ export function UserMenuContent({ user }: Props) {
     };
     const { organization, organizations } = usePage().props as {
         organization: { id: number; name: string } | null;
-        organizations: Array<{ id: number; name: string; role: string | null }>;
+        organizations: Array<{ id: number; name: string; role: string | null; is_active: boolean }>;
     };
 
     const handleLogout = () => {
@@ -78,13 +78,17 @@ export function UserMenuContent({ user }: Props) {
                 {organizations.map((org) => (
                     <DropdownMenuItem
                         key={org.id}
+                        disabled={!org.is_active}
                         onSelect={(e) => {
                             e.preventDefault();
                             cleanup();
                             router.post(switchOrganization({ organization: org.id }).url, {}, { preserveScroll: true });
                         }}
                     >
-                        <span className="truncate">{org.name}</span>
+                        <span className="truncate">
+                            {org.name}
+                            {!org.is_active ? ' (Inactive)' : ''}
+                        </span>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuGroup>

@@ -2,11 +2,13 @@
 
 namespace App\Inertia;
 
+use App\Models\Branch;
 use App\Models\Organization;
 use App\Services\FeatureFlagService;
 use App\Services\OrganizationContext;
 use App\Services\TranslationsResolver;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class SharedProps
@@ -30,21 +32,47 @@ class SharedProps
             ? null
             : Organization::query()
                 ->whereKey($organizationId)
-                ->first(['id', 'name', 'slug', 'currency_code', 'timezone', 'asset_code_prefix', 'asset_code_format']);
+                ->first(['id', 'name', 'slug', 'currency_code', 'timezone', 'asset_code_prefix', 'asset_code_format', 'is_active']);
 
         $organizations = $user
             ? $user->organizations()
                 ->wherePivot('is_active', true)
                 ->orderBy('organization_user.created_at')
-                ->get(['organizations.id', 'organizations.name', 'organizations.slug'])
+                ->get(['organizations.id', 'organizations.name', 'organizations.slug', 'organizations.is_active', 'organizations.deactivated_at'])
                 ->map(fn (Organization $org): array => [
                     'id' => $org->id,
                     'name' => $org->name,
                     'slug' => $org->slug,
                     'role' => $org->pivot?->role,
+                    'is_active' => (bool) $org->is_active,
                 ])
                 ->all()
             : [];
+
+        $currentOrganizationRole = null;
+
+        if ($user !== null && $organizationId !== null) {
+            foreach ($organizations as $org) {
+                if ((int) $org['id'] === (int) $organizationId) {
+                    $currentOrganizationRole = $org['role'];
+                    break;
+                }
+            }
+        }
+
+        $orgAbilities = [
+            'organizations' => [
+                'create' => $user ? $user->can('organization.create') : false,
+                'update' => $user && $currentOrganization ? Gate::forUser($user)->allows('update', $currentOrganization) : false,
+                'deactivate' => $user && $currentOrganization ? Gate::forUser($user)->allows('deactivate', $currentOrganization) : false,
+            ],
+            'branches' => [
+                'view' => $user ? Gate::forUser($user)->allows('viewAny', Branch::class) : false,
+                'create' => $user ? Gate::forUser($user)->allows('create', Branch::class) : false,
+                'update' => $user ? Gate::forUser($user)->allows('update', new Branch) : false,
+                'deactivate' => $user ? Gate::forUser($user)->allows('deactivate', new Branch) : false,
+            ],
+        ];
 
         return [
             'name' => settings('app.name', config('app.name')),
@@ -54,6 +82,8 @@ class SharedProps
             ],
             'organization' => $currentOrganization,
             'organizations' => $organizations,
+            'orgRole' => $currentOrganizationRole,
+            'orgAbilities' => $orgAbilities,
             'permissions' => $user ? $user->getAllPermissions()->pluck('name')->toArray() : [],
             'roles' => $user ? $user->getRoleNames()->toArray() : [],
             'features' => $featureFlags->enabledKeysForUser($user),
@@ -89,13 +119,20 @@ declare module '@inertiajs/core' {
                 timezone: string;
                 asset_code_prefix: string;
                 asset_code_format: string;
+                is_active: boolean;
             } | null;
             organizations: Array<{
                 id: number;
                 name: string;
                 slug: string;
                 role: string | null;
+                is_active: boolean;
             }>;
+            orgRole: string | null;
+            orgAbilities: {
+                organizations: { create: boolean; update: boolean; deactivate: boolean };
+                branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
+            };
             permissions: string[];
             roles: string[];
             features: string[];

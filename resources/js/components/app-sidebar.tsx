@@ -34,9 +34,14 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { permissions } = usePage().props;
+    const { orgAbilities } = usePage().props as {
+        orgAbilities?: { branches?: { view?: boolean } };
+    };
     const userPermissions = permissions as string[];
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { t } = useTranslation();
+
+    const canViewBranches = orgAbilities?.branches?.view === true;
 
     const mainNavItems: NavItem[] = [
         {
@@ -49,11 +54,15 @@ export function AppSidebar() {
             href: organizationsIndex(),
             icon: Building2,
         },
-        {
-            title: 'Branches',
-            href: branchesIndex(),
-            icon: MapPin,
-        },
+        ...(canViewBranches
+            ? [
+                  {
+                      title: 'Branches',
+                      href: branchesIndex(),
+                      icon: MapPin,
+                  },
+              ]
+            : []),
         ...(userPermissions.includes('user.view')
             ? [
                   {

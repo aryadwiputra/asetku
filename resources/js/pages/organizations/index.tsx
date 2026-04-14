@@ -3,6 +3,7 @@ import { Building2, CheckCircle2, Plus, Search, Shuffle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import OrganizationSwitchController from '@/actions/App/Http/Controllers/OrganizationSwitchController';
+import OrganizationManagementController from '@/actions/App/Http/Controllers/OrganizationManagementController';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,9 @@ type OrganizationRow = {
     name: string;
     slug: string;
     role: string | null;
+    is_active: boolean;
+    deactivated_at: string | null;
+    can_manage: boolean;
 };
 
 type Props = {
@@ -26,6 +30,9 @@ type Props = {
 
 export default function OrganizationsIndex({ organizations, currentOrganizationId }: Props) {
     const { organization } = usePage().props;
+    const { orgAbilities } = usePage().props as {
+        orgAbilities: { organizations: { create: boolean; update: boolean } };
+    };
     const [search, setSearch] = useState('');
 
     const filtered = useMemo(() => {
@@ -80,18 +87,20 @@ export default function OrganizationsIndex({ organizations, currentOrganizationI
                                 />
                             </div>
 
-                            <div className="flex items-center justify-between gap-3 sm:justify-end">
-                                <div className="text-sm text-muted-foreground">
-                                    {activeCount} total
-                                </div>
+                        <div className="flex items-center justify-between gap-3 sm:justify-end">
+                            <div className="text-sm text-muted-foreground">
+                                {activeCount} total
+                            </div>
+                            {orgAbilities.organizations.create && (
                                 <Link href={onboardingProfile()}>
                                     <Button type="button">
                                         <Plus className="mr-2 h-4 w-4" />
                                         New
                                     </Button>
                                 </Link>
-                            </div>
+                            )}
                         </div>
+                    </div>
 
                         {current && (
                             <>
@@ -123,25 +132,36 @@ export default function OrganizationsIndex({ organizations, currentOrganizationI
                                             <div className="truncate font-medium">{org.name}</div>
                                             {org.role && <Badge variant="secondary">{org.role}</Badge>}
                                             {org.id === currentOrganizationId && <Badge>Active</Badge>}
+                                            {!org.is_active && <Badge variant="outline">Inactive</Badge>}
                                         </div>
                                         <div className="truncate text-sm text-muted-foreground">{org.slug}</div>
                                     </div>
 
-                                    <Button
-                                        type="button"
-                                        variant={org.id === currentOrganizationId ? 'secondary' : 'default'}
-                                        disabled={org.id === currentOrganizationId}
-                                        onClick={() =>
-                                            router.post(
-                                                OrganizationSwitchController({ organization: org.id }).url,
-                                                {},
-                                                { preserveScroll: true },
-                                            )
-                                        }
-                                    >
-                                        <Shuffle className="mr-2 h-4 w-4" />
-                                        Switch
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        {org.can_manage && (
+                                            <Link href={OrganizationManagementController.edit.url({ organization: org.id })}>
+                                                <Button type="button" variant="outline">
+                                                    Manage
+                                                </Button>
+                                            </Link>
+                                        )}
+
+                                        <Button
+                                            type="button"
+                                            variant={org.id === currentOrganizationId ? 'secondary' : 'default'}
+                                            disabled={org.id === currentOrganizationId || !org.is_active}
+                                            onClick={() =>
+                                                router.post(
+                                                    OrganizationSwitchController({ organization: org.id }).url,
+                                                    {},
+                                                    { preserveScroll: true },
+                                                )
+                                            }
+                                        >
+                                            <Shuffle className="mr-2 h-4 w-4" />
+                                            Switch
+                                        </Button>
+                                    </div>
                                 </CardContent>
                             </Card>
                         ))
