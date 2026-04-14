@@ -4,7 +4,7 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -35,14 +35,18 @@ export default function OrganizationOnboardingPlan({ organization }: Props) {
                         <>
                             <div className="grid gap-2">
                                 <Label>Subscription plan</Label>
-                                <RadioGroup name="plan" defaultValue={organization.plan ?? 'Free'}>
-                                    {['Free', 'Basic', 'Professional', 'Enterprise'].map((value) => (
-                                        <div key={value} className="flex items-center gap-3">
-                                            <RadioGroupItem value={value} id={`plan_${value}`} />
-                                            <Label htmlFor={`plan_${value}`}>{value}</Label>
-                                        </div>
-                                    ))}
-                                </RadioGroup>
+                                <Select name="plan" defaultValue={organization.plan ?? 'Free'}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select plan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {['Free', 'Basic', 'Professional', 'Enterprise'].map((value) => (
+                                            <SelectItem key={value} value={value}>
+                                                {value}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <InputError message={errors.plan} />
                             </div>
 
