@@ -16,6 +16,8 @@ class BranchController extends Controller
      */
     public function index(): Response
     {
+        $this->authorize('viewAny', Branch::class);
+
         $branches = Branch::query()
             ->orderBy('name')
             ->get([
@@ -41,6 +43,8 @@ class BranchController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Branch::class);
+
         return Inertia::render('branches/create');
     }
 
@@ -49,6 +53,8 @@ class BranchController extends Controller
      */
     public function store(StoreBranchRequest $request): RedirectResponse
     {
+        $this->authorize('create', Branch::class);
+
         $branch = Branch::query()->create($request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch created.']);
@@ -61,6 +67,8 @@ class BranchController extends Controller
      */
     public function show(Branch $branch): Response
     {
+        $this->authorize('view', $branch);
+
         return Inertia::render('branches/show', [
             'branch' => $branch,
         ]);
@@ -71,6 +79,8 @@ class BranchController extends Controller
      */
     public function edit(Branch $branch): Response
     {
+        $this->authorize('update', $branch);
+
         return Inertia::render('branches/edit', [
             'branch' => $branch,
         ]);
@@ -81,6 +91,8 @@ class BranchController extends Controller
      */
     public function update(UpdateBranchRequest $request, Branch $branch): RedirectResponse
     {
+        $this->authorize('update', $branch);
+
         $branch->update($request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch updated.']);
@@ -93,9 +105,11 @@ class BranchController extends Controller
      */
     public function destroy(Branch $branch): RedirectResponse
     {
-        $branch->delete();
+        $this->authorize('deactivate', $branch);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch deleted.']);
+        $branch->forceFill(['is_active' => false])->save();
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Branch deactivated.']);
 
         return to_route('branches.index');
     }

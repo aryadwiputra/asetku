@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import BranchController from '@/actions/App/Http/Controllers/BranchController';
 import BranchLocationPicker from '@/components/branch-location-picker';
 import Heading from '@/components/heading';
@@ -22,6 +22,10 @@ type Props = {
 };
 
 export default function ShowBranch({ branch }: Props) {
+    const { orgAbilities } = usePage().props as {
+        orgAbilities: { branches: { update: boolean; deactivate: boolean } };
+    };
+
     return (
         <>
             <Head title={branch.name} />
@@ -34,9 +38,24 @@ export default function ShowBranch({ branch }: Props) {
                 />
 
                 <div className="flex items-center gap-3">
-                    <Link href={BranchController.edit.url({ branch: branch.id })}>
-                        <Button type="button">Edit</Button>
-                    </Link>
+                    {orgAbilities.branches.update && (
+                        <Link href={BranchController.edit.url({ branch: branch.id })}>
+                            <Button type="button">Edit</Button>
+                        </Link>
+                    )}
+                    {orgAbilities.branches.deactivate && branch.is_active && (
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={() => {
+                                if (confirm('Deactivate this branch?')) {
+                                    router.delete(BranchController.destroy.url({ branch: branch.id }));
+                                }
+                            }}
+                        >
+                            Deactivate
+                        </Button>
+                    )}
                     <Link href={branchesIndex()}>
                         <Button type="button" variant="outline">
                             Back

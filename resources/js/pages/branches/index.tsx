@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { MapPin, Pencil, Plus, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -29,6 +29,10 @@ type Props = {
 };
 
 export default function BranchesIndex({ branches }: Props) {
+    const { orgAbilities } = usePage().props as {
+        orgAbilities: { branches: { create: boolean; update: boolean; deactivate: boolean } };
+    };
+
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
@@ -117,12 +121,14 @@ export default function BranchesIndex({ branches }: Props) {
                         <div className="text-sm text-muted-foreground">
                             {stats.total} total • {stats.active} active • {stats.inactive} inactive
                         </div>
-                        <Link href={BranchController.create.url()}>
-                            <Button type="button">
-                                <Plus className="mr-2 h-4 w-4" />
-                                New
-                            </Button>
-                        </Link>
+                        {orgAbilities.branches.create && (
+                            <Link href={BranchController.create.url()}>
+                                <Button type="button">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    New
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 </div>
 
@@ -161,12 +167,14 @@ export default function BranchesIndex({ branches }: Props) {
                                                 View
                                             </Button>
                                         </Link>
-                                        <Link href={BranchController.edit.url({ branch: branch.id })}>
-                                            <Button type="button" variant="outline">
-                                                <Pencil className="mr-2 h-4 w-4" />
-                                                Edit
-                                            </Button>
-                                        </Link>
+                                        {orgAbilities.branches.update && (
+                                            <Link href={BranchController.edit.url({ branch: branch.id })}>
+                                                <Button type="button" variant="outline">
+                                                    <Pencil className="mr-2 h-4 w-4" />
+                                                    Edit
+                                                </Button>
+                                            </Link>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>

@@ -40,7 +40,7 @@ class StoreBranchRequest extends FormRequest
             'pic_phone' => ['nullable', 'string', 'max:50'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'is_active' => ['required', 'boolean'],
+            'is_active' => ['boolean'],
         ];
     }
 }
