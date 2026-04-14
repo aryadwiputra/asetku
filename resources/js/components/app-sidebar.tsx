@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, ChevronDown, FolderGit2, LayoutGrid, Settings, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Settings, UploadCloud, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -28,6 +28,8 @@ import { edit as editMailSettings } from '@/routes/mail-settings';
 import { index as settingsIndex } from '@/routes/settings';
 import { index as usersIndex } from '@/routes/users';
 import { index as mediaIndex } from '@/routes/media';
+import { index as organizationsIndex } from '@/routes/organizations';
+import { index as branchesIndex } from '@/routes/branches';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -41,6 +43,16 @@ export function AppSidebar() {
             title: t('common.dashboard'),
             href: dashboard(),
             icon: LayoutGrid,
+        },
+        {
+            title: 'Organizations',
+            href: organizationsIndex(),
+            icon: Building2,
+        },
+        {
+            title: 'Branches',
+            href: branchesIndex(),
+            icon: MapPin,
         },
         ...(userPermissions.includes('user.view')
             ? [
