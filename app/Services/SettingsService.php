@@ -111,12 +111,27 @@ class SettingsService
             return;
         }
 
-        $userOrganizationId = Auth::user()?->organization_id;
+        $user = Auth::user();
+
+        $userOrganizationId = $user?->current_organization_id ?? $user?->organization_id;
 
         if ($userOrganizationId !== null) {
             $context->setCurrentOrganizationId((int) $userOrganizationId);
 
             return;
+        }
+
+        if ($user !== null) {
+            $membership = $user->organizations()
+                ->wherePivot('is_active', true)
+                ->orderBy('organization_user.created_at')
+                ->first();
+
+            if ($membership !== null) {
+                $context->setCurrentOrganizationId((int) $membership->id);
+
+                return;
+            }
         }
 
         if (Organization::query()->count() !== 1) {

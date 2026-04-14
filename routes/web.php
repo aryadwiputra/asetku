@@ -3,6 +3,7 @@
 use App\Http\Controllers\ColumnPreferenceController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::get('api/docs.json', fn () => redirect()->route('scramble.docs.document')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+
+    // Organization
+    Route::post('organizations/{organization}/switch', OrganizationSwitchController::class)->name('organizations.switch');
 
     // User Management
     Route::resource('users', UserController::class);

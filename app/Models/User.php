@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,7 +21,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'avatar_path', 'is_active', 'locale', 'organization_id', 'department_id', 'asset_location_id', 'last_active_at'])]
+#[Fillable(['name', 'email', 'password', 'avatar_path', 'is_active', 'locale', 'organization_id', 'current_organization_id', 'department_id', 'asset_location_id', 'last_active_at'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -47,8 +48,12 @@ class User extends Authenticatable
     {
         $context = app(OrganizationContext::class);
 
-        if ($context->currentOrganizationId() === null && $this->organization_id !== null) {
-            $context->setCurrentOrganizationId((int) $this->organization_id);
+        if ($context->currentOrganizationId() === null) {
+            $fallbackOrganizationId = $this->current_organization_id ?? $this->organization_id;
+
+            if ($fallbackOrganizationId !== null) {
+                $context->setCurrentOrganizationId((int) $fallbackOrganizationId);
+            }
         }
 
         return $this->morphMany(DatabaseNotification::class, 'notifiable')->latest();
@@ -67,6 +72,21 @@ class User extends Authenticatable
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function currentOrganization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'current_organization_id');
+    }
+
+    /**
+     * @return BelongsToMany<Organization, $this>
+     */
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class)
+            ->withPivot(['role', 'is_active'])
+            ->withTimestamps();
     }
 
     public function department(): BelongsTo

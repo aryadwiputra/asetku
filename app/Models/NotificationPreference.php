@@ -18,7 +18,7 @@ class NotificationPreference extends Model
                 return;
             }
 
-            $organizationId = Auth::user()?->organization_id;
+            $organizationId = Auth::user()?->current_organization_id ?? Auth::user()?->organization_id;
 
             if ($organizationId !== null) {
                 $preference->organization_id = (int) $organizationId;
@@ -30,7 +30,14 @@ class NotificationPreference extends Model
                 $resolvedOrganizationId = User::query()
                     ->withoutGlobalScopes()
                     ->whereKey($preference->user_id)
-                    ->value('organization_id');
+                    ->value('current_organization_id');
+
+                if ($resolvedOrganizationId === null) {
+                    $resolvedOrganizationId = User::query()
+                        ->withoutGlobalScopes()
+                        ->whereKey($preference->user_id)
+                        ->value('organization_id');
+                }
 
                 if ($resolvedOrganizationId !== null) {
                     $preference->organization_id = (int) $resolvedOrganizationId;

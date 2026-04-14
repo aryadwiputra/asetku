@@ -24,14 +24,30 @@ class SetCurrentOrganization
             return $next($request);
         }
 
-        if (! is_int($user->organization_id) && ! is_string($user->organization_id) && $user->organization_id !== null) {
-            abort(500, 'Invalid organization_id.');
-        }
-
-        $organizationId = $user->organization_id === null ? null : (int) $user->organization_id;
+        $organizationId = $user->current_organization_id === null ? null : (int) $user->current_organization_id;
 
         if ($organizationId === null) {
-            abort(403, 'Organization is not set for this user.');
+            $membership = $user->organizations()
+                ->wherePivot('is_active', true)
+                ->orderBy('organization_user.created_at')
+                ->first();
+
+            if ($membership === null) {
+                abort(403, 'No active organization membership.');
+            }
+
+            $organizationId = (int) $membership->id;
+
+            $user->forceFill(['current_organization_id' => $organizationId])->saveQuietly();
+        } else {
+            $isMember = $user->organizations()
+                ->whereKey($organizationId)
+                ->wherePivot('is_active', true)
+                ->exists();
+
+            if (! $isMember) {
+                abort(403, 'Current organization is not accessible.');
+            }
         }
 
         app(OrganizationContext::class)->setCurrentOrganizationId($organizationId);
