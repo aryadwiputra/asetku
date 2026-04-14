@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Services\OrganizationContext;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
@@ -24,7 +25,7 @@ pest()->extend(TestCase::class)
 
 beforeEach(function () {
     try {
-        Cache::store('redis')->forget('settings:all');
+        Cache::store('redis')->flush();
     } catch (Throwable) {
         // Ignore cache failures during tests.
     }
@@ -67,6 +68,7 @@ function asRole(string $role, array $attributes = []): User
     $user->assignRole($role);
 
     test()->actingAs($user);
+    app(OrganizationContext::class)->setCurrentOrganizationId((int) $user->organization_id);
 
     return $user;
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Setting;
+use App\Services\OrganizationContext;
 use App\Services\SettingsService;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,12 +15,15 @@ test('settings helper reads from db and caches in redis store', function () {
 
     $service->set('app.name', 'My App', 'string');
 
-    expect(Cache::store('redis')->has('settings:all'))->toBeFalse();
+    $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+    $cacheKey = 'settings:all:'.($organizationId === null ? 'global' : (string) $organizationId);
+
+    expect(Cache::store('redis')->has($cacheKey))->toBeFalse();
     expect(settings('app.name'))->toBe('My App');
-    expect(Cache::store('redis')->has('settings:all'))->toBeTrue();
+    expect(Cache::store('redis')->has($cacheKey))->toBeTrue();
 
     $service->set('app.name', 'My App 2', 'string');
-    expect(Cache::store('redis')->has('settings:all'))->toBeFalse();
+    expect(Cache::store('redis')->has($cacheKey))->toBeFalse();
     expect(settings('app.name'))->toBe('My App 2');
 });
 

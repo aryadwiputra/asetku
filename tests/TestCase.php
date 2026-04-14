@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use App\Models\Organization;
+use App\Services\OrganizationContext;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Fortify\Features;
@@ -13,11 +15,15 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         try {
-            Cache::store('redis')->forget('settings:all');
-            Cache::store('redis')->forget('feature-flags:all');
+            Cache::store('redis')->flush();
         } catch (\Throwable) {
             // Ignore cache failures during tests.
         }
+
+        $organization = Organization::query()->first()
+            ?? Organization::factory()->create(['slug' => 'test-org']);
+
+        app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
