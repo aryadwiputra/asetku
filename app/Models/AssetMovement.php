@@ -17,6 +17,8 @@ class AssetMovement extends Model
      */
     protected $fillable = [
         'asset_id',
+        'from_branch_id',
+        'to_branch_id',
         'from_location_id',
         'to_location_id',
         'from_department_id',
@@ -59,9 +61,19 @@ class AssetMovement extends Model
         return $this->belongsTo(AssetLocation::class, 'from_location_id');
     }
 
+    public function fromBranch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'from_branch_id');
+    }
+
     public function toLocation(): BelongsTo
     {
         return $this->belongsTo(AssetLocation::class, 'to_location_id');
+    }
+
+    public function toBranch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'to_branch_id');
     }
 
     public function fromDepartment(): BelongsTo

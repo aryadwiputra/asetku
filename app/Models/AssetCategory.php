@@ -19,7 +19,22 @@ class AssetCategory extends Model
         'code',
         'description',
         'parent_id',
+        'depreciation_method',
+        'useful_life_months',
+        'residual_value',
+        'capex_opex_default',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'useful_life_months' => 'integer',
+            'residual_value' => 'decimal:2',
+        ];
+    }
 
     public function assets(): HasMany
     {

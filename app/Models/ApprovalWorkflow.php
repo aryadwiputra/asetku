@@ -5,10 +5,9 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Branch extends Model
+class ApprovalWorkflow extends Model
 {
     use BelongsToOrganization, HasFactory;
 
@@ -17,15 +16,9 @@ class Branch extends Model
      */
     protected $fillable = [
         'organization_id',
+        'type',
         'name',
-        'code',
         'is_active',
-        'address',
-        'pic_name',
-        'pic_email',
-        'pic_phone',
-        'latitude',
-        'longitude',
     ];
 
     /**
@@ -35,21 +28,14 @@ class Branch extends Model
     {
         return [
             'is_active' => 'boolean',
-            'latitude' => 'float',
-            'longitude' => 'float',
         ];
     }
 
-    public function organization(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class);
-    }
-
     /**
-     * @return HasMany<Department, $this>
+     * @return HasMany<ApprovalWorkflowStep, $this>
      */
-    public function departments(): HasMany
+    public function steps(): HasMany
     {
-        return $this->hasMany(Department::class);
+        return $this->hasMany(ApprovalWorkflowStep::class, 'workflow_id')->orderBy('step_number');
     }
 }

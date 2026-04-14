@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AssetApprovalRequest extends Model
@@ -63,6 +64,14 @@ class AssetApprovalRequest extends Model
     public function rejector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    /**
+     * @return HasMany<ApprovalRequestStep, $this>
+     */
+    public function steps(): HasMany
+    {
+        return $this->hasMany(ApprovalRequestStep::class, 'approval_request_id')->orderBy('step_number');
     }
 
     public function isPending(): bool
