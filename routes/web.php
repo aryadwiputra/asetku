@@ -6,6 +6,7 @@ use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationImportTemplateController;
+use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\OrganizationOnboardingController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::post('organizations/{organization}/switch', OrganizationSwitchController::class)->name('organizations.switch');
     Route::get('organizations/import-template/{type}', OrganizationImportTemplateController::class)->name('organizations.import-template');
+    Route::get('organizations/{organization}/edit', [OrganizationManagementController::class, 'edit'])->name('organizations.edit');
+    Route::patch('organizations/{organization}', [OrganizationManagementController::class, 'update'])->name('organizations.update');
+    Route::delete('organizations/{organization}', [OrganizationManagementController::class, 'deactivate'])->name('organizations.deactivate');
 
     Route::prefix('organizations/onboarding')->name('organizations.onboarding.')->group(function () {
         Route::get('profile', [OrganizationOnboardingController::class, 'profile'])->name('profile');

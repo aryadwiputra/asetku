@@ -21,11 +21,15 @@ class OrganizationOnboardingController extends Controller
 {
     public function profile(): Response
     {
+        $this->authorize('create', Organization::class);
+
         return Inertia::render('organizations/onboarding/profile');
     }
 
     public function storeProfile(StoreOrganizationProfileRequest $request): RedirectResponse
     {
+        $this->authorize('create', Organization::class);
+
         $user = $request->user();
 
         if ($user === null) {
@@ -97,9 +101,12 @@ class OrganizationOnboardingController extends Controller
     public function plan(): Response
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
+        $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         return Inertia::render('organizations/onboarding/plan', [
-            'organization' => Organization::query()->findOrFail($organizationId),
+            'organization' => $organization,
         ]);
     }
 
@@ -107,6 +114,8 @@ class OrganizationOnboardingController extends Controller
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
         $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         $organization->forceFill([
             'plan' => $request->validated('plan'),
@@ -121,9 +130,12 @@ class OrganizationOnboardingController extends Controller
     public function locale(): Response
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
+        $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         return Inertia::render('organizations/onboarding/locale', [
-            'organization' => Organization::query()->findOrFail($organizationId),
+            'organization' => $organization,
             'timezones' => \DateTimeZone::listIdentifiers(),
         ]);
     }
@@ -132,6 +144,8 @@ class OrganizationOnboardingController extends Controller
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
         $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         $organization->forceFill([
             'currency_code' => $request->validated('currency_code'),
@@ -146,9 +160,12 @@ class OrganizationOnboardingController extends Controller
     public function assetCode(): Response
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
+        $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         return Inertia::render('organizations/onboarding/asset-code', [
-            'organization' => Organization::query()->findOrFail($organizationId),
+            'organization' => $organization,
         ]);
     }
 
@@ -156,6 +173,8 @@ class OrganizationOnboardingController extends Controller
     {
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
         $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         $organization->forceFill([
             'asset_code_prefix' => $request->validated('asset_code_prefix'),
@@ -169,6 +188,11 @@ class OrganizationOnboardingController extends Controller
 
     public function import(): Response
     {
+        $organizationId = app(OrganizationContext::class)->requireOrganizationId();
+        $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
+
         return Inertia::render('organizations/onboarding/import', [
             'importRuns' => ImportRun::query()->latest()->limit(10)->get(['id', 'type', 'status', 'created_at', 'report_path', 'error_message']),
         ]);
@@ -181,6 +205,11 @@ class OrganizationOnboardingController extends Controller
         if ($user === null) {
             abort(401);
         }
+
+        $organizationId = app(OrganizationContext::class)->requireOrganizationId();
+        $organization = Organization::query()->findOrFail($organizationId);
+
+        $this->authorize('update', $organization);
 
         $type = (string) $request->validated('type');
         $file = $request->file('file');

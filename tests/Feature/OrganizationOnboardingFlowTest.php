@@ -2,9 +2,11 @@
 
 use App\Models\Organization;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
-test('user without memberships can access onboarding and create an organization', function () {
+test('non-admin cannot access onboarding create organization', function () {
     $user = User::factory()->create([
         'organization_id' => null,
         'current_organization_id' => null,
@@ -12,7 +14,17 @@ test('user without memberships can access onboarding and create an organization'
 
     $this->actingAs($user)
         ->get(route('organizations.onboarding.profile'))
-        ->assertSuccessful();
+        ->assertForbidden();
+});
+
+test('admin can create an organization via onboarding and becomes owner', function () {
+    Artisan::call('db:seed', ['--class' => RolePermissionSeeder::class]);
+
+    $user = User::factory()->create([
+        'organization_id' => null,
+        'current_organization_id' => null,
+    ]);
+    $user->assignRole('admin');
 
     $this->actingAs($user)
         ->post(route('organizations.onboarding.profile.store'), [

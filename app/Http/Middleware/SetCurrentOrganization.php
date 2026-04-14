@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Organization;
 use App\Services\OrganizationContext;
 use Closure;
 use Illuminate\Http\Request;
@@ -66,6 +67,22 @@ class SetCurrentOrganization
         }
 
         app(OrganizationContext::class)->setCurrentOrganizationId($organizationId);
+
+        $isActive = Organization::query()->whereKey($organizationId)->value('is_active');
+
+        if ($isActive === 0 || $isActive === false) {
+            app(OrganizationContext::class)->setCurrentOrganizationId(null);
+
+            if ($request->expectsJson()) {
+                abort(403, 'Organization is inactive.');
+            }
+
+            $user->forceFill(['current_organization_id' => null])->saveQuietly();
+
+            return redirect()
+                ->route('organizations.index')
+                ->with('toast', ['type' => 'error', 'message' => 'Organization is inactive.']);
+        }
 
         return $next($request);
     }

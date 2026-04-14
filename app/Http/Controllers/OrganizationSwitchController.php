@@ -16,6 +16,10 @@ class OrganizationSwitchController extends Controller
             abort(401);
         }
 
+        if (! $organization->is_active) {
+            abort(403);
+        }
+
         $isMember = $user->organizations()
             ->whereKey($organization->id)
             ->wherePivot('is_active', true)
