@@ -15,6 +15,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { logout } from '@/routes';
 import { update as updateLocale } from '@/routes/locale';
 import { edit } from '@/routes/profile';
+import { index as organizationsIndex, switchMethod as switchOrganization } from '@/routes/organizations';
 import type { User } from '@/types';
 
 type Props = {
@@ -29,6 +30,10 @@ export function UserMenuContent({ user }: Props) {
         locale: string;
         availableLocales: string[];
         localeLabels: Record<string, string>;
+    };
+    const { organization, organizations } = usePage().props as {
+        organization: { id: number; name: string } | null;
+        organizations: Array<{ id: number; name: string; role: string | null }>;
     };
 
     const handleLogout = () => {
@@ -56,6 +61,32 @@ export function UserMenuContent({ user }: Props) {
                         {t('common.profile')}
                     </Link>
                 </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Organization</DropdownMenuLabel>
+            <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                    <Link
+                        className="block w-full cursor-pointer"
+                        href={organizationsIndex()}
+                        prefetch
+                        onClick={cleanup}
+                    >
+                        {organization?.name ?? 'Select organization'}
+                    </Link>
+                </DropdownMenuItem>
+                {organizations.map((org) => (
+                    <DropdownMenuItem
+                        key={org.id}
+                        onSelect={(e) => {
+                            e.preventDefault();
+                            cleanup();
+                            router.post(switchOrganization({ organization: org.id }).url, {}, { preserveScroll: true });
+                        }}
+                    >
+                        <span className="truncate">{org.name}</span>
+                    </DropdownMenuItem>
+                ))}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>{t('common.theme')}</DropdownMenuLabel>

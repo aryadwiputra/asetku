@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\OrganizationContext;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetCurrentOrganization
@@ -33,6 +34,20 @@ class SetCurrentOrganization
                 ->first();
 
             if ($membership === null) {
+                if (! $request->expectsJson()) {
+                    $routeName = $request->route()?->getName();
+
+                    if (is_string($routeName) && Str::startsWith($routeName, 'organizations.onboarding.')) {
+                        return $next($request);
+                    }
+
+                    if ($routeName === 'organizations.index') {
+                        return $next($request);
+                    }
+
+                    return redirect()->route('organizations.onboarding.profile');
+                }
+
                 abort(403, 'No active organization membership.');
             }
 

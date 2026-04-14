@@ -74,7 +74,13 @@ class ProcessImportRun implements ShouldQueue
      */
     private function processBranches(ImportRun $importRun): array
     {
-        Excel::import(new BranchesImport, $importRun->source_path);
+        $path = (string) $importRun->source_path;
+
+        if (! str_starts_with($path, '/')) {
+            $path = storage_path('app/'.$path);
+        }
+
+        Excel::import(new BranchesImport, $path);
 
         return [
             'status' => 'ok',

@@ -6,6 +6,21 @@ declare module '@inertiajs/core' {
             name: string;
             appLogoUrl: string | null;
             auth: Auth;
+            organization: {
+                id: number;
+                name: string;
+                slug: string;
+                currency_code: string;
+                timezone: string;
+                asset_code_prefix: string;
+                asset_code_format: string;
+            } | null;
+            organizations: Array<{
+                id: number;
+                name: string;
+                slug: string;
+                role: string | null;
+            }>;
             permissions: string[];
             roles: string[];
             features: string[];

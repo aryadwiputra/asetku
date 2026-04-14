@@ -2,7 +2,9 @@
 
 namespace App\Inertia;
 
+use App\Models\Organization;
 use App\Services\FeatureFlagService;
+use App\Services\OrganizationContext;
 use App\Services\TranslationsResolver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,9 +19,32 @@ class SharedProps
         $user = $request->user();
         $featureFlags = app(FeatureFlagService::class);
         $translations = app(TranslationsResolver::class)->resolve($request);
+        $context = app(OrganizationContext::class);
 
         $logoPath = settings('app.logo_path');
         $logoUrl = is_string($logoPath) && $logoPath !== '' ? Storage::disk('public')->url($logoPath) : null;
+
+        $organizationId = $context->currentOrganizationId();
+
+        $currentOrganization = $organizationId === null
+            ? null
+            : Organization::query()
+                ->whereKey($organizationId)
+                ->first(['id', 'name', 'slug', 'currency_code', 'timezone', 'asset_code_prefix', 'asset_code_format']);
+
+        $organizations = $user
+            ? $user->organizations()
+                ->wherePivot('is_active', true)
+                ->orderBy('organization_user.created_at')
+                ->get(['organizations.id', 'organizations.name', 'organizations.slug'])
+                ->map(fn (Organization $org): array => [
+                    'id' => $org->id,
+                    'name' => $org->name,
+                    'slug' => $org->slug,
+                    'role' => $org->pivot?->role,
+                ])
+                ->all()
+            : [];
 
         return [
             'name' => settings('app.name', config('app.name')),
@@ -27,6 +52,8 @@ class SharedProps
             'auth' => [
                 'user' => $user,
             ],
+            'organization' => $currentOrganization,
+            'organizations' => $organizations,
             'permissions' => $user ? $user->getAllPermissions()->pluck('name')->toArray() : [],
             'roles' => $user ? $user->getRoleNames()->toArray() : [],
             'features' => $featureFlags->enabledKeysForUser($user),
@@ -54,6 +81,21 @@ declare module '@inertiajs/core' {
             name: string;
             appLogoUrl: string | null;
             auth: Auth;
+            organization: {
+                id: number;
+                name: string;
+                slug: string;
+                currency_code: string;
+                timezone: string;
+                asset_code_prefix: string;
+                asset_code_format: string;
+            } | null;
+            organizations: Array<{
+                id: number;
+                name: string;
+                slug: string;
+                role: string | null;
+            }>;
             permissions: string[];
             roles: string[];
             features: string[];
