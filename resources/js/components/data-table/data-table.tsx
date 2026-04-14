@@ -29,6 +29,7 @@ export function DataTable<T extends { id: number }>({
     tableId,
     data,
     columns,
+    mobileView = 'table',
     filters = [],
     bulkActions = [],
     rowActions = [],
@@ -70,6 +71,18 @@ export function DataTable<T extends { id: number }>({
     const hasActiveFilters = Object.values(activeFilters).some((v) => v !== '');
     const allSelected = data.data.length > 0 && selectedIds.length === data.data.length;
     const someSelected = selectedIds.length > 0 && selectedIds.length < data.data.length;
+    const showMobileCards = mobileView === 'cards';
+
+    const renderCell = (item: T, column: DataTableColumn<T>) => {
+        if (column.render) {
+            return column.render(item);
+        }
+
+        return String((item as Record<string, unknown>)[column.key] ?? '');
+    };
+
+    const titleColumn = visibleColumns[0] ?? null;
+    const detailColumns = visibleColumns.slice(1, 4);
 
     function handleBulkAction(action: BulkAction) {
         if (selectedIds.length === 0) {
@@ -226,8 +239,62 @@ export function DataTable<T extends { id: number }>({
                 </div>
             )}
 
+            {/* Mobile Cards */}
+            {showMobileCards && (
+                <div className="space-y-3 md:hidden">
+                    {data.data.length === 0 ? (
+                        <div className="rounded-lg border p-6 text-center text-sm text-muted-foreground">
+                            {t('datatable.no_results')}
+                        </div>
+                    ) : (
+                        data.data.map((item) => (
+                            <div key={item.id} className="rounded-lg border p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex min-w-0 items-start gap-3">
+                                        {bulkActions.length > 0 && (
+                                            <Checkbox
+                                                className="mt-0.5"
+                                                checked={selectedIds.includes(item.id)}
+                                                onCheckedChange={() => toggleSelect(item.id)}
+                                            />
+                                        )}
+
+                                        <div className="min-w-0">
+                                            <div className="truncate font-medium">
+                                                {titleColumn ? renderCell(item, titleColumn) : `#${item.id}`}
+                                            </div>
+
+                                            {detailColumns.length > 0 && (
+                                                <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                                                    {detailColumns.map((column) => (
+                                                        <div key={column.key} className="flex gap-2">
+                                                            <div className="w-28 shrink-0 truncate text-xs uppercase tracking-wide">
+                                                                {column.label}
+                                                            </div>
+                                                            <div className="min-w-0 flex-1 break-words text-foreground/90">
+                                                                {renderCell(item, column)}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {rowActions.length > 0 && (
+                                        <div className="shrink-0">
+                                            <RowActionsDropdown item={item} actions={rowActions} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+
             {/* Table */}
-            <div className="overflow-hidden rounded-lg border">
+            <div className={showMobileCards ? 'hidden overflow-hidden rounded-lg border md:block' : 'overflow-hidden rounded-lg border'}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
@@ -287,9 +354,7 @@ export function DataTable<T extends { id: number }>({
                                         )}
                                         {visibleColumns.map((column) => (
                                             <td key={column.key} className="px-4 py-3">
-                                                {column.render
-                                                    ? column.render(item)
-                                                    : String((item as Record<string, unknown>)[column.key] ?? '')}
+                                                {renderCell(item, column)}
                                             </td>
                                         ))}
                                         {rowActions.length > 0 && (

@@ -58,6 +58,7 @@ export type DataTableProps<T> = {
     tableId: string;
     data: PaginatedData<T>;
     columns: DataTableColumn<T>[];
+    mobileView?: 'cards' | 'table';
     filters?: DataTableFilter[];
     bulkActions?: BulkAction[];
     rowActions?: RowAction<T>[];

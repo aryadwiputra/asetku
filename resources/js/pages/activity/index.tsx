@@ -171,6 +171,7 @@ export default function ActivityIndex({ activities, log_names, events }: Props) 
                             tableId="activity-log"
                             data={activities}
                             columns={columns}
+                            mobileView="cards"
                             filters={filters}
                             rowActions={rowActions}
                             routePrefix={activityIndex().url}

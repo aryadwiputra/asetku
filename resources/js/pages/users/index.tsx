@@ -232,6 +232,7 @@ export default function UsersIndex({ users, roles }: Props) {
                     tableId="users"
                     data={users}
                     columns={columns}
+                    mobileView="cards"
                     filters={tableFilters}
                     bulkActions={bulkActions}
                     rowActions={rowActions}

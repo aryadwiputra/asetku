@@ -115,6 +115,7 @@ export default function RolesIndex({ roles }: Props) {
                     tableId="roles"
                     data={roles}
                     columns={columns}
+                    mobileView="cards"
                     rowActions={rowActions}
                     routePrefix={rolesIndex().url}
                 />
