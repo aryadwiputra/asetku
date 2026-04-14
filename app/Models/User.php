@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\OrganizationMemberRole;
 use App\Services\OrganizationContext;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -87,6 +88,41 @@ class User extends Authenticatable
         return $this->belongsToMany(Organization::class)
             ->withPivot(['role', 'is_active'])
             ->withTimestamps();
+    }
+
+    public function currentOrganizationRole(): ?string
+    {
+        $organizationId = $this->current_organization_id ?? $this->organization_id;
+
+        if ($organizationId === null) {
+            return null;
+        }
+
+        return $this->organizationRole((int) $organizationId);
+    }
+
+    public function organizationRole(int $organizationId): ?string
+    {
+        return $this->organizations()
+            ->wherePivot('is_active', true)
+            ->whereKey($organizationId)
+            ->value('organization_user.role');
+    }
+
+    /**
+     * @param  array<int, OrganizationMemberRole|string>  $roles
+     */
+    public function hasOrganizationRole(int $organizationId, array $roles): bool
+    {
+        $allowed = array_map(function (OrganizationMemberRole|string $role): string {
+            return $role instanceof OrganizationMemberRole ? $role->value : (string) $role;
+        }, $roles);
+
+        return $this->organizations()
+            ->wherePivot('is_active', true)
+            ->whereKey($organizationId)
+            ->whereIn('organization_user.role', $allowed)
+            ->exists();
     }
 
     public function department(): BelongsTo

@@ -3,8 +3,12 @@
 namespace App\Providers;
 
 use App\Listeners\ApplyNotificationPreferences;
+use App\Models\Branch;
 use App\Models\MediaAsset;
+use App\Models\Organization;
+use App\Policies\BranchPolicy;
 use App\Policies\MediaAssetPolicy;
+use App\Policies\OrganizationPolicy;
 use App\Policies\RolePolicy;
 use App\Services\OrganizationContext;
 use Carbon\CarbonImmutable;
@@ -71,6 +75,8 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureAuthorization(): void
     {
+        Gate::policy(Organization::class, OrganizationPolicy::class);
+        Gate::policy(Branch::class, BranchPolicy::class);
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
 
