@@ -19,6 +19,7 @@ import Settings from './Settings'
 import NotificationsController from './NotificationsController'
 import MediaAssetController from './MediaAssetController'
 import MediaUploadController from './MediaUploadController'
+import MasterData from './MasterData'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
@@ -42,6 +43,7 @@ const Controllers = {
     NotificationsController: Object.assign(NotificationsController, NotificationsController),
     MediaAssetController: Object.assign(MediaAssetController, MediaAssetController),
     MediaUploadController: Object.assign(MediaUploadController, MediaUploadController),
+    MasterData: Object.assign(MasterData, MasterData),
 }
 
 export default Controllers

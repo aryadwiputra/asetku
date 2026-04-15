@@ -222,7 +222,7 @@ store.form = storeForm
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-export const edit = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -237,7 +237,7 @@ edit.definition = {
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-edit.url = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+edit.url = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { person_in_charge: args }
     }
@@ -270,7 +270,7 @@ edit.url = (args: { person_in_charge: string | number | { id: string | number } 
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-edit.get = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -280,7 +280,7 @@ edit.get = (args: { person_in_charge: string | number | { id: string | number } 
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-edit.head = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -290,7 +290,7 @@ edit.head = (args: { person_in_charge: string | number | { id: string | number }
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-const editForm = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const editForm = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -300,7 +300,7 @@ const editForm = (args: { person_in_charge: string | number | { id: string | num
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-editForm.get = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.get = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -310,7 +310,7 @@ editForm.get = (args: { person_in_charge: string | number | { id: string | numbe
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:65
 * @route '/settings/master-data/person-in-charges/{person_in_charge}/edit'
 */
-editForm.head = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.head = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -327,7 +327,7 @@ edit.form = editForm
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-export const update = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -342,7 +342,7 @@ update.definition = {
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-update.url = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { person_in_charge: args }
     }
@@ -375,7 +375,7 @@ update.url = (args: { person_in_charge: string | number | { id: string | number 
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-update.put = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -385,7 +385,7 @@ update.put = (args: { person_in_charge: string | number | { id: string | number 
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-update.patch = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -395,7 +395,7 @@ update.patch = (args: { person_in_charge: string | number | { id: string | numbe
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-const updateForm = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -410,7 +410,7 @@ const updateForm = (args: { person_in_charge: string | number | { id: string | n
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-updateForm.put = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.put = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -425,7 +425,7 @@ updateForm.put = (args: { person_in_charge: string | number | { id: string | num
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:74
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-updateForm.patch = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.patch = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -442,7 +442,7 @@ update.form = updateForm
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:85
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-export const destroy = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -457,7 +457,7 @@ destroy.definition = {
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:85
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-destroy.url = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { person_in_charge: args }
     }
@@ -490,7 +490,7 @@ destroy.url = (args: { person_in_charge: string | number | { id: string | number
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:85
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-destroy.delete = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -500,7 +500,7 @@ destroy.delete = (args: { person_in_charge: string | number | { id: string | num
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:85
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-const destroyForm = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -515,7 +515,7 @@ const destroyForm = (args: { person_in_charge: string | number | { id: string | 
 * @see app/Http/Controllers/MasterData/PersonInChargeController.php:85
 * @route '/settings/master-data/person-in-charges/{person_in_charge}'
 */
-destroyForm.delete = (args: { person_in_charge: string | number | { id: string | number } } | [person_in_charge: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { person_in_charge: number | { id: number } } | [person_in_charge: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

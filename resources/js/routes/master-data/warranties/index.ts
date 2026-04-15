@@ -222,7 +222,7 @@ store.form = storeForm
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-export const edit = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -237,7 +237,7 @@ edit.definition = {
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-edit.url = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+edit.url = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { warranty: args }
     }
@@ -270,7 +270,7 @@ edit.url = (args: { warranty: string | number | { id: string | number } } | [war
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-edit.get = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -280,7 +280,7 @@ edit.get = (args: { warranty: string | number | { id: string | number } } | [war
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-edit.head = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -290,7 +290,7 @@ edit.head = (args: { warranty: string | number | { id: string | number } } | [wa
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-const editForm = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+const editForm = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -300,7 +300,7 @@ const editForm = (args: { warranty: string | number | { id: string | number } } 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-editForm.get = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.get = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, options),
     method: 'get',
 })
@@ -310,7 +310,7 @@ editForm.get = (args: { warranty: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:63
 * @route '/settings/master-data/warranties/{warranty}/edit'
 */
-editForm.head = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+editForm.head = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
     action: edit.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'HEAD',
@@ -327,7 +327,7 @@ edit.form = editForm
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-export const update = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -342,7 +342,7 @@ update.definition = {
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-update.url = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { warranty: args }
     }
@@ -375,7 +375,7 @@ update.url = (args: { warranty: string | number | { id: string | number } } | [w
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-update.put = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -385,7 +385,7 @@ update.put = (args: { warranty: string | number | { id: string | number } } | [w
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-update.patch = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -395,7 +395,7 @@ update.patch = (args: { warranty: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-const updateForm = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -410,7 +410,7 @@ const updateForm = (args: { warranty: string | number | { id: string | number } 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-updateForm.put = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.put = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PUT',
@@ -425,7 +425,7 @@ updateForm.put = (args: { warranty: string | number | { id: string | number } } 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:72
 * @route '/settings/master-data/warranties/{warranty}'
 */
-updateForm.patch = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.patch = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -442,7 +442,7 @@ update.form = updateForm
 * @see app/Http/Controllers/MasterData/WarrantyController.php:83
 * @route '/settings/master-data/warranties/{warranty}'
 */
-export const destroy = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -457,7 +457,7 @@ destroy.definition = {
 * @see app/Http/Controllers/MasterData/WarrantyController.php:83
 * @route '/settings/master-data/warranties/{warranty}'
 */
-destroy.url = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { warranty: args }
     }
@@ -490,7 +490,7 @@ destroy.url = (args: { warranty: string | number | { id: string | number } } | [
 * @see app/Http/Controllers/MasterData/WarrantyController.php:83
 * @route '/settings/master-data/warranties/{warranty}'
 */
-destroy.delete = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -500,7 +500,7 @@ destroy.delete = (args: { warranty: string | number | { id: string | number } } 
 * @see app/Http/Controllers/MasterData/WarrantyController.php:83
 * @route '/settings/master-data/warranties/{warranty}'
 */
-const destroyForm = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -515,7 +515,7 @@ const destroyForm = (args: { warranty: string | number | { id: string | number }
 * @see app/Http/Controllers/MasterData/WarrantyController.php:83
 * @route '/settings/master-data/warranties/{warranty}'
 */
-destroyForm.delete = (args: { warranty: string | number | { id: string | number } } | [warranty: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { warranty: number | { id: number } } | [warranty: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
