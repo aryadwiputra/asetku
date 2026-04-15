@@ -1,10 +1,12 @@
 import { router, usePage } from '@inertiajs/react';
 import { Handshake, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/hooks/use-translation';
 import { stop } from '@/routes/delegations';
 
 export function DelegationBanner() {
     const { delegating } = usePage().props;
+    const { t } = useTranslation();
 
     if (!delegating) {
         return null;
@@ -19,7 +21,7 @@ export function DelegationBanner() {
             <div className="flex items-center gap-2">
                 <Handshake className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                    Delegation active.
+                    {t('users.delegation.active_banner')}
                 </span>
             </div>
             <Button
@@ -29,9 +31,8 @@ export function DelegationBanner() {
                 onClick={stopDelegation}
             >
                 <X className="mr-1 h-3 w-3" />
-                Stop
+                {t('users.delegation.stop')}
             </Button>
         </div>
     );
 }
-

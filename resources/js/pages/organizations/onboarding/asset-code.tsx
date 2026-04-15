@@ -5,6 +5,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -17,15 +18,17 @@ type Props = {
 };
 
 export default function OrganizationOnboardingAssetCode({ organization }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Asset Code" />
+            <Head title={t('organizations.onboarding.asset_code.head')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
-                    title="Asset code format"
-                    description={`Organization: ${organization.name}`}
+                    title={t('organizations.onboarding.asset_code.title')}
+                    description={t('organizations.onboarding.asset_code.description', { name: organization.name })}
                 />
 
                 <Form
@@ -35,37 +38,37 @@ export default function OrganizationOnboardingAssetCode({ organization }: Props)
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="asset_code_prefix">Prefix</Label>
+                                <Label htmlFor="asset_code_prefix">{t('organizations.onboarding.asset_code.prefix')}</Label>
                                 <Input
                                     id="asset_code_prefix"
                                     name="asset_code_prefix"
                                     defaultValue={organization.asset_code_prefix ?? 'AST'}
                                     required
-                                    placeholder="AST"
+                                    placeholder={t('organizations.onboarding.asset_code.prefix_placeholder')}
                                 />
                                 <InputError message={errors.asset_code_prefix} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="asset_code_format">Format</Label>
+                                <Label htmlFor="asset_code_format">{t('organizations.onboarding.asset_code.format')}</Label>
                                 <Input
                                     id="asset_code_format"
                                     name="asset_code_format"
                                     defaultValue={organization.asset_code_format ?? '{PREFIX}-{BRANCH}-{YEAR}-{SEQ4}'}
                                     required
-                                    placeholder="{PREFIX}-{BRANCH}-{YEAR}-{SEQ4}"
+                                    placeholder={t('organizations.onboarding.asset_code.format_placeholder')}
                                 />
                                 <div className="text-sm text-muted-foreground">
-                                    Tokens: {'{PREFIX}'} {'{BRANCH}'} {'{YEAR}'} {'{SEQ4}'} (or {'{SEQ}'} / {'{SEQ6}'})
+                                    {t('organizations.onboarding.asset_code.help')}
                                 </div>
                                 <InputError message={errors.asset_code_format} />
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Continue</Button>
+                                <Button disabled={processing}>{t('organizations.onboarding.asset_code.continue')}</Button>
                                 <Link href={organizationsIndex()}>
                                     <Button type="button" variant="outline">
-                                        Back
+                                        {t('common.back')}
                                     </Button>
                                 </Link>
                             </div>
@@ -79,7 +82,7 @@ export default function OrganizationOnboardingAssetCode({ organization }: Props)
 
 OrganizationOnboardingAssetCode.layout = {
     breadcrumbs: [
-        { title: 'Organizations', href: organizationsIndex() },
-        { title: 'Onboarding', href: OrganizationOnboardingController.assetCode.url() },
+        { title: 'organizations.title', href: organizationsIndex() },
+        { title: 'organizations.onboarding.asset_code.title', href: OrganizationOnboardingController.assetCode.url() },
     ],
 };

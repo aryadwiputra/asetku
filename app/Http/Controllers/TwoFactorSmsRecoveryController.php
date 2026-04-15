@@ -21,7 +21,7 @@ class TwoFactorSmsRecoveryController extends Controller
 
         if (! $user->phone_number || ! $user->phone_verified_at) {
             throw ValidationException::withMessages([
-                'recovery_code' => __('SMS backup is not available for this account.'),
+                'recovery_code' => __('auth.two_factor.sms_unavailable'),
             ]);
         }
 
@@ -29,7 +29,7 @@ class TwoFactorSmsRecoveryController extends Controller
 
         if (RateLimiter::tooManyAttempts($key, 1)) {
             throw ValidationException::withMessages([
-                'recovery_code' => __('Please wait before requesting another SMS.'),
+                'recovery_code' => __('auth.two_factor.sms_rate_limited'),
             ]);
         }
 
@@ -41,7 +41,7 @@ class TwoFactorSmsRecoveryController extends Controller
 
         if (! is_string($code) || $code === '') {
             throw ValidationException::withMessages([
-                'recovery_code' => __('No recovery codes are available.'),
+                'recovery_code' => __('auth.two_factor.no_recovery_codes'),
             ]);
         }
 
@@ -49,7 +49,7 @@ class TwoFactorSmsRecoveryController extends Controller
 
         $user->forceFill(['last_two_factor_sms_sent_at' => now()])->saveQuietly();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('SMS sent.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('auth.two_factor.sms_sent')]);
 
         return back();
     }

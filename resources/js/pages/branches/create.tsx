@@ -10,9 +10,11 @@ import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as branchesIndex } from '@/routes/branches';
 
 export default function CreateBranch() {
+    const { t } = useTranslation();
     const [latitude, setLatitude] = useState<number | null>(null);
     const [longitude, setLongitude] = useState<number | null>(null);
 
@@ -23,55 +25,55 @@ export default function CreateBranch() {
 
     return (
         <>
-            <Head title="New Branch" />
+            <Head title={t('branches.create.head')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
-                <Heading variant="small" title="Create branch" description="Add a new branch and optional map location." />
+                <Heading variant="small" title={t('branches.create.title')} description={t('branches.create.description')} />
 
                 <Form {...BranchController.store.form()} className="max-w-2xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <Card className="space-y-4 p-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
-                                    <Input id="name" name="name" required placeholder="Jakarta" />
+                                    <Label htmlFor="name">{t('branches.fields.name')}</Label>
+                                    <Input id="name" name="name" required placeholder={t('branches.fields.placeholder.name')} />
                                     <InputError message={errors.name} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="code">Code</Label>
-                                    <Input id="code" name="code" required placeholder="JKT" />
+                                    <Label htmlFor="code">{t('branches.fields.code')}</Label>
+                                    <Input id="code" name="code" required placeholder={t('branches.fields.placeholder.code')} />
                                     <InputError message={errors.code} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="address">Address</Label>
-                                    <Input id="address" name="address" placeholder="Jl. Sudirman No. 1" />
+                                    <Label htmlFor="address">{t('branches.fields.address')}</Label>
+                                    <Input id="address" name="address" placeholder={t('branches.fields.placeholder.address')} />
                                     <InputError message={errors.address} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_name">PIC name</Label>
-                                    <Input id="pic_name" name="pic_name" placeholder="Budi" />
+                                    <Label htmlFor="pic_name">{t('branches.fields.pic_name')}</Label>
+                                    <Input id="pic_name" name="pic_name" placeholder={t('branches.fields.placeholder.pic_name')} />
                                     <InputError message={errors.pic_name} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_email">PIC email</Label>
-                                    <Input id="pic_email" name="pic_email" type="email" placeholder="budi@example.com" />
+                                    <Label htmlFor="pic_email">{t('branches.fields.pic_email')}</Label>
+                                    <Input id="pic_email" name="pic_email" type="email" placeholder={t('branches.fields.placeholder.pic_email')} />
                                     <InputError message={errors.pic_email} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_phone">PIC phone</Label>
-                                    <Input id="pic_phone" name="pic_phone" placeholder="08123456789" />
+                                    <Label htmlFor="pic_phone">{t('branches.fields.pic_phone')}</Label>
+                                    <Input id="pic_phone" name="pic_phone" placeholder={t('branches.fields.placeholder.pic_phone')} />
                                     <InputError message={errors.pic_phone} />
                                 </div>
 
                                 <div className="flex items-center justify-between">
                                     <div className="grid gap-1">
-                                        <Label htmlFor="is_active">Active</Label>
-                                        <div className="text-sm text-muted-foreground">Inactive branches stay in history.</div>
+                                        <Label htmlFor="is_active">{t('branches.fields.active')}</Label>
+                                        <div className="text-sm text-muted-foreground">{t('branches.fields.active_help')}</div>
                                     </div>
                                     <Checkbox id="is_active" name="is_active" defaultChecked value="1" />
                                 </div>
@@ -79,29 +81,29 @@ export default function CreateBranch() {
                             </Card>
 
                             <Card className="space-y-4 p-6">
-                                <div className="text-sm font-medium">Location (optional)</div>
+                                <div className="text-sm font-medium">{t('branches.fields.location_optional')}</div>
                                 <BranchLocationPicker latitude={latitude} longitude={longitude} onChange={handleLocationChange} />
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="latitude">Latitude</Label>
+                                        <Label htmlFor="latitude">{t('branches.fields.latitude')}</Label>
                                         <Input
                                             id="latitude"
                                             name="latitude"
                                             value={latitude ?? ''}
                                             onChange={(e) => setLatitude(e.target.value === '' ? null : Number(e.target.value))}
-                                            placeholder="-6.200000"
+                                            placeholder={t('branches.fields.placeholder.latitude')}
                                         />
                                         <InputError message={errors.latitude} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="longitude">Longitude</Label>
+                                        <Label htmlFor="longitude">{t('branches.fields.longitude')}</Label>
                                         <Input
                                             id="longitude"
                                             name="longitude"
                                             value={longitude ?? ''}
                                             onChange={(e) => setLongitude(e.target.value === '' ? null : Number(e.target.value))}
-                                            placeholder="106.816666"
+                                            placeholder={t('branches.fields.placeholder.longitude')}
                                         />
                                         <InputError message={errors.longitude} />
                                     </div>
@@ -109,10 +111,10 @@ export default function CreateBranch() {
                             </Card>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Create</Button>
+                                <Button disabled={processing}>{t('branches.actions.create')}</Button>
                                 <Link href={branchesIndex()}>
                                     <Button type="button" variant="outline">
-                                        Cancel
+                                        {t('common.cancel')}
                                     </Button>
                                 </Link>
                             </div>
@@ -126,7 +128,7 @@ export default function CreateBranch() {
 
 CreateBranch.layout = {
     breadcrumbs: [
-        { title: 'Branches', href: branchesIndex() },
-        { title: 'Create', href: BranchController.create.url() },
+        { title: 'branches.title', href: branchesIndex() },
+        { title: 'branches.actions.create', href: BranchController.create.url() },
     ],
 };

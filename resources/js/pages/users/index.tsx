@@ -225,29 +225,29 @@ export default function UsersIndex({ users, roles }: Props) {
                                 <DialogTrigger asChild>
                                     <Button variant="outline" className="w-full sm:w-auto">
                                         <UserCog className="mr-1 h-4 w-4" />
-                                        Undang
+                                        {t('users.invite.button')}
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                        <DialogTitle>Undang pengguna</DialogTitle>
+                                        <DialogTitle>{t('users.invite.title')}</DialogTitle>
                                         <DialogDescription>
-                                            Kirim undangan via email. Tautan kadaluarsa dalam 48 jam.
+                                            {t('users.invite.description')}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="grid gap-4">
                                         <div className="grid gap-2">
-                                            <Label htmlFor="invite_email">Email</Label>
+                                            <Label htmlFor="invite_email">{t('users.invite.email')}</Label>
                                             <Input
                                                 id="invite_email"
                                                 type="email"
                                                 value={inviteEmail}
                                                 onChange={(e) => setInviteEmail(e.target.value)}
-                                                placeholder="nama@perusahaan.com"
+                                                placeholder={t('users.invite.email_placeholder')}
                                             />
                                         </div>
                                         <div className="grid gap-2">
-                                            <Label>Role organisasi</Label>
+                                            <Label>{t('users.invite.org_role')}</Label>
                                             <Select
                                                 value={inviteRole}
                                                 onValueChange={(value) => {
@@ -260,10 +260,10 @@ export default function UsersIndex({ users, roles }: Props) {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="Member">Anggota</SelectItem>
-                                                    <SelectItem value="Manager">Manajer</SelectItem>
-                                                    <SelectItem value="Admin">Admin</SelectItem>
-                                                    <SelectItem value="Owner">Pemilik</SelectItem>
+                                                    <SelectItem value="Member">{t('users.invite.roles.Member')}</SelectItem>
+                                                    <SelectItem value="Manager">{t('users.invite.roles.Manager')}</SelectItem>
+                                                    <SelectItem value="Admin">{t('users.invite.roles.Admin')}</SelectItem>
+                                                    <SelectItem value="Owner">{t('users.invite.roles.Owner')}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -286,7 +286,7 @@ export default function UsersIndex({ users, roles }: Props) {
                                             }}
                                             disabled={inviteEmail.trim() === ''}
                                         >
-                                            Kirim undangan
+                                            {t('users.invite.submit')}
                                         </Button>
                                     </DialogFooter>
                                 </DialogContent>

@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as branchesIndex } from '@/routes/branches';
 
 type Props = {
@@ -28,6 +29,7 @@ type Props = {
 };
 
 export default function EditBranch({ branch }: Props) {
+    const { t } = useTranslation();
     const [latitude, setLatitude] = useState<number | null>(branch.latitude);
     const [longitude, setLongitude] = useState<number | null>(branch.longitude);
 
@@ -38,10 +40,10 @@ export default function EditBranch({ branch }: Props) {
 
     return (
         <>
-            <Head title={`Edit ${branch.name}`} />
+            <Head title={`${t('branches.edit.title')} ${branch.name}`} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
-                <Heading variant="small" title="Edit branch" description={branch.name} />
+                <Heading variant="small" title={t('branches.edit.title')} description={branch.name} />
 
                 <Form
                     {...BranchController.update.form({ branch: branch.id })}
@@ -51,45 +53,45 @@ export default function EditBranch({ branch }: Props) {
                         <>
                             <Card className="space-y-4 p-6">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">{t('branches.fields.name')}</Label>
                                     <Input id="name" name="name" required defaultValue={branch.name} />
                                     <InputError message={errors.name} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="code">Code</Label>
+                                    <Label htmlFor="code">{t('branches.fields.code')}</Label>
                                     <Input id="code" name="code" required defaultValue={branch.code} />
                                     <InputError message={errors.code} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="address">Address</Label>
+                                    <Label htmlFor="address">{t('branches.fields.address')}</Label>
                                     <Input id="address" name="address" defaultValue={branch.address ?? ''} />
                                     <InputError message={errors.address} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_name">PIC name</Label>
+                                    <Label htmlFor="pic_name">{t('branches.fields.pic_name')}</Label>
                                     <Input id="pic_name" name="pic_name" defaultValue={branch.pic_name ?? ''} />
                                     <InputError message={errors.pic_name} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_email">PIC email</Label>
+                                    <Label htmlFor="pic_email">{t('branches.fields.pic_email')}</Label>
                                     <Input id="pic_email" name="pic_email" type="email" defaultValue={branch.pic_email ?? ''} />
                                     <InputError message={errors.pic_email} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="pic_phone">PIC phone</Label>
+                                    <Label htmlFor="pic_phone">{t('branches.fields.pic_phone')}</Label>
                                     <Input id="pic_phone" name="pic_phone" defaultValue={branch.pic_phone ?? ''} />
                                     <InputError message={errors.pic_phone} />
                                 </div>
 
                                 <div className="flex items-center justify-between">
                                     <div className="grid gap-1">
-                                        <Label htmlFor="is_active">Active</Label>
-                                        <div className="text-sm text-muted-foreground">Inactive branches stay in history.</div>
+                                        <Label htmlFor="is_active">{t('branches.fields.active')}</Label>
+                                        <div className="text-sm text-muted-foreground">{t('branches.fields.active_help')}</div>
                                     </div>
                                     <Checkbox
                                         id="is_active"
@@ -102,12 +104,12 @@ export default function EditBranch({ branch }: Props) {
                             </Card>
 
                             <Card className="space-y-4 p-6">
-                                <div className="text-sm font-medium">Location (optional)</div>
+                                <div className="text-sm font-medium">{t('branches.fields.location_optional')}</div>
                                 <BranchLocationPicker latitude={latitude} longitude={longitude} onChange={handleLocationChange} />
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="latitude">Latitude</Label>
+                                        <Label htmlFor="latitude">{t('branches.fields.latitude')}</Label>
                                         <Input
                                             id="latitude"
                                             name="latitude"
@@ -117,7 +119,7 @@ export default function EditBranch({ branch }: Props) {
                                         <InputError message={errors.latitude} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="longitude">Longitude</Label>
+                                        <Label htmlFor="longitude">{t('branches.fields.longitude')}</Label>
                                         <Input
                                             id="longitude"
                                             name="longitude"
@@ -130,10 +132,10 @@ export default function EditBranch({ branch }: Props) {
                             </Card>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Save</Button>
+                                <Button disabled={processing}>{t('common.save')}</Button>
                                 <Link href={branchesIndex()}>
                                     <Button type="button" variant="outline">
-                                        Back
+                                        {t('common.back')}
                                     </Button>
                                 </Link>
                             </div>
@@ -147,7 +149,7 @@ export default function EditBranch({ branch }: Props) {
 
 EditBranch.layout = {
     breadcrumbs: [
-        { title: 'Branches', href: branchesIndex() },
-        { title: 'Edit', href: branchesIndex() },
+        { title: 'branches.title', href: branchesIndex() },
+        { title: 'branches.edit.title', href: branchesIndex() },
     ],
 };

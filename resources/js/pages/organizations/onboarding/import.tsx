@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import { importTemplate } from '@/routes/organizations';
 import { index as organizationsIndex } from '@/routes/organizations';
 
@@ -24,24 +25,26 @@ type Props = {
 };
 
 export default function OrganizationOnboardingImport({ importRuns }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Import" />
+            <Head title={t('organizations.onboarding.import.head')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
-                    title="Import initial data"
-                    description="Upload Excel template and process asynchronously via queue."
+                    title={t('organizations.onboarding.import.title')}
+                    description={t('organizations.onboarding.import.description')}
                 />
 
                 <Card className="max-w-2xl space-y-4 p-6">
                     <div className="flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">
-                            Start with the template file.
+                            {t('organizations.onboarding.import.intro')}
                         </div>
                         <a className="text-sm underline" href={importTemplate({ type: 'branches' }).url}>
-                            Download branches template
+                            {t('organizations.onboarding.import.download_branches')}
                         </a>
                     </div>
 
@@ -53,29 +56,29 @@ export default function OrganizationOnboardingImport({ importRuns }: Props) {
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="type">Import type</Label>
+                                    <Label htmlFor="type">{t('organizations.onboarding.import.type')}</Label>
                                     <Select name="type" defaultValue="branches">
                                         <SelectTrigger id="type">
-                                            <SelectValue placeholder="Select type" />
+                                            <SelectValue placeholder={t('organizations.onboarding.import.type_select')} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="branches">Branches</SelectItem>
+                                            <SelectItem value="branches">{t('organizations.onboarding.import.type_branches')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError message={errors.type} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="file">Excel file</Label>
+                                    <Label htmlFor="file">{t('organizations.onboarding.import.file')}</Label>
                                     <Input id="file" name="file" type="file" accept=".xlsx,.xls" required />
                                     <InputError message={errors.file} />
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <Button disabled={processing}>Queue import</Button>
+                                    <Button disabled={processing}>{t('organizations.onboarding.import.queue')}</Button>
                                     <Link href={organizationsIndex()}>
                                         <Button type="button" variant="outline">
-                                            Done
+                                            {t('organizations.onboarding.import.done')}
                                         </Button>
                                     </Link>
                                 </div>
@@ -85,10 +88,10 @@ export default function OrganizationOnboardingImport({ importRuns }: Props) {
                 </Card>
 
                 <div className="max-w-2xl space-y-3">
-                    <div className="text-sm font-medium">Recent import runs</div>
+                    <div className="text-sm font-medium">{t('organizations.onboarding.import.recent')}</div>
 
                     {importRuns.length === 0 ? (
-                        <Card className="p-6 text-sm text-muted-foreground">No imports yet.</Card>
+                        <Card className="p-6 text-sm text-muted-foreground">{t('organizations.onboarding.import.empty')}</Card>
                     ) : (
                         importRuns.map((run) => (
                             <Card key={run.id} className="space-y-1 p-4 text-sm">
@@ -110,7 +113,7 @@ export default function OrganizationOnboardingImport({ importRuns }: Props) {
 
 OrganizationOnboardingImport.layout = {
     breadcrumbs: [
-        { title: 'Organizations', href: organizationsIndex() },
-        { title: 'Onboarding', href: OrganizationOnboardingController.import.url() },
+        { title: 'organizations.title', href: organizationsIndex() },
+        { title: 'organizations.onboarding.import.title', href: OrganizationOnboardingController.import.url() },
     ],
 };

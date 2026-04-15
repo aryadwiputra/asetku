@@ -46,7 +46,7 @@ class UserDelegationController extends Controller
 
         if ($overlapExists) {
             return back()->withErrors([
-                'delegator_user_id' => __('Delegator already has an overlapping delegation.'),
+                'delegator_user_id' => __('users.delegation.overlap_error'),
             ]);
         }
 
@@ -59,7 +59,7 @@ class UserDelegationController extends Controller
 
         if ($membersCount !== 2) {
             return back()->withErrors([
-                'delegatee_user_id' => __('Both users must be active members of the current organization.'),
+                'delegatee_user_id' => __('users.delegation.members_error'),
             ]);
         }
 
@@ -78,7 +78,7 @@ class UserDelegationController extends Controller
             ->performedOn($delegation)
             ->log('Delegation requested');
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Delegation created.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('users.delegation.created')]);
 
         return back();
     }
@@ -100,7 +100,7 @@ class UserDelegationController extends Controller
             ->performedOn($delegation)
             ->log('Delegation approved');
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Delegation approved.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('users.delegation.approved')]);
 
         return back();
     }
@@ -122,7 +122,7 @@ class UserDelegationController extends Controller
             ->performedOn($delegation)
             ->log('Delegation revoked');
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Delegation revoked.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('users.delegation.revoked')]);
 
         return back();
     }
@@ -134,7 +134,7 @@ class UserDelegationController extends Controller
         if (now()->greaterThan($delegation->ends_at)) {
             $delegation->forceFill(['status' => 'ended'])->save();
 
-            return back()->withErrors(['delegation' => __('Delegation has ended.')]);
+            return back()->withErrors(['delegation' => __('users.delegation.ended_error')]);
         }
 
         /** @var User $delegatee */
@@ -160,7 +160,7 @@ class UserDelegationController extends Controller
             ->performedOn($delegation)
             ->log('Delegation started');
 
-        Inertia::flash('toast', ['type' => 'info', 'message' => __('Delegation started.')]);
+        Inertia::flash('toast', ['type' => 'info', 'message' => __('users.delegation.started')]);
 
         return to_route('dashboard');
     }
@@ -186,7 +186,7 @@ class UserDelegationController extends Controller
             ->withProperties(['acting_as_user_id' => is_numeric($asId) ? (int) $asId : null])
             ->log('Delegation stopped');
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Delegation stopped.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('users.delegation.stopped')]);
 
         return to_route('dashboard');
     }

@@ -5,6 +5,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -18,15 +19,17 @@ type Props = {
 };
 
 export default function OrganizationOnboardingLocale({ organization, timezones }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Locale" />
+            <Head title={t('organizations.onboarding.locale.head')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
-                    title="Locale"
-                    description={`Organization: ${organization.name}`}
+                    title={t('organizations.onboarding.locale.title')}
+                    description={t('organizations.onboarding.locale.description', { name: organization.name })}
                 />
 
                 <Form
@@ -36,26 +39,26 @@ export default function OrganizationOnboardingLocale({ organization, timezones }
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="currency_code">Currency</Label>
+                                <Label htmlFor="currency_code">{t('organizations.onboarding.locale.currency')}</Label>
                                 <Input
                                     id="currency_code"
                                     name="currency_code"
                                     defaultValue={organization.currency_code ?? 'IDR'}
                                     required
-                                    placeholder="IDR"
+                                    placeholder={t('organizations.onboarding.locale.currency_placeholder')}
                                 />
                                 <InputError message={errors.currency_code} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="timezone">Timezone</Label>
+                                <Label htmlFor="timezone">{t('organizations.onboarding.locale.timezone')}</Label>
                                 <Input
                                     id="timezone"
                                     name="timezone"
                                     defaultValue={organization.timezone ?? 'Asia/Jakarta'}
                                     list="timezone-list"
                                     required
-                                    placeholder="Asia/Jakarta"
+                                    placeholder={t('organizations.onboarding.locale.timezone_placeholder')}
                                 />
                                 <datalist id="timezone-list">
                                     {timezones.slice(0, 200).map((tz) => (
@@ -66,10 +69,10 @@ export default function OrganizationOnboardingLocale({ organization, timezones }
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Continue</Button>
+                                <Button disabled={processing}>{t('organizations.onboarding.locale.continue')}</Button>
                                 <Link href={organizationsIndex()}>
                                     <Button type="button" variant="outline">
-                                        Back
+                                        {t('common.back')}
                                     </Button>
                                 </Link>
                             </div>
@@ -83,7 +86,7 @@ export default function OrganizationOnboardingLocale({ organization, timezones }
 
 OrganizationOnboardingLocale.layout = {
     breadcrumbs: [
-        { title: 'Organizations', href: organizationsIndex() },
-        { title: 'Onboarding', href: OrganizationOnboardingController.locale.url() },
+        { title: 'organizations.title', href: organizationsIndex() },
+        { title: 'organizations.onboarding.locale.title', href: OrganizationOnboardingController.locale.url() },
     ],
 };

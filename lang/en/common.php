@@ -33,6 +33,7 @@ return [
     'confirm' => 'Confirm',
     'cancel' => 'Cancel',
     'continue' => 'Continue',
+    'or' => 'or',
     'back' => 'Back',
     'close' => 'Close',
     'enabled' => 'Enabled',

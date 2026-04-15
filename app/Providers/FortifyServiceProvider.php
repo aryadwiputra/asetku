@@ -58,7 +58,7 @@ class FortifyServiceProvider extends ServiceProvider
 
             if (! $user->is_active) {
                 throw ValidationException::withMessages([
-                    Fortify::username() => __('Account is suspended.'),
+                    Fortify::username() => __('auth.errors.account_suspended'),
                 ]);
             }
 
@@ -75,7 +75,7 @@ class FortifyServiceProvider extends ServiceProvider
 
                     if (! $allowed) {
                         throw ValidationException::withMessages([
-                            Fortify::username() => __('Access is restricted by organization policy.'),
+                            Fortify::username() => __('auth.errors.access_restricted'),
                         ]);
                     }
                 }

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as branchesIndex } from '@/routes/branches';
 
 type BranchRow = {
@@ -32,6 +33,7 @@ export default function BranchesIndex({ branches }: Props) {
     const { orgAbilities } = usePage().props as {
         orgAbilities: { branches: { create: boolean; update: boolean; deactivate: boolean } };
     };
+    const { t } = useTranslation();
 
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
@@ -74,13 +76,13 @@ export default function BranchesIndex({ branches }: Props) {
 
     return (
         <>
-            <Head title="Branches" />
+            <Head title={t('branches.title')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
-                    title="Branches"
-                    description="Manage branches, contacts, and map locations."
+                    title={t('branches.title')}
+                    description={t('branches.description')}
                 />
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -90,7 +92,7 @@ export default function BranchesIndex({ branches }: Props) {
                             <Input
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Search branches…"
+                                placeholder={t('branches.search_placeholder')}
                                 className="pl-9"
                             />
                         </div>
@@ -105,27 +107,27 @@ export default function BranchesIndex({ branches }: Props) {
                             }}
                             className="justify-start"
                         >
-                            <ToggleGroupItem value="all" aria-label="All branches">
-                                All
+                            <ToggleGroupItem value="all" aria-label={t('branches.filters.all_aria')}>
+                                {t('branches.filters.all')}
                             </ToggleGroupItem>
-                            <ToggleGroupItem value="active" aria-label="Active branches">
-                                Active
+                            <ToggleGroupItem value="active" aria-label={t('branches.filters.active_aria')}>
+                                {t('branches.filters.active')}
                             </ToggleGroupItem>
-                            <ToggleGroupItem value="inactive" aria-label="Inactive branches">
-                                Inactive
+                            <ToggleGroupItem value="inactive" aria-label={t('branches.filters.inactive_aria')}>
+                                {t('branches.filters.inactive')}
                             </ToggleGroupItem>
                         </ToggleGroup>
                     </div>
 
                     <div className="flex items-center justify-between gap-3 sm:justify-end">
                         <div className="text-sm text-muted-foreground">
-                            {stats.total} total • {stats.active} active • {stats.inactive} inactive
+                            {t('branches.stats', { total: stats.total, active: stats.active, inactive: stats.inactive })}
                         </div>
                         {orgAbilities.branches.create && (
                             <Link href={BranchController.create.url()}>
                                 <Button type="button">
                                     <Plus className="mr-2 h-4 w-4" />
-                                    New
+                                    {t('branches.actions.new')}
                                 </Button>
                             </Link>
                         )}
@@ -135,7 +137,7 @@ export default function BranchesIndex({ branches }: Props) {
                 <div className="grid gap-3">
                     {filtered.length === 0 ? (
                         <Card className="p-6 text-sm text-muted-foreground">
-                            No branches match your filters.
+                            {t('branches.empty')}
                         </Card>
                     ) : (
                         filtered.map((branch) => (
@@ -146,9 +148,9 @@ export default function BranchesIndex({ branches }: Props) {
                                             <div className="truncate font-medium">{branch.name}</div>
                                             <Badge variant="secondary">{branch.code}</Badge>
                                             {branch.is_active ? (
-                                                <Badge>Active</Badge>
+                                                <Badge>{t('common.active')}</Badge>
                                             ) : (
-                                                <Badge variant="outline">Inactive</Badge>
+                                                <Badge variant="outline">{t('common.inactive')}</Badge>
                                             )}
                                         </div>
                                         <div className="truncate text-sm text-muted-foreground">
@@ -164,14 +166,14 @@ export default function BranchesIndex({ branches }: Props) {
                                         <Link href={BranchController.show.url({ branch: branch.id })}>
                                             <Button type="button" variant="secondary">
                                                 <MapPin className="mr-2 h-4 w-4" />
-                                                View
+                                                {t('branches.actions.view')}
                                             </Button>
                                         </Link>
                                         {orgAbilities.branches.update && (
                                             <Link href={BranchController.edit.url({ branch: branch.id })}>
                                                 <Button type="button" variant="outline">
                                                     <Pencil className="mr-2 h-4 w-4" />
-                                                    Edit
+                                                    {t('branches.actions.edit')}
                                                 </Button>
                                             </Link>
                                         )}
@@ -187,5 +189,5 @@ export default function BranchesIndex({ branches }: Props) {
 }
 
 BranchesIndex.layout = {
-    breadcrumbs: [{ title: 'Branches', href: branchesIndex() }],
+    breadcrumbs: [{ title: 'branches.title', href: branchesIndex() }],
 };

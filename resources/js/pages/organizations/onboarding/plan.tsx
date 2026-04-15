@@ -5,6 +5,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -16,15 +17,17 @@ type Props = {
 };
 
 export default function OrganizationOnboardingPlan({ organization }: Props) {
+    const { t } = useTranslation();
+
     return (
         <>
-            <Head title="Plan" />
+            <Head title={t('organizations.onboarding.plan.head')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading
                     variant="small"
-                    title="Choose plan"
-                    description={`Organization: ${organization.name}`}
+                    title={t('organizations.onboarding.plan.title')}
+                    description={t('organizations.onboarding.plan.description', { name: organization.name })}
                 />
 
                 <Form
@@ -34,10 +37,10 @@ export default function OrganizationOnboardingPlan({ organization }: Props) {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label>Subscription plan</Label>
+                                <Label>{t('organizations.onboarding.plan.plan')}</Label>
                                 <Select name="plan" defaultValue={organization.plan ?? 'Free'}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select plan" />
+                                        <SelectValue placeholder={t('organizations.onboarding.plan.select')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {['Free', 'Basic', 'Professional', 'Enterprise'].map((value) => (
@@ -51,10 +54,10 @@ export default function OrganizationOnboardingPlan({ organization }: Props) {
                             </div>
 
                             <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Continue</Button>
+                                <Button disabled={processing}>{t('organizations.onboarding.plan.continue')}</Button>
                                 <Link href={organizationsIndex()}>
                                     <Button type="button" variant="outline">
-                                        Back
+                                        {t('common.back')}
                                     </Button>
                                 </Link>
                             </div>
@@ -68,7 +71,7 @@ export default function OrganizationOnboardingPlan({ organization }: Props) {
 
 OrganizationOnboardingPlan.layout = {
     breadcrumbs: [
-        { title: 'Organizations', href: organizationsIndex() },
-        { title: 'Onboarding', href: OrganizationOnboardingController.plan.url() },
+        { title: 'organizations.title', href: organizationsIndex() },
+        { title: 'organizations.onboarding.plan.title', href: OrganizationOnboardingController.plan.url() },
     ],
 };

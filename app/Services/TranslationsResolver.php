@@ -51,6 +51,14 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'organizations.')) {
+            $modules[] = 'organizations';
+        }
+
+        if (str_starts_with($routeName, 'branches.')) {
+            $modules[] = 'branches';
+        }
+
         if (str_starts_with($routeName, 'roles.')) {
             $modules[] = 'roles';
             $modules[] = 'users';
@@ -74,6 +82,7 @@ class TranslationsResolver
         if (str_starts_with($routeName, 'password.')
             || str_starts_with($routeName, 'verification.')
             || str_starts_with($routeName, 'two-factor.')
+            || str_starts_with($routeName, 'invites.')
             || in_array($routeName, ['login', 'register'], true)) {
             $modules[] = 'auth';
         }

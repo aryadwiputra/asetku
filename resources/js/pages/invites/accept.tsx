@@ -30,16 +30,18 @@ export default function AcceptInvite({
     const acceptRoute = accept({ token });
 
     const title = useMemo(() => {
-        return isAvailable ? 'Accept invitation' : 'Invitation not available';
-    }, [isAvailable]);
+        return isAvailable ? t('auth.invites.accept_title') : t('auth.invites.unavailable_title');
+    }, [isAvailable, t]);
 
     const description = useMemo(() => {
         if (!isAvailable) {
-            return 'This invitation is expired, revoked, or already accepted.';
+            return t('auth.invites.unavailable_description');
         }
 
-        return organizationName ? `Join ${organizationName}.` : 'Join organization.';
-    }, [isAvailable, organizationName]);
+        return organizationName
+            ? t('auth.invites.join_named', { name: organizationName })
+            : t('auth.invites.join_organization');
+    }, [isAvailable, organizationName, t]);
 
     setLayoutProps({ title, description });
 
@@ -62,10 +64,10 @@ export default function AcceptInvite({
                         <>
                             <div className="space-y-1 text-sm text-muted-foreground">
                                 <div>
-                                    Email: <span className="font-medium text-foreground">{email}</span>
+                                    {t('auth.invites.email')}: <span className="font-medium text-foreground">{email}</span>
                                 </div>
                                 <div>
-                                    Status: {isExistingUser ? 'Existing account' : 'New account'}
+                                    {t('auth.invites.status')}: {isExistingUser ? t('auth.invites.status_existing') : t('auth.invites.status_new')}
                                 </div>
                             </div>
 
@@ -97,7 +99,7 @@ export default function AcceptInvite({
 
                             <Button disabled={processing} className="w-full">
                                 {processing && <Spinner className="mr-2 h-4 w-4" />}
-                                Accept invitation
+                                {t('auth.invites.accept_button')}
                             </Button>
                         </>
                     )}

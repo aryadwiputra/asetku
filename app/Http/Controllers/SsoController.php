@@ -32,17 +32,17 @@ class SsoController extends Controller
         $providerUserId = (string) $socialUser->getId();
 
         if ($email === null || $providerUserId === '') {
-            return Redirect::route('login')->withErrors(['email' => 'SSO failed.']);
+            return Redirect::route('login')->withErrors(['email' => __('auth.sso.failed')]);
         }
 
         $user = User::query()->where('email', $email)->first();
 
         if ($user === null) {
-            return Redirect::route('login')->withErrors(['email' => 'Your account is not registered. Please request an invite.']);
+            return Redirect::route('login')->withErrors(['email' => __('auth.sso.not_registered')]);
         }
 
         if (! $user->is_active) {
-            return Redirect::route('login')->withErrors(['email' => 'Account is suspended.']);
+            return Redirect::route('login')->withErrors(['email' => __('auth.sso.suspended')]);
         }
 
         $organizationId = $user->current_organization_id;
@@ -57,7 +57,7 @@ class SsoController extends Controller
                 $allowed = app(OrganizationAccessPolicyEvaluator::class)->isRequestAllowed($organization, request());
 
                 if (! $allowed) {
-                    return Redirect::route('login')->withErrors(['email' => 'Access is restricted by organization policy.']);
+                    return Redirect::route('login')->withErrors(['email' => __('auth.sso.access_restricted')]);
                 }
             }
         }
@@ -68,7 +68,7 @@ class SsoController extends Controller
             ->first();
 
         if ($existingIdentity !== null && (int) $existingIdentity->user_id !== (int) $user->id) {
-            return Redirect::route('login')->withErrors(['email' => 'This SSO identity is already linked to another account.']);
+            return Redirect::route('login')->withErrors(['email' => __('auth.sso.identity_taken')]);
         }
 
         UserIdentity::query()->firstOrCreate([

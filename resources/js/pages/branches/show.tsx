@@ -4,6 +4,7 @@ import BranchLocationPicker from '@/components/branch-location-picker';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useTranslation } from '@/hooks/use-translation';
 import { index as branchesIndex } from '@/routes/branches';
 
 type Props = {
@@ -25,6 +26,7 @@ export default function ShowBranch({ branch }: Props) {
     const { orgAbilities } = usePage().props as {
         orgAbilities: { branches: { update: boolean; deactivate: boolean } };
     };
+    const { t } = useTranslation();
 
     return (
         <>
@@ -34,13 +36,13 @@ export default function ShowBranch({ branch }: Props) {
                 <Heading
                     variant="small"
                     title={branch.name}
-                    description={`${branch.code}${branch.is_active ? '' : ' • Inactive'}`}
+                    description={`${branch.code}${branch.is_active ? '' : ` • ${t('common.inactive')}`}`}
                 />
 
                 <div className="flex items-center gap-3">
                     {orgAbilities.branches.update && (
                         <Link href={BranchController.edit.url({ branch: branch.id })}>
-                            <Button type="button">Edit</Button>
+                            <Button type="button">{t('branches.actions.edit')}</Button>
                         </Link>
                     )}
                     {orgAbilities.branches.deactivate && branch.is_active && (
@@ -48,42 +50,42 @@ export default function ShowBranch({ branch }: Props) {
                             type="button"
                             variant="destructive"
                             onClick={() => {
-                                if (confirm('Deactivate this branch?')) {
+                                if (confirm(t('branches.actions.deactivate_confirm'))) {
                                     router.delete(BranchController.destroy.url({ branch: branch.id }));
                                 }
                             }}
                         >
-                            Deactivate
+                            {t('branches.actions.deactivate')}
                         </Button>
                     )}
                     <Link href={branchesIndex()}>
                         <Button type="button" variant="outline">
-                            Back
+                            {t('common.back')}
                         </Button>
                     </Link>
                 </div>
 
                 <Card className="max-w-2xl space-y-2 p-6 text-sm">
                     <div className="flex justify-between">
-                        <div className="text-muted-foreground">Address</div>
+                        <div className="text-muted-foreground">{t('branches.fields.address')}</div>
                         <div className="text-right">{branch.address ?? '-'}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div className="text-muted-foreground">PIC</div>
+                        <div className="text-muted-foreground">{t('branches.fields.pic_name')}</div>
                         <div className="text-right">{branch.pic_name ?? '-'}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div className="text-muted-foreground">Email</div>
+                        <div className="text-muted-foreground">{t('common.email')}</div>
                         <div className="text-right">{branch.pic_email ?? '-'}</div>
                     </div>
                     <div className="flex justify-between">
-                        <div className="text-muted-foreground">Phone</div>
+                        <div className="text-muted-foreground">{t('branches.fields.pic_phone')}</div>
                         <div className="text-right">{branch.pic_phone ?? '-'}</div>
                     </div>
                 </Card>
 
                 <Card className="max-w-2xl space-y-4 p-6">
-                    <div className="text-sm font-medium">Map</div>
+                    <div className="text-sm font-medium">{t('branches.fields.map')}</div>
                     <BranchLocationPicker
                         latitude={branch.latitude}
                         longitude={branch.longitude}
@@ -93,7 +95,7 @@ export default function ShowBranch({ branch }: Props) {
                     <div className="text-sm text-muted-foreground">
                         {branch.latitude && branch.longitude
                             ? `${branch.latitude}, ${branch.longitude}`
-                            : 'No coordinates set.'}
+                            : t('branches.fields.no_coordinates')}
                     </div>
                 </Card>
             </div>
@@ -102,5 +104,5 @@ export default function ShowBranch({ branch }: Props) {
 }
 
 ShowBranch.layout = {
-    breadcrumbs: [{ title: 'Branches', href: branchesIndex() }],
+    breadcrumbs: [{ title: 'branches.title', href: branchesIndex() }],
 };

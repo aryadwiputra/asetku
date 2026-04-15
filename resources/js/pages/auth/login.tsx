@@ -103,7 +103,7 @@ export default function Login({
                                 </div>
                                 <div className="relative flex justify-center text-xs uppercase">
                                     <span className="bg-background px-2 text-muted-foreground">
-                                        atau
+                                        {t('auth.sso.divider')}
                                     </span>
                                 </div>
                             </div>
@@ -111,12 +111,12 @@ export default function Login({
                             <div className="grid gap-2">
                                 <Button asChild variant="outline">
                                     <a href={ssoRedirect('google').url}>
-                                        Login with Google
+                                        {t('auth.sso.google')}
                                     </a>
                                 </Button>
                                 <Button asChild variant="outline">
                                     <a href={ssoRedirect('microsoft').url}>
-                                        Login with Microsoft
+                                        {t('auth.sso.microsoft')}
                                     </a>
                                 </Button>
                             </div>

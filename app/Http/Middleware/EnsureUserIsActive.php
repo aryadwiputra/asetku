@@ -25,12 +25,12 @@ class EnsureUserIsActive
             $request->session()->regenerateToken();
 
             if ($request->expectsJson()) {
-                abort(403, 'Account is suspended.');
+                abort(403, __('auth.errors.account_suspended'));
             }
 
             return redirect()
                 ->route('login')
-                ->with('status', 'Account is suspended.');
+                ->with('status', __('auth.errors.account_suspended'));
         }
 
         return $next($request);

@@ -162,13 +162,13 @@ export default function ShowUser({
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Clock className="h-5 w-5" />
-                                    Login history
+                                    {t('users.show.login_history_title')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {loginEvents.length === 0 ? (
                                     <p className="py-8 text-center text-muted-foreground">
-                                        No login activity yet.
+                                        {t('users.show.login_history_empty')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -205,7 +205,7 @@ export default function ShowUser({
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Shield className="h-5 w-5" />
-                                    Delegation
+                                    {t('users.delegation.title')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
@@ -217,7 +217,7 @@ export default function ShowUser({
 
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="delegatee_user_id">
-                                                        Delegatee
+                                                        {t('users.delegation.delegatee')}
                                                     </Label>
                                                     <select
                                                         id="delegatee_user_id"
@@ -226,7 +226,7 @@ export default function ShowUser({
                                                         required
                                                     >
                                                         <option value="">
-                                                            Select user…
+                                                            {t('users.delegation.select_user')}
                                                         </option>
                                                         {organizationUsers
                                                             .filter((u) => u.id !== user.id)
@@ -246,7 +246,7 @@ export default function ShowUser({
                                                 <div className="grid gap-4 md:grid-cols-2">
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="starts_at">
-                                                            Starts at
+                                                            {t('users.delegation.starts_at')}
                                                         </Label>
                                                         <Input
                                                             id="starts_at"
@@ -262,7 +262,7 @@ export default function ShowUser({
                                                     </div>
                                                     <div className="grid gap-2">
                                                         <Label htmlFor="ends_at">
-                                                            Ends at
+                                                            {t('users.delegation.ends_at')}
                                                         </Label>
                                                         <Input
                                                             id="ends_at"
@@ -279,7 +279,7 @@ export default function ShowUser({
                                                 </div>
 
                                                 <div className="grid gap-2">
-                                                    <Label htmlFor="reason">Reason</Label>
+                                                    <Label htmlFor="reason">{t('users.delegation.reason')}</Label>
                                                     <Textarea id="reason" name="reason" rows={2} />
                                                     {errors.reason && (
                                                         <p className="text-sm text-destructive">
@@ -289,7 +289,7 @@ export default function ShowUser({
                                                 </div>
 
                                                 <Button type="submit" disabled={processing}>
-                                                    Create delegation
+                                                    {t('users.delegation.create')}
                                                 </Button>
                                             </>
                                         )}
@@ -298,7 +298,7 @@ export default function ShowUser({
 
                                 {delegations.length === 0 ? (
                                     <p className="py-6 text-center text-muted-foreground">
-                                        No delegations.
+                                        {t('users.delegation.empty')}
                                     </p>
                                 ) : (
                                     <div className="space-y-3">
@@ -314,22 +314,22 @@ export default function ShowUser({
                                                                 <Badge variant="secondary">
                                                                     {d.status}
                                                                 </Badge>
-                                                                {d.approver && (
-                                                                    <Badge variant="outline">
-                                                                        approved by {d.approver.name}
-                                                                    </Badge>
-                                                                )}
+                                                            {d.approver && (
+                                                                <Badge variant="outline">
+                                                                        {t('users.delegation.approved_by', { name: d.approver.name })}
+                                                                </Badge>
+                                                            )}
+                                                        </div>
+                                                        <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                                                            <div className="break-words">
+                                                                    {t('users.delegation.delegator')}: <span className="text-foreground">{d.delegator.name}</span>
                                                             </div>
-                                                            <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                                                                <div className="break-words">
-                                                                    Delegator: <span className="text-foreground">{d.delegator.name}</span>
-                                                                </div>
-                                                                <div className="break-words">
-                                                                    Delegatee: <span className="text-foreground">{d.delegatee.name}</span>
-                                                                </div>
-                                                                <div className="text-xs">
-                                                                    {new Date(d.starts_at).toLocaleString()} → {new Date(d.ends_at).toLocaleString()}
-                                                                </div>
+                                                            <div className="break-words">
+                                                                    {t('users.delegation.delegatee_label')}: <span className="text-foreground">{d.delegatee.name}</span>
+                                                            </div>
+                                                            <div className="text-xs">
+                                                                {new Date(d.starts_at).toLocaleString()} → {new Date(d.ends_at).toLocaleString()}
+                                                            </div>
                                                                 {d.reason && (
                                                                     <div className="break-words text-xs">
                                                                         {d.reason}
@@ -344,7 +344,7 @@ export default function ShowUser({
                                                                     size="sm"
                                                                     onClick={() => router.post(approve(d.id).url)}
                                                                 >
-                                                                    Approve
+                                                                    {t('users.delegation.approve')}
                                                                 </Button>
                                                             )}
                                                             {canRevokeDelegation && d.status !== 'revoked' && d.status !== 'ended' && (
@@ -353,7 +353,7 @@ export default function ShowUser({
                                                                     variant="destructive"
                                                                     onClick={() => router.delete(revoke(d.id).url, { preserveScroll: true })}
                                                                 >
-                                                                    Revoke
+                                                                    {t('users.delegation.revoke')}
                                                                 </Button>
                                                             )}
                                                             {canStart && (
@@ -362,7 +362,7 @@ export default function ShowUser({
                                                                     variant="outline"
                                                                     onClick={() => router.post(start(d.id).url)}
                                                                 >
-                                                                    Start
+                                                                    {t('users.delegation.start')}
                                                                 </Button>
                                                             )}
                                                         </div>
@@ -376,7 +376,7 @@ export default function ShowUser({
                                                 variant="outline"
                                                 onClick={() => router.post(stop().url)}
                                             >
-                                                Stop delegation
+                                                {t('users.delegation.stop')}
                                             </Button>
                                         )}
                                     </div>

@@ -87,7 +87,7 @@ export default function TwoFactorChallenge() {
                                             )
                                         }
                                     >
-                                        Kirim kode via SMS
+                                        {t('auth.two_factor.sms_send')}
                                     </Button>
                                 </>
                             ) : (

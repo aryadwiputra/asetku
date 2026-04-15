@@ -33,6 +33,7 @@ return [
     'confirm' => 'Konfirmasi',
     'cancel' => 'Batal',
     'continue' => 'Lanjutkan',
+    'or' => 'atau',
     'back' => 'Kembali',
     'close' => 'Tutup',
     'enabled' => 'Aktif',

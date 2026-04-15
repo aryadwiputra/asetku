@@ -60,7 +60,7 @@ store.form = storeForm
 * @see app/Http/Controllers/UserDelegationController.php:86
 * @route '/delegations/{delegation}/approve'
 */
-export const approve = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const approve = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -75,7 +75,7 @@ approve.definition = {
 * @see app/Http/Controllers/UserDelegationController.php:86
 * @route '/delegations/{delegation}/approve'
 */
-approve.url = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+approve.url = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { delegation: args }
     }
@@ -108,7 +108,7 @@ approve.url = (args: { delegation: string | number | { id: string | number } } |
 * @see app/Http/Controllers/UserDelegationController.php:86
 * @route '/delegations/{delegation}/approve'
 */
-approve.post = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+approve.post = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: approve.url(args, options),
     method: 'post',
 })
@@ -118,7 +118,7 @@ approve.post = (args: { delegation: string | number | { id: string | number } } 
 * @see app/Http/Controllers/UserDelegationController.php:86
 * @route '/delegations/{delegation}/approve'
 */
-const approveForm = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const approveForm = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: approve.url(args, options),
     method: 'post',
 })
@@ -128,7 +128,7 @@ const approveForm = (args: { delegation: string | number | { id: string | number
 * @see app/Http/Controllers/UserDelegationController.php:86
 * @route '/delegations/{delegation}/approve'
 */
-approveForm.post = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+approveForm.post = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: approve.url(args, options),
     method: 'post',
 })
@@ -140,7 +140,7 @@ approve.form = approveForm
 * @see app/Http/Controllers/UserDelegationController.php:108
 * @route '/delegations/{delegation}'
 */
-export const revoke = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const revoke = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: revoke.url(args, options),
     method: 'delete',
 })
@@ -155,7 +155,7 @@ revoke.definition = {
 * @see app/Http/Controllers/UserDelegationController.php:108
 * @route '/delegations/{delegation}'
 */
-revoke.url = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+revoke.url = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { delegation: args }
     }
@@ -188,7 +188,7 @@ revoke.url = (args: { delegation: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/UserDelegationController.php:108
 * @route '/delegations/{delegation}'
 */
-revoke.delete = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+revoke.delete = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: revoke.url(args, options),
     method: 'delete',
 })
@@ -198,7 +198,7 @@ revoke.delete = (args: { delegation: string | number | { id: string | number } }
 * @see app/Http/Controllers/UserDelegationController.php:108
 * @route '/delegations/{delegation}'
 */
-const revokeForm = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const revokeForm = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: revoke.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -213,7 +213,7 @@ const revokeForm = (args: { delegation: string | number | { id: string | number 
 * @see app/Http/Controllers/UserDelegationController.php:108
 * @route '/delegations/{delegation}'
 */
-revokeForm.delete = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+revokeForm.delete = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: revoke.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -230,7 +230,7 @@ revoke.form = revokeForm
 * @see app/Http/Controllers/UserDelegationController.php:130
 * @route '/delegations/{delegation}/start'
 */
-export const start = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const start = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: start.url(args, options),
     method: 'post',
 })
@@ -245,7 +245,7 @@ start.definition = {
 * @see app/Http/Controllers/UserDelegationController.php:130
 * @route '/delegations/{delegation}/start'
 */
-start.url = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+start.url = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { delegation: args }
     }
@@ -278,7 +278,7 @@ start.url = (args: { delegation: string | number | { id: string | number } } | [
 * @see app/Http/Controllers/UserDelegationController.php:130
 * @route '/delegations/{delegation}/start'
 */
-start.post = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+start.post = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: start.url(args, options),
     method: 'post',
 })
@@ -288,7 +288,7 @@ start.post = (args: { delegation: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/UserDelegationController.php:130
 * @route '/delegations/{delegation}/start'
 */
-const startForm = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const startForm = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: start.url(args, options),
     method: 'post',
 })
@@ -298,7 +298,7 @@ const startForm = (args: { delegation: string | number | { id: string | number }
 * @see app/Http/Controllers/UserDelegationController.php:130
 * @route '/delegations/{delegation}/start'
 */
-startForm.post = (args: { delegation: string | number | { id: string | number } } | [delegation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+startForm.post = (args: { delegation: number | { id: number } } | [delegation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: start.url(args, options),
     method: 'post',
 })

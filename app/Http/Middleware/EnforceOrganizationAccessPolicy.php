@@ -48,11 +48,11 @@ class EnforceOrganizationAccessPolicy
         }
 
         if ($request->expectsJson()) {
-            abort(403, 'Access is restricted by organization policy.');
+            abort(403, __('auth.errors.access_restricted'));
         }
 
         return redirect()
             ->route('login')
-            ->with('status', 'Access is restricted by organization policy.');
+            ->with('status', __('auth.errors.access_restricted'));
     }
 }
