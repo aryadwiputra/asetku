@@ -108,6 +108,7 @@ class TranslationsResolver
 
         if (str_starts_with($routeName, 'master-data.')) {
             $modules[] = 'master_data';
+            $modules[] = 'datatable';
             $modules[] = 'asset_statuses';
             $modules[] = 'asset_classes';
             $modules[] = 'units';
