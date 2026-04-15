@@ -67,5 +67,9 @@ class DatabaseSeeder extends Seeder
         } catch (\Throwable) {
             // Ignore cache failures.
         }
+
+        if (env('SEED_DEMO_ASSETS', false)) {
+            $this->call(DemoAssetDataSeeder::class);
+        }
     }
 }
