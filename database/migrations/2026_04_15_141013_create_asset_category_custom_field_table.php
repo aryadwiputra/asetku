@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('custom_field_id')->constrained('custom_fields')->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['organization_id', 'asset_category_id', 'custom_field_id']);
-            $table->index(['organization_id', 'asset_category_id']);
+            $table->unique(['organization_id', 'asset_category_id', 'custom_field_id'], 'accf_org_cat_field_unique');
+            $table->index(['organization_id', 'asset_category_id'], 'accf_org_cat_index');
         });
     }
 

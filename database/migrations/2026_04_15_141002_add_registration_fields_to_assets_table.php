@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::table('assets', function (Blueprint $table) {
             $table->foreignId('branch_id')->nullable()->after('organization_id')->constrained('branches')->nullOnDelete();
-            $table->foreignId('asset_condition_id')->nullable()->after('asset_status_id')->constrained('asset_conditions')->nullOnDelete();
+            $table->unsignedBigInteger('asset_condition_id')->nullable()->after('asset_status_id');
+            $table->index('asset_condition_id');
 
             $table->string('brand')->nullable()->after('name');
             $table->string('model')->nullable()->after('brand');
@@ -34,7 +35,8 @@ return new class extends Migration
     {
         Schema::table('assets', function (Blueprint $table) {
             $table->dropConstrainedForeignId('branch_id');
-            $table->dropConstrainedForeignId('asset_condition_id');
+            $table->dropIndex(['asset_condition_id']);
+            $table->dropColumn('asset_condition_id');
 
             $table->dropColumn([
                 'brand',
