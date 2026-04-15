@@ -11,6 +11,7 @@ use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\OrganizationOnboardingController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TwoFactorSmsRecoveryController;
 use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\UserController;
@@ -20,6 +21,11 @@ use Laravel\Fortify\Features;
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
+
+Route::middleware('guest')->group(function () {
+    Route::get('sso/{provider}/redirect', [SsoController::class, 'redirect'])->name('sso.redirect');
+    Route::get('sso/{provider}/callback', [SsoController::class, 'callback'])->name('sso.callback');
+});
 
 Route::get('invites/{token}', [InvitationAcceptController::class, 'show'])->name('invites.show');
 Route::post('invites/{token}', [InvitationAcceptController::class, 'store'])->name('invites.accept');

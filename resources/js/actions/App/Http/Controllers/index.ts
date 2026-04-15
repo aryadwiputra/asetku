@@ -1,4 +1,5 @@
 import Api from './Api'
+import SsoController from './SsoController'
 import InvitationAcceptController from './InvitationAcceptController'
 import TwoFactorSmsRecoveryController from './TwoFactorSmsRecoveryController'
 import LocaleController from './LocaleController'
@@ -20,6 +21,7 @@ import MediaUploadController from './MediaUploadController'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
+    SsoController: Object.assign(SsoController, SsoController),
     InvitationAcceptController: Object.assign(InvitationAcceptController, InvitationAcceptController),
     TwoFactorSmsRecoveryController: Object.assign(TwoFactorSmsRecoveryController, TwoFactorSmsRecoveryController),
     LocaleController: Object.assign(LocaleController, LocaleController),

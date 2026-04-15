@@ -1,6 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 export const document = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -14,7 +14,7 @@ document.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 document.url = (options?: RouteQueryOptions) => {
@@ -22,7 +22,7 @@ document.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 document.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -31,7 +31,7 @@ document.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 document.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -40,7 +40,7 @@ document.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 const documentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -49,7 +49,7 @@ const documentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 })
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 documentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -58,7 +58,7 @@ documentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 })
 
 /**
-* @see routes/web.php:29
+* @see routes/web.php:40
 * @route '/api/docs.json'
 */
 documentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

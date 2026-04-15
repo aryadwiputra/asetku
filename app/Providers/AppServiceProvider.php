@@ -33,6 +33,8 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Microsoft\MicrosoftExtendSocialite;
 use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureAuthorization();
         $this->configureNotifications();
         $this->configureAuthEvents();
+        $this->configureSocialite();
         $this->configureRateLimiting();
     }
 
@@ -120,6 +123,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Login::class, RecordSuccessfulLogin::class);
         Event::listen(Failed::class, RecordFailedLogin::class);
         Event::listen(Logout::class, RecordLogout::class);
+    }
+
+    protected function configureSocialite(): void
+    {
+        Event::listen(SocialiteWasCalled::class, MicrosoftExtendSocialite::class.'@handle');
     }
 
     protected function configureRateLimiting(): void

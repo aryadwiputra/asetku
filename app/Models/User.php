@@ -92,6 +92,14 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * @return HasMany<UserIdentity, $this>
+     */
+    public function identities(): HasMany
+    {
+        return $this->hasMany(UserIdentity::class);
+    }
+
     public function currentOrganizationRole(): ?string
     {
         $organizationId = $this->current_organization_id ?? $this->organization_id;

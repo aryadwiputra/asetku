@@ -367,7 +367,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:37
+* @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
 */
 export const update = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -382,7 +382,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:37
+* @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
 */
 update.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -415,7 +415,7 @@ update.url = (args: { organization: number | { id: number } } | [organization: n
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:37
+* @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
 */
 update.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -425,7 +425,7 @@ update.patch = (args: { organization: number | { id: number } } | [organization:
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:37
+* @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
 */
 const updateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -440,7 +440,7 @@ const updateForm = (args: { organization: number | { id: number } } | [organizat
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:37
+* @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
 */
 updateForm.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -457,7 +457,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:48
+* @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
 */
 export const deactivate = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -472,7 +472,7 @@ deactivate.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:48
+* @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
 */
 deactivate.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -505,7 +505,7 @@ deactivate.url = (args: { organization: number | { id: number } } | [organizatio
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:48
+* @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
 */
 deactivate.delete = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -515,7 +515,7 @@ deactivate.delete = (args: { organization: number | { id: number } } | [organiza
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:48
+* @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
 */
 const deactivateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -530,7 +530,7 @@ const deactivateForm = (args: { organization: number | { id: number } } | [organ
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:48
+* @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
 */
 deactivateForm.delete = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

@@ -11,6 +11,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import { redirect as ssoRedirect } from '@/routes/sso';
 
 type Props = {
     status?: string;
@@ -95,6 +96,30 @@ export default function Login({
                                 {processing && <Spinner />}
                                 {t('auth.login')}
                             </Button>
+
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <span className="w-full border-t border-border" />
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-background px-2 text-muted-foreground">
+                                        atau
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Button asChild variant="outline">
+                                    <a href={ssoRedirect('google').url}>
+                                        Login with Google
+                                    </a>
+                                </Button>
+                                <Button asChild variant="outline">
+                                    <a href={ssoRedirect('microsoft').url}>
+                                        Login with Microsoft
+                                    </a>
+                                </Button>
+                            </div>
                         </div>
 
                         {canRegister && (
