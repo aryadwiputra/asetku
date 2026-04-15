@@ -86,12 +86,10 @@ class UserFactory extends Factory
                 ],
             ]);
 
-            if ($user->current_organization_id === null) {
-                $user->forceFill([
-                    'current_organization_id' => $resolvedOrganization->id,
-                    'organization_id' => $user->organization_id ?? $resolvedOrganization->id,
-                ])->saveQuietly();
-            }
+            $user->forceFill([
+                'current_organization_id' => $resolvedOrganization->id,
+                'organization_id' => $user->organization_id ?? $resolvedOrganization->id,
+            ])->saveQuietly();
         });
     }
 
