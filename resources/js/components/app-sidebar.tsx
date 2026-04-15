@@ -30,6 +30,7 @@ import { index as usersIndex } from '@/routes/users';
 import { index as mediaIndex } from '@/routes/media';
 import { index as organizationsIndex } from '@/routes/organizations';
 import { index as branchesIndex } from '@/routes/branches';
+import { index as masterDataIndex } from '@/routes/master-data';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -37,6 +38,7 @@ export function AppSidebar() {
     const { orgAbilities } = usePage().props as {
         orgAbilities?: { branches?: { view?: boolean } };
     };
+    const { orgRole } = usePage().props as { orgRole?: string | null };
     const userPermissions = permissions as string[];
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { t } = useTranslation();
@@ -87,8 +89,10 @@ export function AppSidebar() {
     const canManageMail = userPermissions.includes('settings.mail.manage');
     const canManageFlags = userPermissions.includes('settings.flags.manage');
     const canViewActivity = userPermissions.includes('activity.view');
+    const canViewMasterData = orgRole !== null && orgRole !== undefined;
 
     const settingsItems: NavItem[] = [
+        ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),
         ...(canManageApp ? [{ title: t('common.settings_app'), href: editAppSettings(), icon: null }] : []),
         ...(canManageMail ? [{ title: t('common.settings_mail'), href: editMailSettings(), icon: null }] : []),
         ...(canManageFlags ? [{ title: t('common.settings_feature_flags'), href: featureFlagsIndex(), icon: null }] : []),

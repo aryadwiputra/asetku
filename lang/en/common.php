@@ -9,6 +9,7 @@ return [
     'settings_feature_flags' => 'Feature flags',
     'media' => 'Media',
     'audit_log' => 'Audit log',
+    'master_data' => 'Master data',
     'profile' => 'Profile',
     'security' => 'Security',
     'theme' => 'Theme',
@@ -48,5 +49,7 @@ return [
     'password' => 'Password',
     'confirm_password' => 'Confirm password',
     'created' => 'Created',
+    'updated' => 'Updated',
+    'deleted' => 'Deleted',
     'only_in_en' => 'Only available in English',
 ];

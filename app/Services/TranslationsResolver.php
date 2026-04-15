@@ -106,6 +106,11 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'master-data.')) {
+            $modules[] = 'master_data';
+            $modules[] = 'asset_statuses';
+        }
+
         return array_values(array_unique($modules));
     }
 }

@@ -9,6 +9,7 @@ return [
     'settings_feature_flags' => 'Feature Flags',
     'media' => 'Media',
     'audit_log' => 'Audit log',
+    'master_data' => 'Master data',
     'profile' => 'Profil',
     'security' => 'Keamanan',
     'theme' => 'Tema',
@@ -48,4 +49,6 @@ return [
     'password' => 'Kata sandi',
     'confirm_password' => 'Konfirmasi kata sandi',
     'created' => 'Dibuat',
+    'updated' => 'Diperbarui',
+    'deleted' => 'Dihapus',
 ];

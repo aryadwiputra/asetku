@@ -98,3 +98,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/notifications.php';
 require __DIR__.'/media.php';
+require __DIR__.'/master-data.php';
