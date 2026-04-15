@@ -10,14 +10,12 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('current_organization_id')->nullable()->constrained('organizations')->nullOnDelete();
-            $table->index('current_organization_id');
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['current_organization_id']);
             $table->dropConstrainedForeignId('current_organization_id');
         });
     }

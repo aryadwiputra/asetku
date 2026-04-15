@@ -30,18 +30,12 @@ return new class extends Migration
             $table->unsignedTinyInteger('maintenance_warning_percent')->default(80);
             $table->unsignedTinyInteger('fiscal_year_start_month')->default(1);
             $table->unsignedTinyInteger('fiscal_year_start_day')->default(1);
-
-            $table->index('organization_group_id');
-            $table->index('logo_media_id');
         });
     }
 
     public function down(): void
     {
         Schema::table('organizations', function (Blueprint $table) {
-            $table->dropIndex(['organization_group_id']);
-            $table->dropIndex(['logo_media_id']);
-
             $table->dropConstrainedForeignId('organization_group_id');
             $table->dropConstrainedForeignId('logo_media_id');
 
