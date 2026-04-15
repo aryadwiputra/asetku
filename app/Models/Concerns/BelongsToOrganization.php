@@ -16,6 +16,23 @@ trait BelongsToOrganization
             $organizationId = app(OrganizationContext::class)->currentOrganizationId();
 
             if ($organizationId === null) {
+                $user = auth()->user();
+
+                if ($user !== null && $user->current_organization_id !== null) {
+                    $candidateOrganizationId = (int) $user->current_organization_id;
+
+                    $isMember = $user->organizations()
+                        ->whereKey($candidateOrganizationId)
+                        ->wherePivot('is_active', true)
+                        ->exists();
+
+                    if ($isMember) {
+                        $organizationId = $candidateOrganizationId;
+                    }
+                }
+            }
+
+            if ($organizationId === null) {
                 $builder->whereRaw('1 = 0');
 
                 return;
@@ -30,6 +47,23 @@ trait BelongsToOrganization
             }
 
             $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+
+            if ($organizationId === null) {
+                $user = auth()->user();
+
+                if ($user !== null && $user->current_organization_id !== null) {
+                    $candidateOrganizationId = (int) $user->current_organization_id;
+
+                    $isMember = $user->organizations()
+                        ->whereKey($candidateOrganizationId)
+                        ->wherePivot('is_active', true)
+                        ->exists();
+
+                    if ($isMember) {
+                        $organizationId = $candidateOrganizationId;
+                    }
+                }
+            }
 
             if ($organizationId === null) {
                 return;
