@@ -19,12 +19,15 @@ use App\Models\Department;
 use App\Models\PersonInCharge;
 use App\Models\SavedFilter;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\VendorContract;
 use App\Models\Warranty;
 use App\Queries\AssetListQuery;
 use App\Services\AssetCodeGenerator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -51,16 +54,15 @@ class AssetController extends Controller
             ->paginate($request->perPage(10))
             ->withQueryString();
 
-        $savedFilters = SavedFilter::query()
-            ->where('entity', 'assets')
-            ->orderByDesc('is_default')
-            ->orderBy('name')
-            ->get(['id', 'name', 'query', 'is_default']);
-
         return Inertia::render('assets/index', [
             'items' => $items,
-            'savedFilters' => $savedFilters,
-            'filtersMeta' => $this->filtersMeta(),
+            'summary' => $this->summary($request->user(), $search, $filters),
+            'savedFilters' => Inertia::defer(fn () => SavedFilter::query()
+                ->where('entity', 'assets')
+                ->orderByDesc('is_default')
+                ->orderBy('name')
+                ->get(['id', 'name', 'query', 'is_default'])),
+            'filtersMeta' => Inertia::defer(fn () => $this->filtersMeta()),
         ]);
     }
 
@@ -143,6 +145,19 @@ class AssetController extends Controller
             ->with('changedBy:id,name')
             ->get(['id', 'action', 'description', 'changed_by', 'payload', 'created_at']);
 
+        $histories = $histories->map(fn (AssetHistory $history): array => [
+            'id' => $history->id,
+            'action' => $history->action,
+            'description' => $history->description,
+            'changed_by' => $history->changed_by,
+            'actor' => $history->changedBy ? [
+                'id' => $history->changedBy->id,
+                'name' => $history->changedBy->name,
+            ] : null,
+            'payload' => $history->payload,
+            'created_at' => $history->created_at,
+        ]);
+
         $media = $asset->media()
             ->with(['mediaAsset'])
             ->orderBy('kind')
@@ -172,6 +187,7 @@ class AssetController extends Controller
             'histories' => $histories,
             'attachments' => $media,
             'formMeta' => $this->formMeta(),
+            'computedBookValue' => $asset->bookValue(),
         ]);
     }
 
@@ -265,6 +281,80 @@ class AssetController extends Controller
             'pics' => PersonInCharge::query()->orderBy('name')->get(['id', 'name']),
             'assetUsers' => AssetUser::query()->orderBy('name')->get(['id', 'name']),
         ];
+    }
+
+    /**
+     * @param  array<string, string>  $filters
+     * @return array{total_count:int,total_cost:string,by_status:array<int,array{id:int|null,name:string,count:int}>,by_condition:array<int,array{id:int|null,name:string,count:int}>}
+     */
+    private function summary(?User $user, ?string $search, array $filters): array
+    {
+        $base = AssetListQuery::buildBase($user, $search, $filters);
+
+        $totalCount = (clone $base)->count('assets.id');
+        $totalCost = (string) ((clone $base)->sum('assets.cost') ?? '0');
+
+        $statusCounts = (clone $base)
+            ->select('asset_status_id', DB::raw('count(*) as aggregate_count'))
+            ->groupBy('asset_status_id')
+            ->orderByDesc('aggregate_count')
+            ->get()
+            ->map(fn ($row): array => [
+                'id' => $row->asset_status_id !== null ? (int) $row->asset_status_id : null,
+                'count' => (int) $row->aggregate_count,
+            ]);
+
+        $conditionCounts = (clone $base)
+            ->select('asset_condition_id', DB::raw('count(*) as aggregate_count'))
+            ->groupBy('asset_condition_id')
+            ->orderByDesc('aggregate_count')
+            ->get()
+            ->map(fn ($row): array => [
+                'id' => $row->asset_condition_id !== null ? (int) $row->asset_condition_id : null,
+                'count' => (int) $row->aggregate_count,
+            ]);
+
+        return [
+            'total_count' => (int) $totalCount,
+            'total_cost' => $totalCost,
+            'by_status' => $this->topBuckets($statusCounts, AssetStatus::class),
+            'by_condition' => $this->topBuckets($conditionCounts, AssetCondition::class),
+        ];
+    }
+
+    /**
+     * @param  Collection<int, array{id:int|null,count:int}>  $counts
+     * @param  class-string<Model>  $modelClass
+     * @return array<int, array{id:int|null,name:string,count:int}>
+     */
+    private function topBuckets(Collection $counts, string $modelClass): array
+    {
+        $ids = $counts->pluck('id')->filter()->values()->all();
+
+        /** @var array<int, string> $names */
+        $names = $modelClass::query()
+            ->whereIn('id', $ids)
+            ->pluck('name', 'id')
+            ->mapWithKeys(fn ($name, $id) => [(int) $id => (string) $name])
+            ->all();
+
+        $rows = $counts->map(fn (array $row): array => [
+            'id' => $row['id'],
+            'name' => $row['id'] !== null ? ($names[(int) $row['id']] ?? '—') : '—',
+            'count' => $row['count'],
+        ])->all();
+
+        usort($rows, fn (array $a, array $b) => $b['count'] <=> $a['count']);
+
+        $top = array_slice($rows, 0, 3);
+        $rest = array_slice($rows, 3);
+
+        $others = array_sum(array_map(fn (array $row) => $row['count'], $rest));
+        if ($others > 0) {
+            $top[] = ['id' => null, 'name' => __('assets.kpis.others'), 'count' => $others];
+        }
+
+        return $top;
     }
 
     /**

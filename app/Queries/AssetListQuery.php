@@ -14,7 +14,7 @@ class AssetListQuery
      */
     public static function build(?User $user, ?string $search, array $filters): Builder
     {
-        $query = Asset::query()
+        return self::buildBase($user, $search, $filters)
             ->with([
                 'branch:id,name,code',
                 'department:id,name,code,branch_id',
@@ -24,8 +24,15 @@ class AssetListQuery
                 'location:id,name,code,branch_id,parent_id',
                 'personInCharge:id,name',
                 'user:id,name',
-            ])
-            ->forUser($user);
+            ]);
+    }
+
+    /**
+     * @param  array<string, string>  $filters
+     */
+    public static function buildBase(?User $user, ?string $search, array $filters): Builder
+    {
+        $query = Asset::query()->forUser($user);
 
         $search = is_string($search) ? trim($search) : '';
         if ($search !== '') {
