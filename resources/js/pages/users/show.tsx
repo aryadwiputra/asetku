@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { Activity, CalendarDays, Mail, Shield, UserCog } from 'lucide-react';
+import { Activity, CalendarDays, Clock, Mail, Shield, UserCog } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,9 +21,17 @@ type ActivityItem = {
 type Props = {
     user: User;
     activities: ActivityItem[];
+    loginEvents: Array<{
+        id: number;
+        event: string;
+        auth_method: string;
+        ip: string | null;
+        user_agent: string | null;
+        occurred_at: string;
+    }>;
 };
 
-export default function ShowUser({ user, activities }: Props) {
+export default function ShowUser({ user, activities, loginEvents }: Props) {
     const { t } = useTranslation();
 
     return (
@@ -81,43 +89,88 @@ export default function ShowUser({ user, activities }: Props) {
                         </CardContent>
                     </Card>
 
-                    {/* Activity Log */}
-                    <Card className="lg:col-span-2">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Activity className="h-5 w-5" />
-                                {t('users.show.activity_title')}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            {activities.length === 0 ? (
-                                <p className="py-8 text-center text-muted-foreground">
-                                    {t('users.show.activity_empty')}
-                                </p>
-                            ) : (
-                                <div className="space-y-4">
-                                    {activities.map((activity) => (
-                                        <div key={activity.id}>
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="flex-1">
-                                                    <p className="text-sm font-medium">{activity.description}</p>
-                                                    {activity.properties && Object.keys(activity.properties).length > 0 && (
-                                                        <p className="mt-1 text-xs text-muted-foreground">
-                                                            {JSON.stringify(activity.properties)}
-                                                        </p>
-                                                    )}
+                    <div className="space-y-6 lg:col-span-2">
+                        {/* Activity Log */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Activity className="h-5 w-5" />
+                                    {t('users.show.activity_title')}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {activities.length === 0 ? (
+                                    <p className="py-8 text-center text-muted-foreground">
+                                        {t('users.show.activity_empty')}
+                                    </p>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {activities.map((activity) => (
+                                            <div key={activity.id}>
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="break-words text-sm font-medium">{activity.description}</p>
+                                                        {activity.properties && Object.keys(activity.properties).length > 0 && (
+                                                            <p className="mt-1 break-words text-xs text-muted-foreground">
+                                                                {JSON.stringify(activity.properties)}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <span className="shrink-0 text-xs text-muted-foreground">
+                                                        {new Date(activity.created_at).toLocaleString()}
+                                                    </span>
                                                 </div>
-                                                <span className="shrink-0 text-xs text-muted-foreground">
-                                                    {new Date(activity.created_at).toLocaleString()}
-                                                </span>
+                                                <Separator className="mt-3" />
                                             </div>
-                                            <Separator className="mt-3" />
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Login History */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Clock className="h-5 w-5" />
+                                    Login history
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {loginEvents.length === 0 ? (
+                                    <p className="py-8 text-center text-muted-foreground">
+                                        No login activity yet.
+                                    </p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {loginEvents.map((event) => (
+                                            <div key={event.id} className="rounded-lg border p-3">
+                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                    <div className="min-w-0">
+                                                        <div className="flex flex-wrap items-center gap-2">
+                                                            <Badge variant={event.event === 'login_failed' ? 'destructive' : 'secondary'}>
+                                                                {event.event}
+                                                            </Badge>
+                                                            <Badge variant="outline">{event.auth_method}</Badge>
+                                                            {event.ip && <span className="text-xs text-muted-foreground">{event.ip}</span>}
+                                                        </div>
+                                                        {event.user_agent && (
+                                                            <div className="mt-1 break-words text-xs text-muted-foreground">
+                                                                {event.user_agent}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="shrink-0 text-xs text-muted-foreground">
+                                                        {new Date(event.occurred_at).toLocaleString()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </>

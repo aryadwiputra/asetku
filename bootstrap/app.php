@@ -3,6 +3,7 @@
 use App\Http\Middleware\ApplyAppSettings;
 use App\Http\Middleware\ApplyLocale;
 use App\Http\Middleware\CheckDatabaseMaintenance;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetCurrentOrganization;
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(prepend: [
             SetCurrentOrganization::class,
         ], append: [
+            EnsureUserIsActive::class,
             HandleAppearance::class,
             ApplyAppSettings::class,
             ApplyLocale::class,

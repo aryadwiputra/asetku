@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Listeners\ApplyNotificationPreferences;
+use App\Listeners\RecordFailedLogin;
+use App\Listeners\RecordLogout;
+use App\Listeners\RecordSuccessfulLogin;
 use App\Models\Branch;
 use App\Models\MediaAsset;
 use App\Models\Organization;
@@ -25,6 +28,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureAuthorization();
         $this->configureNotifications();
+        $this->configureAuthEvents();
         $this->configureRateLimiting();
     }
 
@@ -95,6 +102,13 @@ class AppServiceProvider extends ServiceProvider
     protected function configureNotifications(): void
     {
         Event::listen(NotificationSending::class, ApplyNotificationPreferences::class);
+    }
+
+    protected function configureAuthEvents(): void
+    {
+        Event::listen(Login::class, RecordSuccessfulLogin::class);
+        Event::listen(Failed::class, RecordFailedLogin::class);
+        Event::listen(Logout::class, RecordLogout::class);
     }
 
     protected function configureRateLimiting(): void

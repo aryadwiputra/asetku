@@ -4,11 +4,14 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -40,6 +43,25 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+            /** @var User|null $user */
+            $user = User::query()->where('email', $request->input('email'))->first();
+
+            if (! $user || ! Hash::check((string) $request->input('password'), (string) $user->password)) {
+                return null;
+            }
+
+            session()->put('auth.method', 'password');
+
+            if (! $user->is_active) {
+                throw ValidationException::withMessages([
+                    Fortify::username() => __('Account is suspended.'),
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     /**

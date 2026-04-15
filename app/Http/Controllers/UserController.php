@@ -7,6 +7,7 @@ use App\Http\Requests\DataTableRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Models\UserLoginEvent;
 use App\Services\DataTableService;
 use App\Services\ExportService;
 use Illuminate\Http\RedirectResponse;
@@ -106,6 +107,12 @@ class UserController extends Controller implements HasMiddleware
 
         $user->load('roles');
 
+        $loginEvents = UserLoginEvent::query()
+            ->where('user_id', $user->id)
+            ->latest('occurred_at')
+            ->limit(50)
+            ->get();
+
         $activities = Activity::where(function ($query) use ($user) {
             $query->where('subject_type', User::class)
                 ->where('subject_id', $user->id);
@@ -120,6 +127,7 @@ class UserController extends Controller implements HasMiddleware
         return Inertia::render('users/show', [
             'user' => $user,
             'activities' => $activities,
+            'loginEvents' => $loginEvents,
         ]);
     }
 
