@@ -4,11 +4,13 @@ import { useMemo, useState } from 'react';
 
 import AssetAttachmentController from '@/actions/App/Http/Controllers/AssetAttachmentController';
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
+import BranchLocationPicker from '@/components/branch-location-picker';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -38,6 +40,7 @@ type HistoryRow = {
     action: string;
     description: string | null;
     changed_by: number | null;
+    actor: { id: number; name: string } | null;
     payload: unknown;
     created_at: string;
 };
@@ -73,16 +76,39 @@ type Props = {
     asset: Asset;
     histories: HistoryRow[];
     attachments: Attachment[];
+    computedBookValue: number;
 };
 
-export default function AssetShow({ asset, histories, attachments }: Props) {
-    const { permissions, orgRole } = usePage().props as { permissions: string[]; orgRole: string | null };
+export default function AssetShow({ asset, histories, attachments, computedBookValue }: Props) {
+    const { permissions, orgRole, organization, locale } = usePage().props as {
+        permissions: string[];
+        orgRole: string | null;
+        organization: { currency_code: string; timezone: string } | null;
+        locale: string;
+    };
     const { t } = useTranslation();
 
     const canUpdate = permissions.includes('asset.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
     const canDelete = permissions.includes('asset.delete') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
 
     const qrUrl = qrShow(asset.qr_token).url;
+    const [deleteOpen, setDeleteOpen] = useState(false);
+
+    const currencyCode = organization?.currency_code || 'IDR';
+    const currencyFormatter = useMemo(
+        () => new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode, maximumFractionDigits: 0 }),
+        [currencyCode, locale],
+    );
+
+    const dateTimeFormatter = useMemo(
+        () =>
+            new Intl.DateTimeFormat(locale, {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: organization?.timezone || undefined,
+            }),
+        [locale, organization?.timezone],
+    );
 
     return (
         <>
@@ -90,11 +116,13 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Heading
-                        variant="small"
-                        title={asset.name}
-                        description={t('assets.show.subtitle', { code: asset.code })}
-                    />
+                    <div className="min-w-0">
+                        <Heading variant="small" title={asset.name} description={t('assets.show.subtitle', { code: asset.code })} />
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                            {asset.status ? <Badge variant="secondary">{asset.status.name}</Badge> : null}
+                            {asset.condition ? <Badge>{asset.condition.name}</Badge> : null}
+                        </div>
+                    </div>
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                         <Button
@@ -137,11 +165,7 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
                             <Button
                                 variant="destructive"
                                 className="w-full sm:w-auto"
-                                onClick={() => {
-                                    if (confirm(t('assets.actions.delete_confirm', { code: asset.code }))) {
-                                        router.delete(AssetController.destroy.url({ asset: asset.id }));
-                                    }
-                                }}
+                                onClick={() => setDeleteOpen(true)}
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 {t('common.delete')}
@@ -164,12 +188,32 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
                                 <Detail label={t('assets.fields.department')} value={asset.department?.name} />
                                 <Detail label={t('assets.fields.location')} value={asset.location?.name} />
                                 <Detail label={t('assets.fields.category')} value={asset.category?.name} />
-                                <Detail label={t('assets.fields.status')} value={asset.status?.name} />
-                                <Detail label={t('assets.fields.condition')} value={asset.condition?.name} />
                                 <Detail label={t('assets.fields.pic')} value={asset.person_in_charge?.name} />
                                 <Detail label={t('assets.fields.asset_user')} value={asset.user?.name} />
                                 <Detail label={t('assets.fields.purchase_date')} value={asset.purchase_date} />
-                                <Detail label={t('assets.fields.cost')} value={asset.cost} />
+                                <Detail
+                                    label={t('assets.fields.cost')}
+                                    value={asset.cost ? currencyFormatter.format(Number(asset.cost)) : null}
+                                />
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('assets.sections.financial')}</CardTitle>
+                                <CardDescription>{t('assets.sections.financial_desc')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid gap-4 md:grid-cols-2">
+                                <Detail
+                                    label={t('assets.fields.book_value')}
+                                    value={currencyFormatter.format(Number.isFinite(computedBookValue) ? computedBookValue : 0)}
+                                />
+                                <Detail label={t('assets.fields.depreciation_method')} value={asset.depreciation_method} />
+                                <Detail label={t('assets.fields.useful_life_months')} value={asset.useful_life_months} />
+                                <Detail
+                                    label={t('assets.fields.residual_value')}
+                                    value={asset.residual_value ? currencyFormatter.format(Number(asset.residual_value)) : null}
+                                />
                             </CardContent>
                         </Card>
 
@@ -192,11 +236,9 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
                                                     <div className="truncate text-sm font-medium">{h.description || '—'}</div>
                                                 </div>
                                                 <div className="mt-1 text-xs text-muted-foreground">
-                                                    {new Date(h.created_at).toLocaleString()}
+                                                    {dateTimeFormatter.format(new Date(h.created_at))}
+                                                    {h.actor?.name ? ` • ${h.actor.name}` : ''}
                                                 </div>
-                                            </div>
-                                            <div className="shrink-0 text-xs text-muted-foreground">
-                                                {h.changed_by ? `#${h.changed_by}` : '—'}
                                             </div>
                                         </div>
                                     ))
@@ -219,6 +261,22 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
                                         {t('assets.actions.open_qr')}
                                     </Button>
                                 </Link>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('assets.sections.map')}</CardTitle>
+                                <CardDescription>{t('assets.sections.map_desc')}</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {asset.latitude !== null && asset.longitude !== null ? (
+                                    <BranchLocationPicker latitude={asset.latitude} longitude={asset.longitude} onChange={() => {}} readOnly />
+                                ) : (
+                                    <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                                        {t('assets.map.empty')}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -246,6 +304,27 @@ export default function AssetShow({ asset, histories, attachments }: Props) {
                     </div>
                 </div>
             </div>
+
+            <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('common.confirm')}</DialogTitle>
+                    </DialogHeader>
+                    <div className="text-sm text-muted-foreground">{t('assets.actions.delete_confirm', { code: asset.code })}</div>
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setDeleteOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={() => router.delete(AssetController.destroy.url({ asset: asset.id }))}
+                            className="w-full sm:w-auto"
+                        >
+                            {t('common.delete')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

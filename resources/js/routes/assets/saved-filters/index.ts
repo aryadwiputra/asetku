@@ -60,7 +60,7 @@ store.form = storeForm
 * @see app/Http/Controllers/AssetSavedFilterController.php:52
 * @route '/assets-saved-filters/{savedFilter}'
 */
-export const update = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+export const update = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -75,7 +75,7 @@ update.definition = {
 * @see app/Http/Controllers/AssetSavedFilterController.php:52
 * @route '/assets-saved-filters/{savedFilter}'
 */
-update.url = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { savedFilter: args }
     }
@@ -108,7 +108,7 @@ update.url = (args: { savedFilter: string | number | { id: string | number } } |
 * @see app/Http/Controllers/AssetSavedFilterController.php:52
 * @route '/assets-saved-filters/{savedFilter}'
 */
-update.patch = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -118,7 +118,7 @@ update.patch = (args: { savedFilter: string | number | { id: string | number } }
 * @see app/Http/Controllers/AssetSavedFilterController.php:52
 * @route '/assets-saved-filters/{savedFilter}'
 */
-const updateForm = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const updateForm = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -133,7 +133,7 @@ const updateForm = (args: { savedFilter: string | number | { id: string | number
 * @see app/Http/Controllers/AssetSavedFilterController.php:52
 * @route '/assets-saved-filters/{savedFilter}'
 */
-updateForm.patch = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+updateForm.patch = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: update.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'PATCH',
@@ -150,7 +150,7 @@ update.form = updateForm
 * @see app/Http/Controllers/AssetSavedFilterController.php:90
 * @route '/assets-saved-filters/{savedFilter}'
 */
-export const destroy = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -165,7 +165,7 @@ destroy.definition = {
 * @see app/Http/Controllers/AssetSavedFilterController.php:90
 * @route '/assets-saved-filters/{savedFilter}'
 */
-destroy.url = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { savedFilter: args }
     }
@@ -198,7 +198,7 @@ destroy.url = (args: { savedFilter: string | number | { id: string | number } } 
 * @see app/Http/Controllers/AssetSavedFilterController.php:90
 * @route '/assets-saved-filters/{savedFilter}'
 */
-destroy.delete = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -208,7 +208,7 @@ destroy.delete = (args: { savedFilter: string | number | { id: string | number }
 * @see app/Http/Controllers/AssetSavedFilterController.php:90
 * @route '/assets-saved-filters/{savedFilter}'
 */
-const destroyForm = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -223,7 +223,7 @@ const destroyForm = (args: { savedFilter: string | number | { id: string | numbe
 * @see app/Http/Controllers/AssetSavedFilterController.php:90
 * @route '/assets-saved-filters/{savedFilter}'
 */
-destroyForm.delete = (args: { savedFilter: string | number | { id: string | number } } | [savedFilter: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { savedFilter: number | { id: number } } | [savedFilter: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

@@ -84,7 +84,7 @@ store.form = storeForm
 * @see app/Http/Controllers/AssetAttachmentController.php:56
 * @route '/assets/{asset}/attachments/{assetMedia}'
 */
-export const destroy = (args: { asset: number | { id: number }, assetMedia: string | number | { id: string | number } } | [asset: number | { id: number }, assetMedia: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { asset: number | { id: number }, assetMedia: number | { id: number } } | [asset: number | { id: number }, assetMedia: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -99,7 +99,7 @@ destroy.definition = {
 * @see app/Http/Controllers/AssetAttachmentController.php:56
 * @route '/assets/{asset}/attachments/{assetMedia}'
 */
-destroy.url = (args: { asset: number | { id: number }, assetMedia: string | number | { id: string | number } } | [asset: number | { id: number }, assetMedia: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { asset: number | { id: number }, assetMedia: number | { id: number } } | [asset: number | { id: number }, assetMedia: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             asset: args[0],
@@ -129,7 +129,7 @@ destroy.url = (args: { asset: number | { id: number }, assetMedia: string | numb
 * @see app/Http/Controllers/AssetAttachmentController.php:56
 * @route '/assets/{asset}/attachments/{assetMedia}'
 */
-destroy.delete = (args: { asset: number | { id: number }, assetMedia: string | number | { id: string | number } } | [asset: number | { id: number }, assetMedia: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { asset: number | { id: number }, assetMedia: number | { id: number } } | [asset: number | { id: number }, assetMedia: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -139,7 +139,7 @@ destroy.delete = (args: { asset: number | { id: number }, assetMedia: string | n
 * @see app/Http/Controllers/AssetAttachmentController.php:56
 * @route '/assets/{asset}/attachments/{assetMedia}'
 */
-const destroyForm = (args: { asset: number | { id: number }, assetMedia: string | number | { id: string | number } } | [asset: number | { id: number }, assetMedia: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+const destroyForm = (args: { asset: number | { id: number }, assetMedia: number | { id: number } } | [asset: number | { id: number }, assetMedia: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',
@@ -154,7 +154,7 @@ const destroyForm = (args: { asset: number | { id: number }, assetMedia: string 
 * @see app/Http/Controllers/AssetAttachmentController.php:56
 * @route '/assets/{asset}/attachments/{assetMedia}'
 */
-destroyForm.delete = (args: { asset: number | { id: number }, assetMedia: string | number | { id: string | number } } | [asset: number | { id: number }, assetMedia: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+destroyForm.delete = (args: { asset: number | { id: number }, assetMedia: number | { id: number } } | [asset: number | { id: number }, assetMedia: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: destroy.url(args, {
         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
             _method: 'DELETE',

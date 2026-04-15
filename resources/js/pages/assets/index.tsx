@@ -1,5 +1,5 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Check, FileDown, Filter, Plus, Printer, Save, Settings2, Trash2 } from 'lucide-react';
+import { Deferred, Head, Link, router, usePage } from '@inertiajs/react';
+import { Check, Eye, FileDown, Filter, Pencil, Plus, Printer, Save, Settings2, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
@@ -8,7 +8,7 @@ import Heading from '@/components/heading';
 import { DataTable } from '@/components/data-table/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -55,10 +55,18 @@ type SavedFilter = {
     is_default: boolean;
 };
 
+type SummaryBucket = { id: number | null; name: string; count: number };
+
 type Props = {
     items: PaginatedData<AssetRow>;
-    savedFilters: SavedFilter[];
-    filtersMeta: {
+    summary: {
+        total_count: number;
+        total_cost: string;
+        by_status: SummaryBucket[];
+        by_condition: SummaryBucket[];
+    };
+    savedFilters?: SavedFilter[];
+    filtersMeta?: {
         branches: Option[];
         departments: Option[];
         locations: Option[];
@@ -70,8 +78,13 @@ type Props = {
     };
 };
 
-export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props) {
-    const { permissions, orgRole } = usePage().props as { permissions: string[]; orgRole: string | null };
+export default function AssetsIndex({ items, summary, savedFilters, filtersMeta }: Props) {
+    const { permissions, orgRole, organization, locale } = usePage().props as {
+        permissions: string[];
+        orgRole: string | null;
+        organization: { currency_code: string } | null;
+        locale: string;
+    };
     const { t } = useTranslation();
 
     const canCreate = permissions.includes('asset.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
@@ -99,37 +112,70 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
     const [filterName, setFilterName] = useState('');
     const [setAsDefault, setSetAsDefault] = useState(false);
 
+    const savedFiltersResolved = savedFilters ?? [];
+
     const selectFilters = useMemo(
         () => [
             {
                 key: 'branch_id',
                 label: t('assets.fields.branch'),
-                options: (filtersMeta.branches || [])
+                options: (filtersMeta?.branches || [])
                     .filter((b) => b.is_active !== false)
                     .map((b) => ({ value: String(b.id), label: `${b.name}${b.code ? ` (${b.code})` : ''}` })),
             },
             {
                 key: 'asset_status_id',
                 label: t('assets.filters.status'),
-                options: (filtersMeta.statuses || []).map((s) => ({ value: String(s.id), label: s.name })),
+                options: (filtersMeta?.statuses || []).map((s) => ({ value: String(s.id), label: s.name })),
             },
             {
                 key: 'asset_condition_id',
                 label: t('assets.filters.condition'),
-                options: (filtersMeta.conditions || []).map((c) => ({ value: String(c.id), label: c.name })),
+                options: (filtersMeta?.conditions || []).map((c) => ({ value: String(c.id), label: c.name })),
             },
         ],
         [filtersMeta, t],
     );
 
     const columns: DataTableColumn<AssetRow>[] = [
-        { key: 'code', label: t('assets.fields.code'), sortable: true },
-        { key: 'name', label: t('assets.fields.name'), sortable: true },
         {
-            key: 'branch',
-            label: t('assets.fields.branch'),
+            key: 'code',
+            label: t('assets.fields.code'),
+            sortable: true,
+            render: (row) => (
+                <Link href={AssetController.show.url({ asset: row.id })} className="font-medium hover:underline">
+                    {row.code}
+                </Link>
+            ),
+        },
+        {
+            key: 'name',
+            label: t('assets.fields.name'),
+            sortable: true,
+            render: (row) => <span className="truncate">{row.name}</span>,
+        },
+        {
+            key: 'category',
+            label: t('assets.fields.category'),
             sortable: false,
-            render: (row) => <span className="text-muted-foreground">{row.branch?.name ?? '—'}</span>,
+            render: (row) => <span className="text-muted-foreground">{row.category?.name ?? '—'}</span>,
+        },
+        {
+            key: 'location',
+            label: t('assets.fields.location'),
+            sortable: false,
+            render: (row) => <span className="text-muted-foreground">{row.location?.name ?? '—'}</span>,
+        },
+        {
+            key: 'owner',
+            label: t('assets.fields.pic'),
+            sortable: false,
+            render: (row) => (
+                <div className="space-y-0.5">
+                    <div className="text-sm">{row.person_in_charge?.name ?? '—'}</div>
+                    <div className="text-xs text-muted-foreground">{row.user?.name ?? '—'}</div>
+                </div>
+            ),
         },
         {
             key: 'status',
@@ -146,6 +192,19 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                 row.condition ? <Badge>{row.condition.name}</Badge> : <span className="text-muted-foreground">—</span>,
         },
         {
+            key: 'cost',
+            label: t('assets.fields.cost'),
+            sortable: true,
+            render: (row) => {
+                const value = row.cost === null ? null : Number(row.cost);
+                return (
+                    <span className="text-muted-foreground">
+                        {value === null || Number.isNaN(value) ? '—' : currencyFormatter.format(value)}
+                    </span>
+                );
+            },
+        },
+        {
             key: 'updated_at',
             label: t('common.updated'),
             sortable: true,
@@ -157,13 +216,13 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
         {
             key: 'view',
             label: t('common.view'),
-            icon: <Filter className="mr-2 h-4 w-4" />,
+            icon: <Eye className="mr-2 h-4 w-4" />,
             onClick: (row) => router.visit(AssetController.show.url({ asset: row.id })),
         },
         {
             key: 'edit',
             label: t('common.edit'),
-            icon: <Filter className="mr-2 h-4 w-4" />,
+            icon: <Pencil className="mr-2 h-4 w-4" />,
             onClick: (row) => router.visit(AssetController.edit.url({ asset: row.id })),
             visible: () => canUpdate,
         },
@@ -365,28 +424,32 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
         router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true });
     }
 
-    const savedDefault = savedFilters.find((f) => f.is_default) ?? null;
+    const savedDefault = savedFiltersResolved.find((f) => f.is_default) ?? null;
 
     const departmentsForBranch = useMemo(() => {
+        const departments = filtersMeta?.departments ?? [];
         if (!branchId) {
-            return filtersMeta.departments;
+            return departments;
         }
 
-        return filtersMeta.departments.filter((d) => String(d.branch_id) === String(branchId));
-    }, [filtersMeta.departments, branchId]);
+        return departments.filter((d) => String(d.branch_id) === String(branchId));
+    }, [filtersMeta?.departments, branchId]);
 
     const locationsForBranch = useMemo(() => {
+        const locations = filtersMeta?.locations ?? [];
         if (!branchId) {
-            return filtersMeta.locations;
+            return locations;
         }
 
-        return filtersMeta.locations.filter((l) => String(l.branch_id) === String(branchId));
-    }, [filtersMeta.locations, branchId]);
+        return locations.filter((l) => String(l.branch_id) === String(branchId));
+    }, [filtersMeta?.locations, branchId]);
 
     const hasActiveFilters = useMemo(() => {
         const params = new URLSearchParams(window.location.search);
         return Array.from(params.keys()).some((k) => k.startsWith('filters[') && (params.get(k) ?? '') !== '');
     }, [items.current_page]); // re-evaluate on navigation
+
+    const searchValue = useMemo(() => new URLSearchParams(window.location.search).get('search'), [items.current_page]);
 
     const activeFilterCount = useMemo(() => {
         return [
@@ -403,9 +466,21 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
         ].filter((v) => String(v ?? '').trim() !== '').length;
     }, [assetUserId, branchId, categoryId, conditionId, costMax, costMin, departmentId, locationId, picId, statusId]);
 
-    const filterForm = (
+    const meta = filtersMeta ?? {
+        branches: [],
+        departments: [],
+        locations: [],
+        categories: [],
+        statuses: [],
+        conditions: [],
+        pics: [],
+        assetUsers: [],
+    };
+
+    const filterForm = filtersMeta ? (
         <Card className="space-y-4 p-4">
             <div className="grid gap-2">
+                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.structure')}</CardDescription>
                 <Label>{t('assets.fields.branch')}</Label>
                 <select
                     className="h-10 w-full rounded-md border bg-background px-3 text-sm"
@@ -417,7 +492,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     }}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.branches
+                    {meta.branches
                         .filter((b) => b.is_active !== false)
                         .map((b) => (
                             <option key={b.id} value={String(b.id)}>
@@ -460,6 +535,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
             </div>
 
             <div className="grid gap-2">
+                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.classification')}</CardDescription>
                 <Label>{t('assets.fields.category')}</Label>
                 <select
                     className="h-10 w-full rounded-md border bg-background px-3 text-sm"
@@ -467,7 +543,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     onChange={(e) => setCategoryId(e.target.value)}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.categories.map((c) => (
+                    {meta.categories.map((c) => (
                         <option key={c.id} value={String(c.id)}>
                             {c.name} {c.code ? `(${c.code})` : ''}
                         </option>
@@ -483,7 +559,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     onChange={(e) => setStatusId(e.target.value)}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.statuses.map((s) => (
+                    {meta.statuses.map((s) => (
                         <option key={s.id} value={String(s.id)}>
                             {s.name}
                         </option>
@@ -499,7 +575,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     onChange={(e) => setConditionId(e.target.value)}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.conditions.map((c) => (
+                    {meta.conditions.map((c) => (
                         <option key={c.id} value={String(c.id)}>
                             {c.name}
                         </option>
@@ -508,6 +584,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
             </div>
 
             <div className="grid gap-2">
+                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.ownership')}</CardDescription>
                 <Label>{t('assets.fields.pic')}</Label>
                 <select
                     className="h-10 w-full rounded-md border bg-background px-3 text-sm"
@@ -515,7 +592,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     onChange={(e) => setPicId(e.target.value)}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.pics.map((p) => (
+                    {meta.pics.map((p) => (
                         <option key={p.id} value={String(p.id)}>
                             {p.name}
                         </option>
@@ -531,7 +608,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     onChange={(e) => setAssetUserId(e.target.value)}
                 >
                     <option value="">{t('common.none')}</option>
-                    {filtersMeta.assetUsers.map((u) => (
+                    {meta.assetUsers.map((u) => (
                         <option key={u.id} value={String(u.id)}>
                             {u.name}
                         </option>
@@ -540,6 +617,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
             </div>
 
             <div className="grid gap-2">
+                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.finance')}</CardDescription>
                 <Label htmlFor="costMin">{t('assets.filters.cost_min')}</Label>
                 <Input id="costMin" value={costMin} onChange={(e) => setCostMin(e.target.value)} inputMode="decimal" />
             </div>
@@ -553,11 +631,227 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     {t('common.apply')}
                 </Button>
                 <Button onClick={clearAllFilters} variant="outline" className="w-full sm:w-auto">
-                    {t('common.clear')}
+                    {t('assets.filters.clear_all')}
                 </Button>
             </div>
         </Card>
+    ) : (
+        <Card className="space-y-3 p-4">
+            <div className="h-4 w-28 rounded bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-4 w-28 rounded bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-4 w-28 rounded bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-4 w-28 rounded bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+            <div className="h-10 rounded-md bg-muted" />
+        </Card>
     );
+
+    const currencyCode = organization?.currency_code || 'IDR';
+
+    const numberFormatter = useMemo(() => new Intl.NumberFormat(locale), [locale]);
+
+    const currencyFormatter = useMemo(
+        () => new Intl.NumberFormat(locale, { style: 'currency', currency: currencyCode, maximumFractionDigits: 0 }),
+        [currencyCode, locale],
+    );
+
+    function normalizeViewQuery(params: URLSearchParams): Record<string, string> {
+        const query: Record<string, string> = {};
+
+        for (const [key, value] of params.entries()) {
+            if (key === 'page') {
+                continue;
+            }
+            if (key === 'sort_by' || key === 'sort_direction' || key === 'per_page') {
+                continue;
+            }
+
+            query[key] = value;
+        }
+
+        return query;
+    }
+
+    function isSavedFilterActive(filter: SavedFilter): boolean {
+        const current = normalizeViewQuery(new URLSearchParams(window.location.search));
+        const expected = normalizeViewQuery(
+            new URLSearchParams(
+                Object.entries(filter.query || {})
+                    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                    .join('&'),
+            ),
+        );
+
+        const keys = new Set([...Object.keys(current), ...Object.keys(expected)]);
+        for (const key of keys) {
+            if ((current[key] ?? '') !== (expected[key] ?? '')) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function applyAllAssetsView() {
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+
+        Array.from(params.keys()).forEach((k) => {
+            if (k === 'sort_by' || k === 'sort_direction' || k === 'per_page') {
+                return;
+            }
+            if (k === 'search' || k.startsWith('filters[') || k === 'page') {
+                params.delete(k);
+            }
+        });
+
+        setCostMin('');
+        setCostMax('');
+        setBranchId('');
+        setDepartmentId('');
+        setLocationId('');
+        setCategoryId('');
+        setStatusId('');
+        setConditionId('');
+        setPicId('');
+        setAssetUserId('');
+
+        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+    }
+
+    const optionLabels = useMemo(() => {
+        return {
+            branch: new Map((meta.branches || []).map((b) => [String(b.id), b.name])),
+            department: new Map((meta.departments || []).map((d) => [String(d.id), d.name])),
+            location: new Map((meta.locations || []).map((l) => [String(l.id), l.name])),
+            category: new Map((meta.categories || []).map((c) => [String(c.id), c.name])),
+            status: new Map((meta.statuses || []).map((s) => [String(s.id), s.name])),
+            condition: new Map((meta.conditions || []).map((c) => [String(c.id), c.name])),
+            pic: new Map((meta.pics || []).map((p) => [String(p.id), p.name])),
+            assetUser: new Map((meta.assetUsers || []).map((u) => [String(u.id), u.name])),
+        };
+    }, [meta]);
+
+    const activeFilterChips = useMemo(() => {
+        const chips: Array<{ key: string; label: string; value: string }> = [];
+
+        if (branchId) {
+            chips.push({ key: 'filters[branch_id]', label: t('assets.fields.branch'), value: optionLabels.branch.get(branchId) ?? branchId });
+        }
+        if (departmentId) {
+            chips.push({
+                key: 'filters[department_id]',
+                label: t('assets.fields.department'),
+                value: optionLabels.department.get(departmentId) ?? departmentId,
+            });
+        }
+        if (locationId) {
+            chips.push({
+                key: 'filters[asset_location_id]',
+                label: t('assets.fields.location'),
+                value: optionLabels.location.get(locationId) ?? locationId,
+            });
+        }
+        if (categoryId) {
+            chips.push({
+                key: 'filters[asset_category_id]',
+                label: t('assets.fields.category'),
+                value: optionLabels.category.get(categoryId) ?? categoryId,
+            });
+        }
+        if (statusId) {
+            chips.push({ key: 'filters[asset_status_id]', label: t('assets.filters.status'), value: optionLabels.status.get(statusId) ?? statusId });
+        }
+        if (conditionId) {
+            chips.push({
+                key: 'filters[asset_condition_id]',
+                label: t('assets.filters.condition'),
+                value: optionLabels.condition.get(conditionId) ?? conditionId,
+            });
+        }
+        if (picId) {
+            chips.push({ key: 'filters[person_in_charge_id]', label: t('assets.fields.pic'), value: optionLabels.pic.get(picId) ?? picId });
+        }
+        if (assetUserId) {
+            chips.push({
+                key: 'filters[asset_user_id]',
+                label: t('assets.fields.asset_user'),
+                value: optionLabels.assetUser.get(assetUserId) ?? assetUserId,
+            });
+        }
+        if (costMin.trim() !== '') {
+            chips.push({ key: 'filters[cost_min]', label: t('assets.filters.cost_min'), value: costMin });
+        }
+        if (costMax.trim() !== '') {
+            chips.push({ key: 'filters[cost_max]', label: t('assets.filters.cost_max'), value: costMax });
+        }
+
+        return chips;
+    }, [
+        assetUserId,
+        branchId,
+        categoryId,
+        conditionId,
+        costMax,
+        costMin,
+        departmentId,
+        locationId,
+        optionLabels,
+        picId,
+        statusId,
+        t,
+    ]);
+
+    function removeFilterChip(key: string) {
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+        params.delete(key);
+        params.delete('page');
+
+        if (key === 'filters[branch_id]') {
+            setBranchId('');
+            setDepartmentId('');
+            setLocationId('');
+            params.delete('filters[department_id]');
+            params.delete('filters[asset_location_id]');
+        }
+        if (key === 'filters[department_id]') {
+            setDepartmentId('');
+        }
+        if (key === 'filters[asset_location_id]') {
+            setLocationId('');
+        }
+        if (key === 'filters[asset_category_id]') {
+            setCategoryId('');
+        }
+        if (key === 'filters[asset_status_id]') {
+            setStatusId('');
+        }
+        if (key === 'filters[asset_condition_id]') {
+            setConditionId('');
+        }
+        if (key === 'filters[person_in_charge_id]') {
+            setPicId('');
+        }
+        if (key === 'filters[asset_user_id]') {
+            setAssetUserId('');
+        }
+        if (key === 'filters[cost_min]') {
+            setCostMin('');
+        }
+        if (key === 'filters[cost_max]') {
+            setCostMax('');
+        }
+
+        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+    }
 
     return (
         <>
@@ -572,7 +866,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="sm" className="w-full sm:w-auto">
                                     <Settings2 className="mr-2 h-4 w-4" />
-                                    {t('saved_filters.title')}
+                                    {t('assets.views.manage')}
                                     {savedDefault ? (
                                         <Badge variant="secondary" className="ml-2">
                                             {savedDefault.name}
@@ -581,13 +875,15 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[260px]">
-                                <DropdownMenuLabel>{t('saved_filters.title')}</DropdownMenuLabel>
+                                <DropdownMenuLabel>{t('assets.views.manage')}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
 
-                                {savedFilters.length === 0 ? (
+                                {!savedFilters ? (
+                                    <DropdownMenuItem disabled>{t('common.loading')}</DropdownMenuItem>
+                                ) : savedFiltersResolved.length === 0 ? (
                                     <DropdownMenuItem disabled>{t('saved_filters.empty')}</DropdownMenuItem>
                                 ) : (
-                                    savedFilters.map((filter) => (
+                                    savedFiltersResolved.map((filter) => (
                                         <DropdownMenuItem key={filter.id} onClick={() => applySavedFilter(filter)} className="flex items-center justify-between gap-2">
                                             <span className="truncate">{filter.name}</span>
                                             <span className="shrink-0 text-muted-foreground">
@@ -605,16 +901,16 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                                     </DropdownMenuItem>
                                 ) : null}
 
-                                {savedFilters.length > 0 ? (
+                                {savedFiltersResolved.length > 0 ? (
                                     <>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuLabel>{t('saved_filters.actions.manage')}</DropdownMenuLabel>
-                                        {savedFilters.map((filter) => (
+                                        {savedFiltersResolved.map((filter) => (
                                             <DropdownMenuItem key={`manage-${filter.id}`} onClick={() => openRenameSavedFilter(filter)}>
                                                 {t('saved_filters.actions.rename', { name: filter.name })}
                                             </DropdownMenuItem>
                                         ))}
-                                        {savedFilters.map((filter) => (
+                                        {savedFiltersResolved.map((filter) => (
                                             <DropdownMenuItem
                                                 key={`default-${filter.id}`}
                                                 disabled={filter.is_default}
@@ -623,7 +919,7 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                                                 {t('saved_filters.actions.set_default', { name: filter.name })}
                                             </DropdownMenuItem>
                                         ))}
-                                        {savedFilters.map((filter) => (
+                                        {savedFiltersResolved.map((filter) => (
                                             <DropdownMenuItem
                                                 key={`delete-${filter.id}`}
                                                 className="text-destructive focus:text-destructive"
@@ -676,6 +972,103 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     </div>
                 </div>
 
+                <Deferred
+                    data={['savedFilters']}
+                    fallback={
+                        <div className="flex flex-wrap gap-2">
+                            <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
+                            <div className="h-8 w-32 animate-pulse rounded-md bg-muted" />
+                            <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
+                        </div>
+                    }
+                >
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                            size="sm"
+                            variant={!hasActiveFilters && !searchValue ? 'default' : 'outline'}
+                            onClick={applyAllAssetsView}
+                        >
+                            {t('assets.views.all')}
+                        </Button>
+
+                        {savedFiltersResolved.map((filter) => (
+                            <Button
+                                key={filter.id}
+                                size="sm"
+                                variant={isSavedFilterActive(filter) ? 'default' : 'outline'}
+                                onClick={() => applySavedFilter(filter)}
+                                className="max-w-[220px] justify-start"
+                            >
+                                <span className="truncate">{filter.name}</span>
+                            </Button>
+                        ))}
+                    </div>
+                </Deferred>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card className="py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm">{t('assets.kpis.total_assets')}</CardTitle>
+                            <CardDescription className="text-xs">{t('assets.kpis.scoped')}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <div className="text-2xl font-semibold">{numberFormatter.format(summary.total_count)}</div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm">{t('assets.kpis.total_value')}</CardTitle>
+                            <CardDescription className="text-xs">{currencyCode}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <div className="text-2xl font-semibold">
+                                {currencyFormatter.format(Number(summary.total_cost || 0))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm">{t('assets.kpis.by_status')}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <div className="space-y-1 text-sm">
+                                {summary.by_status.length === 0 ? (
+                                    <div className="text-muted-foreground">—</div>
+                                ) : (
+                                    summary.by_status.map((row) => (
+                                        <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
+                                            <span className="truncate text-muted-foreground">{row.name}</span>
+                                            <span className="shrink-0">{numberFormatter.format(row.count)}</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="py-4">
+                        <CardHeader className="px-4">
+                            <CardTitle className="text-sm">{t('assets.kpis.by_condition')}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            <div className="space-y-1 text-sm">
+                                {summary.by_condition.length === 0 ? (
+                                    <div className="text-muted-foreground">—</div>
+                                ) : (
+                                    summary.by_condition.map((row) => (
+                                        <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
+                                            <span className="truncate text-muted-foreground">{row.name}</span>
+                                            <span className="shrink-0">{numberFormatter.format(row.count)}</span>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 <div className="flex flex-col gap-6 lg:flex-row">
                     <div className="hidden lg:block lg:w-80">
                         <div className="sticky top-6">
@@ -692,6 +1085,32 @@ export default function AssetsIndex({ items, savedFilters, filtersMeta }: Props)
                     </div>
 
                     <div className="min-w-0 flex-1">
+                        {activeFilterChips.length > 0 ? (
+                            <div className="mb-3 flex flex-wrap items-center gap-2">
+                                <div className="mr-1 text-sm text-muted-foreground">
+                                    {t('assets.filters.active_count', { count: activeFilterChips.length })}
+                                </div>
+                                {activeFilterChips.map((chip) => (
+                                    <Badge key={chip.key} variant="secondary" className="flex items-center gap-1">
+                                        <span className="max-w-[220px] truncate">
+                                            {chip.label}: {chip.value}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded hover:bg-muted"
+                                            onClick={() => removeFilterChip(chip.key)}
+                                            aria-label={t('assets.filters.remove')}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                ))}
+                                <Button variant="ghost" size="sm" onClick={clearAllFilters} className="ml-auto">
+                                    {t('assets.filters.clear_all')}
+                                </Button>
+                            </div>
+                        ) : null}
+
                         <DataTable
                             tableId="assets"
                             data={items}
