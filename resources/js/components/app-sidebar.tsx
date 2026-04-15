@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Settings, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Package, Settings, UploadCloud, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -31,10 +31,13 @@ import { index as mediaIndex } from '@/routes/media';
 import { index as organizationsIndex } from '@/routes/organizations';
 import { index as branchesIndex } from '@/routes/branches';
 import { index as masterDataIndex } from '@/routes/master-data';
+import { index as assetsIndex } from '@/routes/assets';
+import { index as assetsImportIndex } from '@/routes/assets/import';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { permissions } = usePage().props;
+    const { orgRole } = usePage().props as { orgRole?: string | null };
     const { orgAbilities } = usePage().props as {
         orgAbilities?: { branches?: { view?: boolean } };
     };
@@ -46,6 +49,7 @@ export function AppSidebar() {
     const { t } = useTranslation();
 
     const canViewBranches = orgAbilities?.branches?.view === true;
+    const canViewAssets = userPermissions.includes('asset.view') || Boolean(orgRole);
 
     const mainNavItems: NavItem[] = [
         {
@@ -64,6 +68,20 @@ export function AppSidebar() {
                       title: 'Branches',
                       href: branchesIndex(),
                       icon: MapPin,
+                  },
+              ]
+            : []),
+        ...(canViewAssets
+            ? [
+                  {
+                      title: t('common.assets'),
+                      href: assetsIndex(),
+                      icon: Package,
+                  },
+                  {
+                      title: t('common.asset_import'),
+                      href: assetsImportIndex(),
+                      icon: null,
                   },
               ]
             : []),
