@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\Organization;
 use App\Models\User;
+use App\Services\OrganizationAccessPolicyEvaluator;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -58,6 +60,25 @@ class FortifyServiceProvider extends ServiceProvider
                 throw ValidationException::withMessages([
                     Fortify::username() => __('Account is suspended.'),
                 ]);
+            }
+
+            $organizationId = $user->current_organization_id;
+
+            if ($organizationId !== null) {
+                /** @var Organization|null $organization */
+                $organization = Organization::query()
+                    ->whereKey($organizationId)
+                    ->first(['id', 'timezone', 'access_timezone', 'access_ip_allowlist', 'access_working_hours', 'is_active']);
+
+                if ($organization !== null && $organization->is_active) {
+                    $allowed = app(OrganizationAccessPolicyEvaluator::class)->isRequestAllowed($organization, $request);
+
+                    if (! $allowed) {
+                        throw ValidationException::withMessages([
+                            Fortify::username() => __('Access is restricted by organization policy.'),
+                        ]);
+                    }
+                }
             }
 
             return $user;

@@ -18,6 +18,9 @@ type Props = {
         industry: string | null;
         currency_code: string;
         timezone: string;
+        access_ip_allowlist: string[] | null;
+        access_working_hours: { days: number[]; ranges: Array<{ start: string; end: string }> } | null;
+        access_timezone: string | null;
         asset_code_prefix: string;
         asset_code_format: string;
         maintenance_warning_percent: number;
@@ -28,6 +31,11 @@ type Props = {
 };
 
 export default function EditOrganization({ organization }: Props) {
+    const allowlistText = (organization.access_ip_allowlist ?? []).join('\n');
+    const workingEnabled = organization.access_working_hours !== null;
+    const workingDays = organization.access_working_hours?.days ?? [1, 2, 3, 4, 5];
+    const workingRange = organization.access_working_hours?.ranges?.[0] ?? { start: '08:00', end: '17:00' };
+
     return (
         <>
             <Head title={`Manage ${organization.name}`} />
@@ -120,12 +128,12 @@ export default function EditOrganization({ organization }: Props) {
                                 </CardContent>
                             </Card>
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Maintenance + fiscal year</CardTitle>
-                                    <CardDescription>Defaults used for reporting and reminders.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
+	                            <Card>
+	                                <CardHeader>
+	                                    <CardTitle>Maintenance + fiscal year</CardTitle>
+	                                    <CardDescription>Defaults used for reporting and reminders.</CardDescription>
+	                                </CardHeader>
+	                                <CardContent className="space-y-4">
                                     <div className="grid gap-2 sm:grid-cols-3 sm:gap-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="maintenance_warning_percent">Warning %</Label>
@@ -166,13 +174,102 @@ export default function EditOrganization({ organization }: Props) {
                                             />
                                             <InputError message={errors.fiscal_year_start_day} />
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+	                                    </div>
+	                                </CardContent>
+	                            </Card>
 
-                            <div className="flex items-center gap-4">
-                                <Button disabled={processing}>Save</Button>
-                                <Link href={organizationsIndex()}>
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Access policy</CardTitle>
+                                        <CardDescription>Restrict access by IP and working hours (enterprise).</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="access_ip_allowlist_raw">IP allowlist</Label>
+                                            <textarea
+                                                id="access_ip_allowlist_raw"
+                                                name="access_ip_allowlist_raw"
+                                                defaultValue={allowlistText}
+                                                placeholder="One per line, e.g. 203.0.113.10 or 103.10.20.0/24"
+                                                className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] flex min-h-24 w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none"
+                                            />
+                                            <InputError message={(errors as Record<string, string | undefined>).access_ip_allowlist} />
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                id="access_working_hours_enabled"
+                                                name="access_working_hours_enabled"
+                                                type="checkbox"
+                                                defaultChecked={workingEnabled}
+                                            />
+                                            <Label htmlFor="access_working_hours_enabled">Enable working hours</Label>
+                                        </div>
+
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="grid gap-2">
+                                                <Label>Working days</Label>
+                                                <div className="flex flex-wrap gap-3 text-sm">
+                                                    {[
+                                                        { value: 1, label: 'Mon' },
+                                                        { value: 2, label: 'Tue' },
+                                                        { value: 3, label: 'Wed' },
+                                                        { value: 4, label: 'Thu' },
+                                                        { value: 5, label: 'Fri' },
+                                                        { value: 6, label: 'Sat' },
+                                                        { value: 7, label: 'Sun' },
+                                                    ].map((d) => (
+                                                        <label key={d.value} className="flex items-center gap-2">
+                                                            <input
+                                                                type="checkbox"
+                                                                name="access_working_days[]"
+                                                                value={String(d.value)}
+                                                                defaultChecked={workingDays.includes(d.value)}
+                                                            />
+                                                            <span>{d.label}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="access_timezone">Policy timezone</Label>
+                                                <Input
+                                                    id="access_timezone"
+                                                    name="access_timezone"
+                                                    defaultValue={organization.access_timezone ?? organization.timezone}
+                                                    placeholder="Asia/Jakarta"
+                                                />
+                                                <InputError message={errors.access_timezone} />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="access_working_start">Start</Label>
+                                                <Input
+                                                    id="access_working_start"
+                                                    name="access_working_start"
+                                                    type="time"
+                                                    defaultValue={workingRange.start}
+                                                />
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="access_working_end">End</Label>
+                                                <Input
+                                                    id="access_working_end"
+                                                    name="access_working_end"
+                                                    type="time"
+                                                    defaultValue={workingRange.end}
+                                                />
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+	                            <div className="flex items-center gap-4">
+	                                <Button disabled={processing}>Save</Button>
+	                                <Link href={organizationsIndex()}>
                                     <Button type="button" variant="outline">
                                         Back
                                     </Button>
