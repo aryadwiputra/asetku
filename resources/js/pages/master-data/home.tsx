@@ -12,6 +12,10 @@ import { index as unitsIndex } from '@/routes/master-data/units';
 import { index as departmentsIndex } from '@/routes/master-data/departments';
 import { index as personInChargesIndex } from '@/routes/master-data/person-in-charges';
 import { index as assetUsersIndex } from '@/routes/master-data/asset-users';
+import { index as assetCategoriesIndex } from '@/routes/master-data/asset-categories';
+import { index as assetLocationsIndex } from '@/routes/master-data/asset-locations';
+import { index as warrantiesIndex } from '@/routes/master-data/warranties';
+import { index as vendorContractsIndex } from '@/routes/master-data/vendor-contracts';
 import { index as settingsIndex } from '@/routes/settings';
 
 type MasterDataItem = {
@@ -61,6 +65,30 @@ export default function MasterDataHome() {
             title: t('asset_users.title'),
             description: t('asset_users.description'),
             href: assetUsersIndex(),
+        },
+        {
+            key: 'asset_categories',
+            title: t('asset_categories.title'),
+            description: t('asset_categories.description'),
+            href: assetCategoriesIndex(),
+        },
+        {
+            key: 'asset_locations',
+            title: t('asset_locations.title'),
+            description: t('asset_locations.description'),
+            href: assetLocationsIndex(),
+        },
+        {
+            key: 'warranties',
+            title: t('warranties.title'),
+            description: t('warranties.description'),
+            href: warrantiesIndex(),
+        },
+        {
+            key: 'vendor_contracts',
+            title: t('vendor_contracts.title'),
+            description: t('vendor_contracts.description'),
+            href: vendorContractsIndex(),
         },
     ];
 

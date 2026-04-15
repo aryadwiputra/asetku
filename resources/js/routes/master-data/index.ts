@@ -5,6 +5,10 @@ import units from './units'
 import departments from './departments'
 import personInCharges from './person-in-charges'
 import assetUsers from './asset-users'
+import assetCategories from './asset-categories'
+import assetLocations from './asset-locations'
+import warranties from './warranties'
+import vendorContracts from './vendor-contracts'
 /**
 * @see \App\Http\Controllers\MasterData\MasterDataHomeController::index
 * @see app/Http/Controllers/MasterData/MasterDataHomeController.php:13
@@ -94,6 +98,10 @@ const masterData = {
     departments: Object.assign(departments, departments),
     personInCharges: Object.assign(personInCharges, personInCharges),
     assetUsers: Object.assign(assetUsers, assetUsers),
+    assetCategories: Object.assign(assetCategories, assetCategories),
+    assetLocations: Object.assign(assetLocations, assetLocations),
+    warranties: Object.assign(warranties, warranties),
+    vendorContracts: Object.assign(vendorContracts, vendorContracts),
 }
 
 export default masterData

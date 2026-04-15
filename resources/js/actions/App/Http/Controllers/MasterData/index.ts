@@ -5,6 +5,10 @@ import UnitController from './UnitController'
 import DepartmentController from './DepartmentController'
 import PersonInChargeController from './PersonInChargeController'
 import AssetUserController from './AssetUserController'
+import AssetCategoryController from './AssetCategoryController'
+import AssetLocationController from './AssetLocationController'
+import WarrantyController from './WarrantyController'
+import VendorContractController from './VendorContractController'
 
 const MasterData = {
     MasterDataHomeController: Object.assign(MasterDataHomeController, MasterDataHomeController),
@@ -14,6 +18,10 @@ const MasterData = {
     DepartmentController: Object.assign(DepartmentController, DepartmentController),
     PersonInChargeController: Object.assign(PersonInChargeController, PersonInChargeController),
     AssetUserController: Object.assign(AssetUserController, AssetUserController),
+    AssetCategoryController: Object.assign(AssetCategoryController, AssetCategoryController),
+    AssetLocationController: Object.assign(AssetLocationController, AssetLocationController),
+    WarrantyController: Object.assign(WarrantyController, WarrantyController),
+    VendorContractController: Object.assign(VendorContractController, VendorContractController),
 }
 
 export default MasterData
