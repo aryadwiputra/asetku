@@ -13,25 +13,21 @@ beforeEach(function () {
 test('delegation can be created approved started and stopped', function () {
     $organization = Organization::factory()->create();
 
-    $admin = User::factory()->create([
+    $admin = User::factory()->inOrganization($organization, 'Admin')->create([
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
     $admin->assignRole('admin');
 
-    $delegator = User::factory()->create([
+    $delegator = User::factory()->inOrganization($organization, 'Member')->create([
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
 
-    $delegatee = User::factory()->create([
+    $delegatee = User::factory()->inOrganization($organization, 'Member')->create([
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
-
-    $organization->members()->attach($admin->id, ['role' => 'Admin', 'is_active' => true]);
-    $organization->members()->attach($delegator->id, ['role' => 'Member', 'is_active' => true]);
-    $organization->members()->attach($delegatee->id, ['role' => 'Member', 'is_active' => true]);
 
     $this->actingAs($admin)
         ->post(route('delegations.store'), [
@@ -60,7 +56,10 @@ test('delegation can be created approved started and stopped', function () {
 
     $this->assertAuthenticatedAs($delegator);
 
-    $activity = Activity::query()->latest()->firstOrFail();
+    $activity = Activity::query()
+        ->where('description', 'Delegation started')
+        ->latest()
+        ->firstOrFail();
 
     expect($activity->subject_type)->toBe(UserDelegation::class)
         ->and((int) $activity->subject_id)->toBe((int) $delegation->id)
