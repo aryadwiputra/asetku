@@ -558,6 +558,62 @@ regenerateRecoveryCodesForm.post = (options?: RouteQueryOptions): RouteFormDefin
 
 regenerateRecoveryCodes.form = regenerateRecoveryCodesForm
 
+/**
+* @see \App\Http\Controllers\TwoFactorSmsRecoveryController::smsRecovery
+* @see app/Http/Controllers/TwoFactorSmsRecoveryController.php:14
+* @route '/two-factor/sms-recovery'
+*/
+export const smsRecovery = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: smsRecovery.url(options),
+    method: 'post',
+})
+
+smsRecovery.definition = {
+    methods: ["post"],
+    url: '/two-factor/sms-recovery',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\TwoFactorSmsRecoveryController::smsRecovery
+* @see app/Http/Controllers/TwoFactorSmsRecoveryController.php:14
+* @route '/two-factor/sms-recovery'
+*/
+smsRecovery.url = (options?: RouteQueryOptions) => {
+    return smsRecovery.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\TwoFactorSmsRecoveryController::smsRecovery
+* @see app/Http/Controllers/TwoFactorSmsRecoveryController.php:14
+* @route '/two-factor/sms-recovery'
+*/
+smsRecovery.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: smsRecovery.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\TwoFactorSmsRecoveryController::smsRecovery
+* @see app/Http/Controllers/TwoFactorSmsRecoveryController.php:14
+* @route '/two-factor/sms-recovery'
+*/
+const smsRecoveryForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: smsRecovery.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\TwoFactorSmsRecoveryController::smsRecovery
+* @see app/Http/Controllers/TwoFactorSmsRecoveryController.php:14
+* @route '/two-factor/sms-recovery'
+*/
+smsRecoveryForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: smsRecovery.url(options),
+    method: 'post',
+})
+
+smsRecovery.form = smsRecoveryForm
+
 const twoFactor = {
     login: Object.assign(login, loginDf2c2a),
     enable: Object.assign(enable, enable),
@@ -567,6 +623,7 @@ const twoFactor = {
     secretKey: Object.assign(secretKey, secretKey),
     recoveryCodes: Object.assign(recoveryCodes, recoveryCodes),
     regenerateRecoveryCodes: Object.assign(regenerateRecoveryCodes, regenerateRecoveryCodes),
+    smsRecovery: Object.assign(smsRecovery, smsRecovery),
 }
 
 export default twoFactor

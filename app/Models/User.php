@@ -22,7 +22,7 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'avatar_path', 'is_active', 'locale', 'organization_id', 'current_organization_id', 'department_id', 'asset_location_id', 'last_active_at'])]
+#[Fillable(['name', 'email', 'phone_number', 'password', 'avatar_path', 'is_active', 'locale', 'organization_id', 'current_organization_id', 'department_id', 'asset_location_id', 'last_active_at'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -40,6 +40,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
+            'last_two_factor_sms_sent_at' => 'datetime',
             'is_active' => 'boolean',
             'last_active_at' => 'datetime',
         ];

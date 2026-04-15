@@ -15,7 +15,9 @@ use App\Policies\InvitationPolicy;
 use App\Policies\MediaAssetPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\RolePolicy;
+use App\Contracts\SmsSender;
 use App\Services\OrganizationContext;
+use App\Services\Sms\LogSmsSender;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +43,15 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(OrganizationContext::class, fn (): OrganizationContext => new OrganizationContext);
+
+        $this->app->singleton(SmsSender::class, function () {
+            $driver = (string) config('sms.driver', 'log');
+
+            return match ($driver) {
+                'log' => new LogSmsSender,
+                default => new LogSmsSender,
+            };
+        });
     }
 
     /**

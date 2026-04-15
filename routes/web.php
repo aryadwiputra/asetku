@@ -11,6 +11,7 @@ use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\OrganizationOnboardingController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\TwoFactorSmsRecoveryController;
 use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::inertia('/', 'welcome', [
 
 Route::get('invites/{token}', [InvitationAcceptController::class, 'show'])->name('invites.show');
 Route::post('invites/{token}', [InvitationAcceptController::class, 'store'])->name('invites.accept');
+
+Route::post('two-factor/sms-recovery', [TwoFactorSmsRecoveryController::class, 'store'])
+    ->middleware('throttle:1,1')
+    ->name('two-factor.sms-recovery');
 
 Route::post('locale', LocaleController::class)->name('locale.update');
 
