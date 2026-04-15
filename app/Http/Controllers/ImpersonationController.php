@@ -26,6 +26,8 @@ class ImpersonationController extends Controller
         // Store original user info in session
         $request->session()->put('impersonate.original_id', $originalUser->id);
         $request->session()->put('impersonate.original_name', $originalUser->name);
+        $request->session()->put('impersonate.as_id', $user->id);
+        $request->session()->put('impersonate.mode', 'impersonation');
 
         // Log the impersonation start
         activity()
@@ -71,6 +73,8 @@ class ImpersonationController extends Controller
         // Clear impersonation session data
         $request->session()->forget('impersonate.original_id');
         $request->session()->forget('impersonate.original_name');
+        $request->session()->forget('impersonate.as_id');
+        $request->session()->forget('impersonate.mode');
 
         Auth::login($originalUser);
 

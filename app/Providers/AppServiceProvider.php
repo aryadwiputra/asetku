@@ -9,12 +9,15 @@ use App\Listeners\RecordSuccessfulLogin;
 use App\Models\Branch;
 use App\Models\MediaAsset;
 use App\Models\Organization;
+use App\Models\User;
+use App\Models\UserDelegation;
 use App\Models\UserInvitation;
 use App\Policies\BranchPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\MediaAssetPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\RolePolicy;
+use App\Policies\UserDelegationPolicy;
 use App\Contracts\SmsSender;
 use App\Services\OrganizationContext;
 use App\Services\Sms\LogSmsSender;
@@ -35,6 +38,8 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use SocialiteProviders\Microsoft\MicrosoftExtendSocialite;
+use Spatie\Activitylog\Facades\CauserResolver as ActivityCauserResolver;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
@@ -65,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureAuthorization();
         $this->configureNotifications();
         $this->configureAuthEvents();
+        $this->configureActivityLogging();
         $this->configureSocialite();
         $this->configureRateLimiting();
     }
@@ -101,6 +107,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Organization::class, OrganizationPolicy::class);
         Gate::policy(Branch::class, BranchPolicy::class);
         Gate::policy(UserInvitation::class, InvitationPolicy::class);
+        Gate::policy(UserDelegation::class, UserDelegationPolicy::class);
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
 
@@ -123,6 +130,54 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Login::class, RecordSuccessfulLogin::class);
         Event::listen(Failed::class, RecordFailedLogin::class);
         Event::listen(Logout::class, RecordLogout::class);
+    }
+
+    protected function configureActivityLogging(): void
+    {
+        ActivityCauserResolver::resolveUsing(function () {
+            $request = request();
+
+            if (! $request?->hasSession()) {
+                return auth()->user();
+            }
+
+            $originalId = $request->session()->get('acting.original_id')
+                ?? $request->session()->get('impersonate.original_id');
+
+            if (! is_numeric($originalId)) {
+                return auth()->user();
+            }
+
+            return User::query()->find((int) $originalId);
+        });
+
+        Activity::creating(function (Activity $activity): void {
+            $request = request();
+
+            if (! $request?->hasSession()) {
+                return;
+            }
+
+            $mode = $request->session()->get('acting.mode');
+            $asId = $request->session()->get('acting.as_id');
+
+            if ($asId === null) {
+                $mode = $request->session()->get('impersonate.mode');
+                $asId = $request->session()->get('impersonate.as_id');
+            }
+
+            if (! is_numeric($asId)) {
+                return;
+            }
+
+            $properties = $activity->properties?->toArray() ?? [];
+            $properties['acting_as'] = [
+                'mode' => is_string($mode) ? $mode : null,
+                'user_id' => (int) $asId,
+            ];
+
+            $activity->properties = $properties;
+        });
     }
 
     protected function configureSocialite(): void

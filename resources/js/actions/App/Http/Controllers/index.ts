@@ -10,6 +10,7 @@ import OrganizationManagementController from './OrganizationManagementController
 import OrganizationOnboardingController from './OrganizationOnboardingController'
 import BranchController from './BranchController'
 import UserInvitationController from './UserInvitationController'
+import UserDelegationController from './UserDelegationController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import ImpersonationController from './ImpersonationController'
@@ -32,6 +33,7 @@ const Controllers = {
     OrganizationOnboardingController: Object.assign(OrganizationOnboardingController, OrganizationOnboardingController),
     BranchController: Object.assign(BranchController, BranchController),
     UserInvitationController: Object.assign(UserInvitationController, UserInvitationController),
+    UserDelegationController: Object.assign(UserDelegationController, UserDelegationController),
     UserController: Object.assign(UserController, UserController),
     RoleController: Object.assign(RoleController, RoleController),
     ImpersonationController: Object.assign(ImpersonationController, ImpersonationController),

@@ -81,7 +81,7 @@ start.form = startForm
 
 /**
 * @see \App\Http\Controllers\ImpersonationController::stop
-* @see app/Http/Controllers/ImpersonationController.php:50
+* @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
 */
 export const stop = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -96,7 +96,7 @@ stop.definition = {
 
 /**
 * @see \App\Http\Controllers\ImpersonationController::stop
-* @see app/Http/Controllers/ImpersonationController.php:50
+* @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
 */
 stop.url = (options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ stop.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ImpersonationController::stop
-* @see app/Http/Controllers/ImpersonationController.php:50
+* @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
 */
 stop.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ stop.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\ImpersonationController::stop
-* @see app/Http/Controllers/ImpersonationController.php:50
+* @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
 */
 const stopForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -125,7 +125,7 @@ const stopForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => (
 
 /**
 * @see \App\Http\Controllers\ImpersonationController::stop
-* @see app/Http/Controllers/ImpersonationController.php:50
+* @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
 */
 stopForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

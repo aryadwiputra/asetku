@@ -91,6 +91,11 @@ class SharedProps
                 'original_user_id' => $request->session()->get('impersonate.original_id'),
                 'original_user_name' => $request->session()->get('impersonate.original_name'),
             ] : null,
+            'delegating' => $request->session()->get('acting.mode') === 'delegation' && is_numeric($request->session()->get('acting.original_id')) && is_numeric($request->session()->get('acting.as_id')) && is_numeric($request->session()->get('acting.organization_id')) ? [
+                'original_user_id' => (int) $request->session()->get('acting.original_id'),
+                'as_user_id' => (int) $request->session()->get('acting.as_id'),
+                'organization_id' => (int) $request->session()->get('acting.organization_id'),
+            ] : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'locale' => app()->getLocale(),
             'fallbackLocale' => config('app.fallback_locale'),
@@ -104,6 +109,7 @@ class SharedProps
     {
         return <<<'TS'
 import type { Auth, Impersonation } from '@/types/auth';
+import type { Delegation } from '@/types/auth';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
@@ -137,6 +143,7 @@ declare module '@inertiajs/core' {
             roles: string[];
             features: string[];
             impersonating: Impersonation | null;
+            delegating: Delegation | null;
             sidebarOpen: boolean;
             locale: string;
             fallbackLocale: string;

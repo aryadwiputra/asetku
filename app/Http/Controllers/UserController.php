@@ -7,9 +7,11 @@ use App\Http\Requests\DataTableRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Models\UserDelegation;
 use App\Models\UserLoginEvent;
 use App\Services\DataTableService;
 use App\Services\ExportService;
+use App\Services\OrganizationContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -124,10 +126,33 @@ class UserController extends Controller implements HasMiddleware
             ->limit(50)
             ->get();
 
+        $delegations = UserDelegation::query()
+            ->where(function ($query) use ($user) {
+                $query->where('delegator_user_id', $user->id)
+                    ->orWhere('delegatee_user_id', $user->id);
+            })
+            ->with(['delegator:id,name,email', 'delegatee:id,name,email', 'creator:id,name', 'approver:id,name'])
+            ->latest()
+            ->get();
+
+        $organizationUsers = [];
+        $organizationId = app(OrganizationContext::class)->currentOrganizationId();
+
+        if ($organizationId !== null) {
+            $organizationUsers = User::query()
+                ->whereHas('organizations', function ($query) use ($organizationId) {
+                    $query->whereKey($organizationId)->where('organization_user.is_active', true);
+                })
+                ->orderBy('name')
+                ->get(['id', 'name', 'email']);
+        }
+
         return Inertia::render('users/show', [
             'user' => $user,
             'activities' => $activities,
             'loginEvents' => $loginEvents,
+            'delegations' => $delegations,
+            'organizationUsers' => $organizationUsers,
         ]);
     }
 

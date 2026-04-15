@@ -1,10 +1,16 @@
-import { Head } from '@inertiajs/react';
+import { Form, Head, router, usePage } from '@inertiajs/react';
 import { Activity, CalendarDays, Clock, Mail, Shield, UserCog } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { useCan } from '@/hooks/use-permission';
 import { useTranslation } from '@/hooks/use-translation';
+import { approve, revoke, start, stop, store as delegationsStore } from '@/routes/delegations';
 import { index as usersIndex } from '@/routes/users';
 import type { User } from '@/types';
 
@@ -29,10 +35,33 @@ type Props = {
         user_agent: string | null;
         occurred_at: string;
     }>;
+    delegations: Array<{
+        id: number;
+        status: string;
+        starts_at: string;
+        ends_at: string;
+        reason: string | null;
+        revoked_at: string | null;
+        delegator: { id: number; name: string; email: string };
+        delegatee: { id: number; name: string; email: string };
+        approver: { id: number; name: string } | null;
+    }>;
+    organizationUsers: Array<{ id: number; name: string; email: string }>;
 };
 
-export default function ShowUser({ user, activities, loginEvents }: Props) {
+export default function ShowUser({
+    user,
+    activities,
+    loginEvents,
+    delegations,
+    organizationUsers,
+}: Props) {
     const { t } = useTranslation();
+    const { auth, delegating } = usePage().props;
+
+    const canCreateDelegation = useCan('delegation.create');
+    const canApproveDelegation = useCan('delegation.approve');
+    const canRevokeDelegation = useCan('delegation.delete') || canApproveDelegation;
 
     return (
         <>
@@ -166,6 +195,190 @@ export default function ShowUser({ user, activities, loginEvents }: Props) {
                                                 </div>
                                             </div>
                                         ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Delegations */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Shield className="h-5 w-5" />
+                                    Delegation
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {canCreateDelegation && (
+                                    <Form {...delegationsStore.form()} className="grid gap-4">
+                                        {({ processing, errors }) => (
+                                            <>
+                                                <input type="hidden" name="delegator_user_id" value={user.id} />
+
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="delegatee_user_id">
+                                                        Delegatee
+                                                    </Label>
+                                                    <select
+                                                        id="delegatee_user_id"
+                                                        name="delegatee_user_id"
+                                                        className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                                                        required
+                                                    >
+                                                        <option value="">
+                                                            Select user…
+                                                        </option>
+                                                        {organizationUsers
+                                                            .filter((u) => u.id !== user.id)
+                                                            .map((u) => (
+                                                                <option key={u.id} value={u.id}>
+                                                                    {u.name} ({u.email})
+                                                                </option>
+                                                            ))}
+                                                    </select>
+                                                    {errors.delegatee_user_id && (
+                                                        <p className="text-sm text-destructive">
+                                                            {errors.delegatee_user_id}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid gap-4 md:grid-cols-2">
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="starts_at">
+                                                            Starts at
+                                                        </Label>
+                                                        <Input
+                                                            id="starts_at"
+                                                            name="starts_at"
+                                                            type="datetime-local"
+                                                            required
+                                                        />
+                                                        {errors.starts_at && (
+                                                            <p className="text-sm text-destructive">
+                                                                {errors.starts_at}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    <div className="grid gap-2">
+                                                        <Label htmlFor="ends_at">
+                                                            Ends at
+                                                        </Label>
+                                                        <Input
+                                                            id="ends_at"
+                                                            name="ends_at"
+                                                            type="datetime-local"
+                                                            required
+                                                        />
+                                                        {errors.ends_at && (
+                                                            <p className="text-sm text-destructive">
+                                                                {errors.ends_at}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="reason">Reason</Label>
+                                                    <Textarea id="reason" name="reason" rows={2} />
+                                                    {errors.reason && (
+                                                        <p className="text-sm text-destructive">
+                                                            {errors.reason}
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                <Button type="submit" disabled={processing}>
+                                                    Create delegation
+                                                </Button>
+                                            </>
+                                        )}
+                                    </Form>
+                                )}
+
+                                {delegations.length === 0 ? (
+                                    <p className="py-6 text-center text-muted-foreground">
+                                        No delegations.
+                                    </p>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {delegations.map((d) => {
+                                            const isDelegatee = auth.user?.id === d.delegatee.id;
+                                            const canStart = isDelegatee && d.status === 'active' && !d.revoked_at;
+
+                                            return (
+                                                <div key={d.id} className="rounded-lg border p-3">
+                                                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                        <div className="min-w-0">
+                                                            <div className="flex flex-wrap items-center gap-2">
+                                                                <Badge variant="secondary">
+                                                                    {d.status}
+                                                                </Badge>
+                                                                {d.approver && (
+                                                                    <Badge variant="outline">
+                                                                        approved by {d.approver.name}
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
+                                                            <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                                                                <div className="break-words">
+                                                                    Delegator: <span className="text-foreground">{d.delegator.name}</span>
+                                                                </div>
+                                                                <div className="break-words">
+                                                                    Delegatee: <span className="text-foreground">{d.delegatee.name}</span>
+                                                                </div>
+                                                                <div className="text-xs">
+                                                                    {new Date(d.starts_at).toLocaleString()} → {new Date(d.ends_at).toLocaleString()}
+                                                                </div>
+                                                                {d.reason && (
+                                                                    <div className="break-words text-xs">
+                                                                        {d.reason}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex flex-wrap gap-2 sm:justify-end">
+                                                            {d.status === 'pending' && canApproveDelegation && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    onClick={() => router.post(approve(d.id).url)}
+                                                                >
+                                                                    Approve
+                                                                </Button>
+                                                            )}
+                                                            {canRevokeDelegation && d.status !== 'revoked' && d.status !== 'ended' && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="destructive"
+                                                                    onClick={() => router.delete(revoke(d.id).url, { preserveScroll: true })}
+                                                                >
+                                                                    Revoke
+                                                                </Button>
+                                                            )}
+                                                            {canStart && (
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() => router.post(start(d.id).url)}
+                                                                >
+                                                                    Start
+                                                                </Button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {delegating && (
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => router.post(stop().url)}
+                                            >
+                                                Stop delegation
+                                            </Button>
+                                        )}
                                     </div>
                                 )}
                             </CardContent>

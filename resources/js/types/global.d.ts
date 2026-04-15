@@ -1,4 +1,4 @@
-import type { Auth, Impersonation } from '@/types/auth';
+import type { Auth, Delegation, Impersonation } from '@/types/auth';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {
@@ -32,6 +32,7 @@ declare module '@inertiajs/core' {
             roles: string[];
             features: string[];
             impersonating: Impersonation | null;
+            delegating: Delegation | null;
             sidebarOpen: boolean;
             locale: string;
             fallbackLocale: string;

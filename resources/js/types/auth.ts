@@ -32,3 +32,9 @@ export type Impersonation = {
     original_user_id: number;
     original_user_name: string;
 };
+
+export type Delegation = {
+    original_user_id: number;
+    as_user_id: number;
+    organization_id: number;
+};

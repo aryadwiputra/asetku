@@ -13,6 +13,7 @@ use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TwoFactorSmsRecoveryController;
+use App\Http\Controllers\UserDelegationController;
 use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Invitations
     Route::post('invitations', [UserInvitationController::class, 'store'])->name('invitations.store');
+
+    // Delegations
+    Route::post('delegations', [UserDelegationController::class, 'store'])->name('delegations.store');
+    Route::post('delegations/{delegation}/approve', [UserDelegationController::class, 'approve'])->name('delegations.approve');
+    Route::delete('delegations/{delegation}', [UserDelegationController::class, 'revoke'])->name('delegations.revoke');
+    Route::post('delegations/{delegation}/start', [UserDelegationController::class, 'start'])->name('delegations.start');
+    Route::post('delegations/stop', [UserDelegationController::class, 'stop'])->name('delegations.stop');
 
     // User Management
     Route::resource('users', UserController::class);

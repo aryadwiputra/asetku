@@ -26,6 +26,39 @@ class SetCurrentOrganization
             return $next($request);
         }
 
+        if ($request->hasSession() && $request->session()->has('acting.organization_id')) {
+            $organizationId = (int) $request->session()->get('acting.organization_id');
+
+            $isMember = $user->organizations()
+                ->whereKey($organizationId)
+                ->wherePivot('is_active', true)
+                ->exists();
+
+            if (! $isMember) {
+                $request->session()->forget('acting');
+                abort(403, 'Current organization is not accessible.');
+            }
+
+            app(OrganizationContext::class)->setCurrentOrganizationId($organizationId);
+
+            $isActive = Organization::query()->whereKey($organizationId)->value('is_active');
+
+            if ($isActive === 0 || $isActive === false) {
+                app(OrganizationContext::class)->setCurrentOrganizationId(null);
+                $request->session()->forget('acting');
+
+                if ($request->expectsJson()) {
+                    abort(403, 'Organization is inactive.');
+                }
+
+                return redirect()
+                    ->route('organizations.index')
+                    ->with('toast', ['type' => 'error', 'message' => 'Organization is inactive.']);
+            }
+
+            return $next($request);
+        }
+
         $organizationId = $user->current_organization_id === null ? null : (int) $user->current_organization_id;
 
         if ($organizationId === null) {

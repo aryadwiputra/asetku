@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
-* @see app/Http/Controllers/OrganizationSwitchController.php:11
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
 * @route '/organizations/{organization}/switch'
 */
 const OrganizationSwitchController = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ OrganizationSwitchController.definition = {
 
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
-* @see app/Http/Controllers/OrganizationSwitchController.php:11
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
 * @route '/organizations/{organization}/switch'
 */
 OrganizationSwitchController.url = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ OrganizationSwitchController.url = (args: { organization: number | { id: number 
 
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
-* @see app/Http/Controllers/OrganizationSwitchController.php:11
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
 * @route '/organizations/{organization}/switch'
 */
 OrganizationSwitchController.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -59,7 +59,7 @@ OrganizationSwitchController.post = (args: { organization: number | { id: number
 
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
-* @see app/Http/Controllers/OrganizationSwitchController.php:11
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
 * @route '/organizations/{organization}/switch'
 */
 const OrganizationSwitchControllerForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -69,7 +69,7 @@ const OrganizationSwitchControllerForm = (args: { organization: number | { id: n
 
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
-* @see app/Http/Controllers/OrganizationSwitchController.php:11
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
 * @route '/organizations/{organization}/switch'
 */
 OrganizationSwitchControllerForm.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

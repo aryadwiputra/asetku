@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrganizationSwitchController extends Controller
 {
@@ -28,6 +30,20 @@ class OrganizationSwitchController extends Controller
         if (! $isMember) {
             abort(403);
         }
+
+        $originalId = $request->session()->get('acting.original_id') ?? $request->session()->get('impersonate.original_id');
+
+        if (is_numeric($originalId)) {
+            /** @var User $originalUser */
+            $originalUser = User::query()->findOrFail((int) $originalId);
+            Auth::login($originalUser);
+        }
+
+        $request->session()->forget('acting');
+        $request->session()->forget('impersonate.original_id');
+        $request->session()->forget('impersonate.original_name');
+        $request->session()->forget('impersonate.as_id');
+        $request->session()->forget('impersonate.mode');
 
         $user->forceFill(['current_organization_id' => $organization->id])->save();
 
