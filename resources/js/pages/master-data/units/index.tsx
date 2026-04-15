@@ -23,9 +23,7 @@ type Props = {
 };
 
 export default function UnitsIndex({ items }: Props) {
-    const { masterDataAbilities } = usePage().props as {
-        masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
-    };
+    const { masterDataAbilities } = usePage().props;
     const abilities = masterDataAbilities.units ?? { view: false, create: false, update: false, delete: false };
     const { t } = useTranslation();
 
@@ -79,7 +77,7 @@ export default function UnitsIndex({ items }: Props) {
                     data={items}
                     columns={columns}
                     rowActions={rowActions}
-                    routePrefix={unitsIndex()}
+                    routePrefix={unitsIndex.url()}
                     mobileView="cards"
                 />
             </div>
@@ -89,8 +87,7 @@ export default function UnitsIndex({ items }: Props) {
 
 UnitsIndex.layout = {
     breadcrumbs: [
-        { title: 'common.master_data', href: masterDataIndex() },
-        { title: 'units.title', href: unitsIndex() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
+        { title: 'units.title', href: unitsIndex.url() },
     ],
 };
-

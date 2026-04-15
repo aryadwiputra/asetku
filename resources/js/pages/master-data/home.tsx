@@ -34,61 +34,61 @@ export default function MasterDataHome() {
             key: 'asset_statuses',
             title: t('asset_statuses.title'),
             description: t('asset_statuses.description'),
-            href: assetStatusesIndex(),
+            href: assetStatusesIndex.url(),
         },
         {
             key: 'asset_classes',
             title: t('asset_classes.title'),
             description: t('asset_classes.description'),
-            href: assetClassesIndex(),
+            href: assetClassesIndex.url(),
         },
         {
             key: 'units',
             title: t('units.title'),
             description: t('units.description'),
-            href: unitsIndex(),
+            href: unitsIndex.url(),
         },
         {
             key: 'departments',
             title: t('departments.title'),
             description: t('departments.description'),
-            href: departmentsIndex(),
+            href: departmentsIndex.url(),
         },
         {
             key: 'person_in_charges',
             title: t('person_in_charges.title'),
             description: t('person_in_charges.description'),
-            href: personInChargesIndex(),
+            href: personInChargesIndex.url(),
         },
         {
             key: 'asset_users',
             title: t('asset_users.title'),
             description: t('asset_users.description'),
-            href: assetUsersIndex(),
+            href: assetUsersIndex.url(),
         },
         {
             key: 'asset_categories',
             title: t('asset_categories.title'),
             description: t('asset_categories.description'),
-            href: assetCategoriesIndex(),
+            href: assetCategoriesIndex.url(),
         },
         {
             key: 'asset_locations',
             title: t('asset_locations.title'),
             description: t('asset_locations.description'),
-            href: assetLocationsIndex(),
+            href: assetLocationsIndex.url(),
         },
         {
             key: 'warranties',
             title: t('warranties.title'),
             description: t('warranties.description'),
-            href: warrantiesIndex(),
+            href: warrantiesIndex.url(),
         },
         {
             key: 'vendor_contracts',
             title: t('vendor_contracts.title'),
             description: t('vendor_contracts.description'),
-            href: vendorContractsIndex(),
+            href: vendorContractsIndex.url(),
         },
     ];
 
@@ -102,12 +102,12 @@ export default function MasterDataHome() {
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                     {items.map((item) => {
                         const card = (
-                            <Card className={item.href ? 'transition hover:bg-muted/30' : 'opacity-60'}>
+                            <Card className={`h-full ${item.href ? 'transition hover:bg-muted/30' : 'opacity-60'}`}>
                                 <CardContent className="flex h-full flex-col gap-3 p-4">
-                                    <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-start justify-between gap-3">
                                         <div className="min-w-0">
                                             <div className="truncate font-medium">{item.title}</div>
-                                            <div className="text-sm text-muted-foreground">{item.description}</div>
+                                            <div className="min-h-10 text-sm text-muted-foreground line-clamp-2">{item.description}</div>
                                         </div>
                                         <ArrowRight className="h-4 w-4 text-muted-foreground" />
                                     </div>
@@ -121,11 +121,13 @@ export default function MasterDataHome() {
                         );
 
                         return item.href ? (
-                            <Link key={item.key} href={item.href} className="block">
+                            <Link key={item.key} href={item.href} className="block h-full">
                                 {card}
                             </Link>
                         ) : (
-                            <div key={item.key}>{card}</div>
+                            <div key={item.key} className="h-full">
+                                {card}
+                            </div>
                         );
                     })}
                 </div>
@@ -146,7 +148,7 @@ export default function MasterDataHome() {
 
 MasterDataHome.layout = {
     breadcrumbs: [
-        { title: 'common.settings', href: settingsIndex() },
-        { title: 'common.master_data', href: masterDataIndex() },
+        { title: 'common.settings', href: settingsIndex.url() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
     ],
 };

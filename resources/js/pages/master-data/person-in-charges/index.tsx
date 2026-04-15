@@ -24,9 +24,7 @@ type Props = {
 };
 
 export default function PersonInChargesIndex({ items }: Props) {
-    const { masterDataAbilities } = usePage().props as {
-        masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
-    };
+    const { masterDataAbilities } = usePage().props;
     const abilities = masterDataAbilities.person_in_charges ?? { view: false, create: false, update: false, delete: false };
     const { t } = useTranslation();
 
@@ -80,7 +78,7 @@ export default function PersonInChargesIndex({ items }: Props) {
                     data={items}
                     columns={columns}
                     rowActions={rowActions}
-                    routePrefix={personInChargesIndex()}
+                    routePrefix={personInChargesIndex.url()}
                     mobileView="cards"
                 />
             </div>
@@ -90,8 +88,7 @@ export default function PersonInChargesIndex({ items }: Props) {
 
 PersonInChargesIndex.layout = {
     breadcrumbs: [
-        { title: 'common.master_data', href: masterDataIndex() },
-        { title: 'person_in_charges.title', href: personInChargesIndex() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
+        { title: 'person_in_charges.title', href: personInChargesIndex.url() },
     ],
 };
-

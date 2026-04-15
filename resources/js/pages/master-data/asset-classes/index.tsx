@@ -23,9 +23,7 @@ type Props = {
 };
 
 export default function AssetClassesIndex({ items }: Props) {
-    const { masterDataAbilities } = usePage().props as {
-        masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
-    };
+    const { masterDataAbilities } = usePage().props;
     const abilities = masterDataAbilities.asset_classes ?? { view: false, create: false, update: false, delete: false };
     const { t } = useTranslation();
 
@@ -79,7 +77,7 @@ export default function AssetClassesIndex({ items }: Props) {
                     data={items}
                     columns={columns}
                     rowActions={rowActions}
-                    routePrefix={assetClassesIndex()}
+                    routePrefix={assetClassesIndex.url()}
                     mobileView="cards"
                 />
             </div>
@@ -89,8 +87,7 @@ export default function AssetClassesIndex({ items }: Props) {
 
 AssetClassesIndex.layout = {
     breadcrumbs: [
-        { title: 'common.master_data', href: masterDataIndex() },
-        { title: 'asset_classes.title', href: assetClassesIndex() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
+        { title: 'asset_classes.title', href: assetClassesIndex.url() },
     ],
 };
-

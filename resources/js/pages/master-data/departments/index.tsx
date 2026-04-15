@@ -25,9 +25,7 @@ type Props = {
 };
 
 export default function DepartmentsIndex({ items }: Props) {
-    const { masterDataAbilities } = usePage().props as {
-        masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
-    };
+    const { masterDataAbilities } = usePage().props;
     const abilities = masterDataAbilities.departments ?? { view: false, create: false, update: false, delete: false };
     const { t } = useTranslation();
 
@@ -94,7 +92,7 @@ export default function DepartmentsIndex({ items }: Props) {
                     data={items}
                     columns={columns}
                     rowActions={rowActions}
-                    routePrefix={departmentsIndex()}
+                    routePrefix={departmentsIndex.url()}
                     mobileView="cards"
                 />
             </div>
@@ -104,8 +102,7 @@ export default function DepartmentsIndex({ items }: Props) {
 
 DepartmentsIndex.layout = {
     breadcrumbs: [
-        { title: 'common.master_data', href: masterDataIndex() },
-        { title: 'departments.title', href: departmentsIndex() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
+        { title: 'departments.title', href: departmentsIndex.url() },
     ],
 };
-

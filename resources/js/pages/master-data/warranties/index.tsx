@@ -23,9 +23,7 @@ type Props = {
 };
 
 export default function WarrantiesIndex({ items }: Props) {
-    const { masterDataAbilities } = usePage().props as {
-        masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
-    };
+    const { masterDataAbilities } = usePage().props;
     const abilities = masterDataAbilities.warranties ?? { view: false, create: false, update: false, delete: false };
     const { t } = useTranslation();
 
@@ -78,7 +76,7 @@ export default function WarrantiesIndex({ items }: Props) {
                     data={items}
                     columns={columns}
                     rowActions={rowActions}
-                    routePrefix={warrantiesIndex()}
+                    routePrefix={warrantiesIndex.url()}
                     mobileView="cards"
                 />
             </div>
@@ -88,8 +86,7 @@ export default function WarrantiesIndex({ items }: Props) {
 
 WarrantiesIndex.layout = {
     breadcrumbs: [
-        { title: 'common.master_data', href: masterDataIndex() },
-        { title: 'warranties.title', href: warrantiesIndex() },
+        { title: 'common.master_data', href: masterDataIndex.url() },
+        { title: 'warranties.title', href: warrantiesIndex.url() },
     ],
 };
-

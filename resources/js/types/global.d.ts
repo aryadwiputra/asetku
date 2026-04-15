@@ -28,6 +28,7 @@ declare module '@inertiajs/core' {
                 organizations: { create: boolean; update: boolean; deactivate: boolean };
                 branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
             };
+            masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
             permissions: string[];
             roles: string[];
             features: string[];
