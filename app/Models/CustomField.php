@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CustomField extends Model
 {
@@ -36,5 +37,11 @@ class CustomField extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function assetCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(AssetCategory::class, 'asset_category_custom_field')
+            ->withTimestamps();
     }
 }

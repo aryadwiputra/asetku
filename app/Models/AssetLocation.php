@@ -16,6 +16,8 @@ class AssetLocation extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'branch_id',
+        'type',
         'name',
         'code',
         'description',
@@ -25,6 +27,11 @@ class AssetLocation extends Model
     public function assets(): HasMany
     {
         return $this->hasMany(Asset::class, 'asset_location_id');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function parent(): BelongsTo

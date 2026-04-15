@@ -22,12 +22,18 @@ class Asset extends Model
     protected $fillable = [
         'code',
         'name',
+        'brand',
+        'model',
+        'series',
         'serial_number',
+        'imei',
         'description',
         'asset_status_id',
+        'asset_condition_id',
         'asset_class_id',
         'asset_category_id',
         'unit_id',
+        'branch_id',
         'department_id',
         'person_in_charge_id',
         'asset_user_id',
@@ -40,11 +46,14 @@ class Asset extends Model
         'depreciation_method',
         'useful_life_months',
         'residual_value',
+        'book_value_cached',
         'capex_opex',
         'vendor_contract_id',
         'qr_token',
         'qr_path',
         'metadata',
+        'latitude',
+        'longitude',
         'rfid_tag',
         'nfc_tag',
         'label_template',
@@ -70,7 +79,10 @@ class Asset extends Model
             'warranty_reminder_sent_at' => 'datetime',
             'cost' => 'decimal:2',
             'residual_value' => 'decimal:2',
+            'book_value_cached' => 'decimal:2',
             'metadata' => 'array',
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
             'is_consumable' => 'boolean',
             'is_pool' => 'boolean',
             'archived_at' => 'datetime',
@@ -81,6 +93,11 @@ class Asset extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(AssetStatus::class, 'asset_status_id');
+    }
+
+    public function condition(): BelongsTo
+    {
+        return $this->belongsTo(AssetCondition::class, 'asset_condition_id');
     }
 
     public function class(): BelongsTo
@@ -101,6 +118,11 @@ class Asset extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function personInCharge(): BelongsTo
@@ -166,6 +188,11 @@ class Asset extends Model
     public function changelogs(): HasMany
     {
         return $this->hasMany(AssetChangelog::class);
+    }
+
+    public function media(): HasMany
+    {
+        return $this->hasMany(AssetMedia::class);
     }
 
     public function scopeForUser(Builder $query, ?User $user): Builder
