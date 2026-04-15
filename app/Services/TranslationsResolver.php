@@ -122,6 +122,24 @@ class TranslationsResolver
             $modules[] = 'vendor_contracts';
         }
 
+        if (str_starts_with($routeName, 'assets.')
+            || str_starts_with($routeName, 'assets-import')
+            || str_starts_with($routeName, 'assets-labels')
+            || str_starts_with($routeName, 'assets-export')
+            || str_starts_with($routeName, 'assets-saved-filters')) {
+            $modules[] = 'assets';
+            $modules[] = 'imports';
+            $modules[] = 'labels';
+            $modules[] = 'saved_filters';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'qr.')
+            || str_starts_with($routeName, 'scan.')) {
+            $modules[] = 'qr';
+            $modules[] = 'assets';
+        }
+
         return array_values(array_unique($modules));
     }
 }
