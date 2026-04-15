@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as usersIndex } from '@/routes/users';
 
 type Props = {
@@ -28,7 +29,7 @@ export default function CreateUser({ roles }: Props) {
                 />
 
                 <Form
-                    {...UserController.store.form()}
+                    {...toForm(UserController.store())}
                     className="max-w-2xl space-y-6"
                 >
                     {({ processing, errors }) => (

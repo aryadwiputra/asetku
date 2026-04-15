@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -17,7 +18,7 @@ export default function Register() {
         <>
             <Head title={t('auth.register')} />
             <Form
-                {...store.form()}
+                {...toForm(store())}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
                 className="flex flex-col gap-6"

@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { edit } from '@/routes/profile';
 import { update as updateNotificationPreferences } from '@/routes/profile/notification-preferences';
 import { disable, enable } from '@/routes/two-factor';
@@ -163,7 +164,7 @@ export default function Profile({
                 />
 
                 <Form
-                    {...ProfileController.update.form()}
+                    {...toForm(ProfileController.update())}
                     encType="multipart/form-data"
                     options={{ preserveScroll: true }}
                     className="max-w-3xl space-y-6"
@@ -281,7 +282,7 @@ export default function Profile({
                     </CardHeader>
                     <CardContent>
                         <Form
-                            {...updateNotificationPreferences.form()}
+                            {...toForm(updateNotificationPreferences())}
                             className="space-y-6"
                             options={{ preserveScroll: true }}
                         >
@@ -446,7 +447,7 @@ export default function Profile({
                         </CardHeader>
                         <CardContent>
                             <Form
-                                {...SecurityController.update.form()}
+                                {...toForm(SecurityController.update())}
                                 options={{ preserveScroll: true }}
                                 resetOnError={[
                                     'password',
@@ -539,7 +540,7 @@ export default function Profile({
                                         </p>
 
                                         <div className="relative inline">
-                                            <Form {...disable.form()}>
+                                            <Form {...toForm(disable())}>
                                                 {({ processing }) => (
                                                     <Button
                                                         variant="destructive"
@@ -572,7 +573,7 @@ export default function Profile({
                                                 </Button>
                                             ) : (
                                                 <Form
-                                                    {...enable.form()}
+                                                    {...toForm(enable())}
                                                     onSuccess={() => setShowSetupModal(true)}
                                                 >
                                                     {({ processing }) => (

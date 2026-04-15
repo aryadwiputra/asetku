@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { edit as editMailSettings } from '@/routes/mail-settings';
 
 type Props = {
@@ -69,7 +70,7 @@ export default function MailSettings({ settings }: Props) {
                 </div>
 
                 <Form
-                    {...MailSettingsController.update.form()}
+                    {...toForm(MailSettingsController.update())}
                     className="space-y-8"
                     options={{ preserveScroll: true }}
                 >
@@ -419,7 +420,7 @@ export default function MailSettings({ settings }: Props) {
                     </CardHeader>
                     <CardContent>
                         <Form
-                            {...MailSettingsController.test.form()}
+                            {...toForm(MailSettingsController.test())}
                             className="space-y-4"
                             options={{ preserveScroll: true }}
                         >

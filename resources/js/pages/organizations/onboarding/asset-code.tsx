@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -32,7 +33,7 @@ export default function OrganizationOnboardingAssetCode({ organization }: Props)
                 />
 
                 <Form
-                    {...OrganizationOnboardingController.updateAssetCode.form()}
+                    {...toForm(OrganizationOnboardingController.updateAssetCode())}
                     className="max-w-2xl space-y-6"
                 >
                     {({ processing, errors }) => (

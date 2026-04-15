@@ -2,20 +2,24 @@
 
 namespace App\Providers;
 
+use App\Contracts\SmsSender;
 use App\Listeners\ApplyNotificationPreferences;
 use App\Listeners\RecordFailedLogin;
 use App\Listeners\RecordLogout;
 use App\Listeners\RecordSuccessfulLogin;
+use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\AssetClass;
+use App\Models\AssetCondition;
 use App\Models\AssetLocation;
-use App\Models\Branch;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
+use App\Models\Branch;
 use App\Models\Department;
 use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\PersonInCharge;
+use App\Models\SavedFilter;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserDelegation;
@@ -24,24 +28,29 @@ use App\Models\VendorContract;
 use App\Models\Warranty;
 use App\Policies\AssetCategoryPolicy;
 use App\Policies\AssetClassPolicy;
+use App\Policies\AssetConditionPolicy;
 use App\Policies\AssetLocationPolicy;
-use App\Policies\BranchPolicy;
+use App\Policies\AssetPolicy;
 use App\Policies\AssetStatusPolicy;
 use App\Policies\AssetUserPolicy;
+use App\Policies\BranchPolicy;
 use App\Policies\DepartmentPolicy;
 use App\Policies\InvitationPolicy;
 use App\Policies\MediaAssetPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\PersonInChargePolicy;
 use App\Policies\RolePolicy;
+use App\Policies\SavedFilterPolicy;
 use App\Policies\UnitPolicy;
 use App\Policies\UserDelegationPolicy;
-use App\Contracts\SmsSender;
 use App\Policies\VendorContractPolicy;
 use App\Policies\WarrantyPolicy;
 use App\Services\OrganizationContext;
 use App\Services\Sms\LogSmsSender;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -53,9 +62,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Auth\Events\Failed;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use SocialiteProviders\Microsoft\MicrosoftExtendSocialite;
 use Spatie\Activitylog\Facades\CauserResolver as ActivityCauserResolver;
@@ -126,7 +132,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Organization::class, OrganizationPolicy::class);
         Gate::policy(Branch::class, BranchPolicy::class);
+        Gate::policy(Asset::class, AssetPolicy::class);
         Gate::policy(AssetStatus::class, AssetStatusPolicy::class);
+        Gate::policy(AssetCondition::class, AssetConditionPolicy::class);
         Gate::policy(AssetClass::class, AssetClassPolicy::class);
         Gate::policy(Unit::class, UnitPolicy::class);
         Gate::policy(Department::class, DepartmentPolicy::class);
@@ -139,6 +147,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(UserInvitation::class, InvitationPolicy::class);
         Gate::policy(UserDelegation::class, UserDelegationPolicy::class);
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
+        Gate::policy(SavedFilter::class, SavedFilterPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
 
         Gate::define('viewApiDocs', function ($user): bool {

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 export default function OrganizationOnboardingProfile() {
@@ -23,7 +24,7 @@ export default function OrganizationOnboardingProfile() {
                 />
 
                 <Form
-                    {...OrganizationOnboardingController.storeProfile.form()}
+                    {...toForm(OrganizationOnboardingController.storeProfile())}
                     className="max-w-2xl space-y-6"
                 >
                     {({ processing, errors }) => (

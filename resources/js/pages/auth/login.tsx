@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -31,7 +32,7 @@ export default function Login({
             <Head title={t('auth.login')} />
 
             <Form
-                {...store.form()}
+                {...toForm(store())}
                 resetOnSuccess={['password']}
                 className="flex flex-col gap-6"
             >

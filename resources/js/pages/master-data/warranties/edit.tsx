@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as masterDataIndex } from '@/routes/master-data';
 import { index as warrantiesIndex } from '@/routes/master-data/warranties';
 
@@ -31,7 +32,7 @@ export default function EditWarranty({ item }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title={t('warranties.edit.title')} description={item.name} />
 
-                <Form {...WarrantyController.update.form({ warranty: item.id })} className="max-w-2xl space-y-6">
+                <Form {...toForm(WarrantyController.update({ warranty: item.id }))} className="max-w-2xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <Card className="space-y-4 p-6">
@@ -77,4 +78,3 @@ EditWarranty.layout = {
         { title: 'warranties.edit.title', href: warrantiesIndex() },
     ],
 };
-

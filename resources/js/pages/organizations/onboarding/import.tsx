@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { importTemplate } from '@/routes/organizations';
 import { index as organizationsIndex } from '@/routes/organizations';
 
@@ -49,7 +50,7 @@ export default function OrganizationOnboardingImport({ importRuns }: Props) {
                     </div>
 
                     <Form
-                        {...OrganizationOnboardingController.storeImport.form()}
+                        {...toForm(OrganizationOnboardingController.storeImport())}
                         className="space-y-4"
                         encType="multipart/form-data"
                     >

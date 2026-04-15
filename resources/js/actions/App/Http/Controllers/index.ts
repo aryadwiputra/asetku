@@ -20,6 +20,13 @@ import NotificationsController from './NotificationsController'
 import MediaAssetController from './MediaAssetController'
 import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
+import QrController from './QrController'
+import AssetController from './AssetController'
+import AssetAttachmentController from './AssetAttachmentController'
+import AssetLabelController from './AssetLabelController'
+import AssetExportController from './AssetExportController'
+import AssetSavedFilterController from './AssetSavedFilterController'
+import AssetImportController from './AssetImportController'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
@@ -44,6 +51,13 @@ const Controllers = {
     MediaAssetController: Object.assign(MediaAssetController, MediaAssetController),
     MediaUploadController: Object.assign(MediaUploadController, MediaUploadController),
     MasterData: Object.assign(MasterData, MasterData),
+    QrController: Object.assign(QrController, QrController),
+    AssetController: Object.assign(AssetController, AssetController),
+    AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
+    AssetLabelController: Object.assign(AssetLabelController, AssetLabelController),
+    AssetExportController: Object.assign(AssetExportController, AssetExportController),
+    AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),
+    AssetImportController: Object.assign(AssetImportController, AssetImportController),
 }
 
 export default Controllers

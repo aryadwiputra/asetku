@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as branchesIndex } from '@/routes/branches';
 
 type Props = {
@@ -46,7 +47,7 @@ export default function EditBranch({ branch }: Props) {
                 <Heading variant="small" title={t('branches.edit.title')} description={branch.name} />
 
                 <Form
-                    {...BranchController.update.form({ branch: branch.id })}
+                    {...toForm(BranchController.update({ branch: branch.id }))}
                     className="max-w-2xl space-y-6"
                 >
                     {({ processing, errors }) => (

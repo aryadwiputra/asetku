@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as branchesIndex } from '@/routes/branches';
 
 export default function CreateBranch() {
@@ -30,7 +31,7 @@ export default function CreateBranch() {
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title={t('branches.create.title')} description={t('branches.create.description')} />
 
-                <Form {...BranchController.store.form()} className="max-w-2xl space-y-6">
+                <Form {...toForm(BranchController.store())} className="max-w-2xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <Card className="space-y-4 p-6">

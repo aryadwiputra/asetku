@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/input-otp';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { smsRecovery } from '@/routes/two-factor';
 import { store } from '@/routes/two-factor/login';
 
@@ -56,7 +57,7 @@ export default function TwoFactorChallenge() {
 
             <div className="space-y-6">
                 <Form
-                    {...store.form()}
+                    {...toForm(store())}
                     className="space-y-4"
                     resetOnError
                     resetOnSuccess={!showRecoveryInput}

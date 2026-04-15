@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { edit as editAppSettings } from '@/routes/app-settings';
 
 type Props = {
@@ -58,7 +59,7 @@ export default function AppSettings({ settings }: Props) {
                 </div>
 
                 <Form
-                    {...AppSettingsController.update.form()}
+                    {...toForm(AppSettingsController.update())}
                     encType="multipart/form-data"
                     className="space-y-6"
                     options={{ preserveScroll: true }}

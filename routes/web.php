@@ -13,9 +13,9 @@ use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\TwoFactorSmsRecoveryController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDelegationController;
 use App\Http\Controllers\UserInvitationController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -99,3 +99,4 @@ require __DIR__.'/settings.php';
 require __DIR__.'/notifications.php';
 require __DIR__.'/media.php';
 require __DIR__.'/master-data.php';
+require __DIR__.'/assets.php';

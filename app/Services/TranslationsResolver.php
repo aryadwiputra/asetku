@@ -110,6 +110,7 @@ class TranslationsResolver
             $modules[] = 'master_data';
             $modules[] = 'datatable';
             $modules[] = 'asset_statuses';
+            $modules[] = 'asset_conditions';
             $modules[] = 'asset_classes';
             $modules[] = 'units';
             $modules[] = 'departments';

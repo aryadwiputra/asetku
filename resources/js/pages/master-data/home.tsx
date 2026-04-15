@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 import { index as masterDataIndex } from '@/routes/master-data';
 import { index as assetStatusesIndex } from '@/routes/master-data/asset-statuses';
+import { index as assetConditionsIndex } from '@/routes/master-data/asset-conditions';
 import { index as assetClassesIndex } from '@/routes/master-data/asset-classes';
 import { index as unitsIndex } from '@/routes/master-data/units';
 import { index as departmentsIndex } from '@/routes/master-data/departments';
@@ -35,6 +36,12 @@ export default function MasterDataHome() {
             title: t('asset_statuses.title'),
             description: t('asset_statuses.description'),
             href: assetStatusesIndex.url(),
+        },
+        {
+            key: 'asset_conditions',
+            title: t('asset_conditions.title'),
+            description: t('asset_conditions.description'),
+            href: assetConditionsIndex.url(),
         },
         {
             key: 'asset_classes',

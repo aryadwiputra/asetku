@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -31,7 +32,7 @@ export default function OrganizationOnboardingPlan({ organization }: Props) {
                 />
 
                 <Form
-                    {...OrganizationOnboardingController.updatePlan.form()}
+                    {...toForm(OrganizationOnboardingController.updatePlan())}
                     className="max-w-2xl space-y-6"
                 >
                     {({ processing, errors }) => (

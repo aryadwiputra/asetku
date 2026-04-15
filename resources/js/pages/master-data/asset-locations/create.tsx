@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as masterDataIndex } from '@/routes/master-data';
 import { index as assetLocationsIndex } from '@/routes/master-data/asset-locations';
 
@@ -27,7 +28,7 @@ export default function CreateAssetLocation({ parents }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title={t('asset_locations.create.title')} description={t('asset_locations.create.description')} />
 
-                <Form {...AssetLocationController.store.form()} className="max-w-2xl space-y-6">
+                <Form {...toForm(AssetLocationController.store())} className="max-w-2xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <Card className="space-y-4 p-6">
@@ -91,4 +92,3 @@ CreateAssetLocation.layout = {
         { title: 'asset_locations.actions.new', href: AssetLocationController.create.url() },
     ],
 };
-

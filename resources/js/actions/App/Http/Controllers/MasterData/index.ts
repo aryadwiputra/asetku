@@ -1,5 +1,6 @@
 import MasterDataHomeController from './MasterDataHomeController'
 import AssetStatusController from './AssetStatusController'
+import AssetConditionController from './AssetConditionController'
 import AssetClassController from './AssetClassController'
 import UnitController from './UnitController'
 import DepartmentController from './DepartmentController'
@@ -13,6 +14,7 @@ import VendorContractController from './VendorContractController'
 const MasterData = {
     MasterDataHomeController: Object.assign(MasterDataHomeController, MasterDataHomeController),
     AssetStatusController: Object.assign(AssetStatusController, AssetStatusController),
+    AssetConditionController: Object.assign(AssetConditionController, AssetConditionController),
     AssetClassController: Object.assign(AssetClassController, AssetClassController),
     UnitController: Object.assign(UnitController, UnitController),
     DepartmentController: Object.assign(DepartmentController, DepartmentController),

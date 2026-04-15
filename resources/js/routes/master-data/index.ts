@@ -1,5 +1,6 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 import assetStatuses from './asset-statuses'
+import assetConditions from './asset-conditions'
 import assetClasses from './asset-classes'
 import units from './units'
 import departments from './departments'
@@ -93,6 +94,7 @@ index.form = indexForm
 const masterData = {
     index: Object.assign(index, index),
     assetStatuses: Object.assign(assetStatuses, assetStatuses),
+    assetConditions: Object.assign(assetConditions, assetConditions),
     assetClasses: Object.assign(assetClasses, assetClasses),
     units: Object.assign(units, units),
     departments: Object.assign(departments, departments),

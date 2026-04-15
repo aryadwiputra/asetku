@@ -2,21 +2,22 @@
 
 namespace App\Inertia;
 
-use App\Models\Branch;
 use App\Models\AssetCategory;
 use App\Models\AssetClass;
+use App\Models\AssetCondition;
 use App\Models\AssetLocation;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
+use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Organization;
 use App\Models\PersonInCharge;
-use App\Services\FeatureFlagService;
-use App\Services\OrganizationContext;
-use App\Services\TranslationsResolver;
 use App\Models\Unit;
 use App\Models\VendorContract;
 use App\Models\Warranty;
+use App\Services\FeatureFlagService;
+use App\Services\OrganizationContext;
+use App\Services\TranslationsResolver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -90,6 +91,12 @@ class SharedProps
                 'create' => Gate::forUser($user)->allows('create', AssetStatus::class),
                 'update' => Gate::forUser($user)->allows('update', new AssetStatus),
                 'delete' => Gate::forUser($user)->allows('delete', new AssetStatus),
+            ],
+            'asset_conditions' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetCondition::class),
+                'create' => Gate::forUser($user)->allows('create', AssetCondition::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetCondition),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetCondition),
             ],
             'asset_classes' => [
                 'view' => Gate::forUser($user)->allows('viewAny', AssetClass::class),

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as organizationsIndex } from '@/routes/organizations';
 
 type Props = {
@@ -50,7 +51,7 @@ export default function EditOrganization({ organization }: Props) {
                 />
 
                 <Form
-                    {...OrganizationManagementController.update.form({ organization: organization.id })}
+                    {...toForm(OrganizationManagementController.update({ organization: organization.id }))}
                     className="max-w-3xl space-y-6"
                 >
                     {({ processing, errors }) => (

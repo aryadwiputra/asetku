@@ -11,6 +11,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 
 type Props = {
@@ -84,7 +85,7 @@ export default function TwoFactorRecoveryCodes({
 
                     {canRegenerateCodes && (
                         <Form
-                            {...regenerateRecoveryCodes.form()}
+                            {...toForm(regenerateRecoveryCodes())}
                             options={{ preserveScroll: true }}
                             onSuccess={fetchRecoveryCodes}
                         >

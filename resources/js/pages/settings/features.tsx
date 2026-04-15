@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as featureFlagsIndex } from '@/routes/feature-flags';
 
 type Flag = {
@@ -152,10 +153,8 @@ export default function FeatureFlags({ flags, roles }: Props) {
 
                 <Form
                     {...(editingFlag
-                        ? FeatureFlagsController.update.form({
-                              featureFlag: editingFlag.id,
-                          })
-                        : FeatureFlagsController.store.form())}
+                        ? toForm(FeatureFlagsController.update({ featureFlag: editingFlag.id }))
+                        : toForm(FeatureFlagsController.store()))}
                     options={{ preserveScroll: true }}
                     className="space-y-6"
                 >

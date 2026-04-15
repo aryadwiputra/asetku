@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as rolesIndex } from '@/routes/roles';
 
 type PermissionGroup = {
@@ -42,7 +43,7 @@ export default function CreateRole({ permission_groups }: Props) {
                 />
 
                 <Form
-                    {...RoleController.store.form()}
+                    {...toForm(RoleController.store())}
                     className="max-w-3xl space-y-6"
                 >
                     {({ processing, errors }) => (

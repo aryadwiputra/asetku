@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as masterDataIndex } from '@/routes/master-data';
 import { index as departmentsIndex } from '@/routes/master-data/departments';
 
@@ -27,7 +28,7 @@ export default function CreateDepartment({ branches }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <Heading variant="small" title={t('departments.create.title')} description={t('departments.create.description')} />
 
-                <Form {...DepartmentController.store.form()} className="max-w-2xl space-y-6">
+                <Form {...toForm(DepartmentController.store())} className="max-w-2xl space-y-6">
                     {({ processing, errors }) => (
                         <>
                             <Card className="space-y-4 p-6">
@@ -90,4 +91,3 @@ CreateDepartment.layout = {
         { title: 'departments.actions.new', href: DepartmentController.create.url() },
     ],
 };
-

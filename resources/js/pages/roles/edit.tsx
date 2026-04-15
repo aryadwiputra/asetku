@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { index as rolesIndex } from '@/routes/roles';
 
 type PermissionGroup = {
@@ -51,7 +52,7 @@ export default function EditRole({ role, permission_groups }: Props) {
                 />
 
                 <Form
-                    {...RoleController.update.form({ role: role.id })}
+                    {...toForm(RoleController.update({ role: String(role.id) }))}
                     className="max-w-3xl space-y-6"
                 >
                     {({ processing, errors }) => (

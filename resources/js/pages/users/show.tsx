@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useCan } from '@/hooks/use-permission';
 import { useTranslation } from '@/hooks/use-translation';
+import { toForm } from '@/lib/to-form';
 import { approve, revoke, start, stop, store as delegationsStore } from '@/routes/delegations';
 import { index as usersIndex } from '@/routes/users';
 import type { User } from '@/types';
@@ -210,7 +211,7 @@ export default function ShowUser({
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 {canCreateDelegation && (
-                                    <Form {...delegationsStore.form()} className="grid gap-4">
+                                    <Form {...toForm(delegationsStore())} className="grid gap-4">
                                         {({ processing, errors }) => (
                                             <>
                                                 <input type="hidden" name="delegator_user_id" value={user.id} />
