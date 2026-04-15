@@ -22,7 +22,9 @@ class UpdateRoleRequest extends FormRequest
             return false;
         }
 
-        return $this->user()?->can('role.edit') ?? false;
+        $user = $this->user();
+
+        return $user?->can('role.update') === true || $user?->can('role.edit') === true;
     }
 
     /**

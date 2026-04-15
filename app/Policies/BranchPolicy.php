@@ -54,7 +54,7 @@ class BranchPolicy
 
     public function update(User $user, Branch $branch): bool
     {
-        if ($user->can('branch.edit')) {
+        if ($user->can('branch.update') || $user->can('branch.edit')) {
             return true;
         }
 
@@ -73,7 +73,7 @@ class BranchPolicy
 
     public function deactivate(User $user, Branch $branch): bool
     {
-        if ($user->can('branch.deactivate')) {
+        if ($user->can('branch.delete') || $user->can('branch.deactivate')) {
             return true;
         }
 

@@ -32,7 +32,7 @@ class RolePolicy
             return false;
         }
 
-        return $user->can('role.edit');
+        return $user->can('role.update') || $user->can('role.edit');
     }
 
     /**

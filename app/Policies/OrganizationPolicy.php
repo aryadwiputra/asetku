@@ -30,7 +30,7 @@ class OrganizationPolicy
             return false;
         }
 
-        if ($user->can('organization.edit')) {
+        if ($user->can('organization.update') || $user->can('organization.edit')) {
             return true;
         }
 
@@ -46,7 +46,7 @@ class OrganizationPolicy
             return false;
         }
 
-        if ($user->can('organization.deactivate')) {
+        if ($user->can('organization.delete') || $user->can('organization.deactivate')) {
             return true;
         }
 

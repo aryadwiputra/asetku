@@ -35,7 +35,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        if (! $user->can('user.edit')) {
+        if (! ($user->can('user.update') || $user->can('user.edit'))) {
             return false;
         }
 
@@ -96,7 +96,7 @@ class UserPolicy
      */
     public function bulkAction(User $user): bool
     {
-        return $user->can('user.edit') || $user->can('user.delete');
+        return $user->can('user.update') || $user->can('user.edit') || $user->can('user.delete');
     }
 
     /**
@@ -104,6 +104,23 @@ class UserPolicy
      */
     public function export(User $user): bool
     {
-        return $user->can('user.view');
+        return $user->can('user.export');
+    }
+
+    public function suspend(User $user, User $model): bool
+    {
+        if (! ($user->can('user.update') || $user->can('user.edit'))) {
+            return false;
+        }
+
+        if ($user->id === $model->id) {
+            return false;
+        }
+
+        if ($model->hasRole('super-admin') && ! $user->hasRole('super-admin')) {
+            return false;
+        }
+
+        return true;
     }
 }

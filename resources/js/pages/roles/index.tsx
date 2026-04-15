@@ -24,7 +24,7 @@ type Props = {
 };
 
 export default function RolesIndex({ roles }: Props) {
-    const canEdit = useCan('role.edit');
+    const canEdit = useCan('role.update');
     const canDelete = useCan('role.delete');
     const { t } = useTranslation();
 

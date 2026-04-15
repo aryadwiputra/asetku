@@ -16,10 +16,15 @@ class RolePermissionSeeder extends Seeder
      * @var array<string, list<string>>
      */
     private const PERMISSIONS = [
-        'user' => ['view', 'create', 'edit', 'delete', 'impersonate'],
-        'role' => ['view', 'create', 'edit', 'delete'],
-        'organization' => ['view', 'create', 'edit', 'deactivate'],
-        'branch' => ['view', 'create', 'edit', 'deactivate'],
+        // Standardized granular permissions (v2)
+        'user' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'role' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'organization' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'branch' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'invitation' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'delegation' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'access_policy' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'login_history' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'settings' => ['app.manage', 'mail.manage', 'flags.manage'],
         'media' => ['manage'],
         'activity' => ['view'],
@@ -32,22 +37,22 @@ class RolePermissionSeeder extends Seeder
      */
     private const ROLE_PERMISSIONS = [
         'admin' => [
-            'user.view',
-            'user.create',
-            'user.edit',
-            'user.delete',
-            'role.view',
-            'role.create',
+            // Standard permissions
+            'user.view', 'user.create', 'user.update', 'user.delete', 'user.approve', 'user.export',
+            'role.view', 'role.create', 'role.update', 'role.delete', 'role.approve', 'role.export',
+            'organization.view', 'organization.create', 'organization.update', 'organization.delete', 'organization.approve', 'organization.export',
+            'branch.view', 'branch.create', 'branch.update', 'branch.delete', 'branch.approve', 'branch.export',
+            'invitation.view', 'invitation.create', 'invitation.update', 'invitation.delete', 'invitation.approve', 'invitation.export',
+            'delegation.view', 'delegation.create', 'delegation.update', 'delegation.delete', 'delegation.approve', 'delegation.export',
+            'access_policy.view', 'access_policy.create', 'access_policy.update', 'access_policy.delete', 'access_policy.approve', 'access_policy.export',
+            'login_history.view', 'login_history.create', 'login_history.update', 'login_history.delete', 'login_history.approve', 'login_history.export',
+
+            // Legacy permissions kept for backward compatibility (v1)
+            'user.edit', 'user.impersonate',
             'role.edit',
-            'role.delete',
-            'organization.view',
-            'organization.create',
-            'organization.edit',
-            'organization.deactivate',
-            'branch.view',
-            'branch.create',
-            'branch.edit',
-            'branch.deactivate',
+            'organization.edit', 'organization.deactivate',
+            'branch.edit', 'branch.deactivate',
+
             'settings.app.manage',
             'settings.mail.manage',
             'settings.flags.manage',
@@ -84,6 +89,15 @@ class RolePermissionSeeder extends Seeder
                 Permission::findOrCreate("{$group}.{$action}");
             }
         }
+
+        // Legacy permissions (v1) that still exist in the app codebase.
+        Permission::findOrCreate('user.edit');
+        Permission::findOrCreate('user.impersonate');
+        Permission::findOrCreate('role.edit');
+        Permission::findOrCreate('organization.edit');
+        Permission::findOrCreate('organization.deactivate');
+        Permission::findOrCreate('branch.edit');
+        Permission::findOrCreate('branch.deactivate');
     }
 
     /**

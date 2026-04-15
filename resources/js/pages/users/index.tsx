@@ -30,7 +30,7 @@ type Props = {
 };
 
 export default function UsersIndex({ users, roles }: Props) {
-    const canEdit = useCan('user.edit');
+    const canEdit = useCan('user.update');
     const canDelete = useCan('user.delete');
     const canImpersonate = useCan('user.impersonate');
     const { t } = useTranslation();
