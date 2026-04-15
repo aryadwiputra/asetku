@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\Asset;
+use App\Models\AssetHistory;
 use App\Models\Branch;
 use App\Models\Organization;
 use App\Models\User;
 use App\Services\OrganizationContext;
 use Database\Seeders\RolePermissionSeeder;
+use Inertia\Testing\AssertableInertia as Assert;
 
 use function Pest\Laravel\actingAs;
 
@@ -25,11 +27,47 @@ test('assets index loads for organization member', function () {
     actingAs($user)
         ->get(route('assets.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (Assert $page) => $page
             ->component('assets/index')
             ->has('items')
-            ->has('filtersMeta')
-            ->has('savedFilters')
+            ->has('summary.total_count')
+            ->missing('filtersMeta')
+            ->missing('savedFilters')
+            ->loadDeferredProps(fn (Assert $reload) => $reload
+                ->has('filtersMeta')
+                ->has('savedFilters')
+            )
+        );
+});
+
+test('assets summary follows filters', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    $branchA = Branch::factory()->create(['organization_id' => $organization->id, 'code' => 'A']);
+    $branchB = Branch::factory()->create(['organization_id' => $organization->id, 'code' => 'B']);
+
+    Asset::query()->create([
+        'code' => 'AST-A-0001',
+        'name' => 'A1',
+        'branch_id' => $branchA->id,
+    ]);
+    Asset::query()->create([
+        'code' => 'AST-B-0001',
+        'name' => 'B1',
+        'branch_id' => $branchB->id,
+    ]);
+
+    actingAs($user)
+        ->get(route('assets.index', ['filters' => ['branch_id' => $branchA->id]]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('summary.total_count', 1)
         );
 });
 
@@ -126,5 +164,40 @@ test('asset labels print page loads', function () {
         ->assertInertia(fn ($page) => $page
             ->component('assets/labels/print')
             ->has('assets')
+        );
+});
+
+test('asset show includes history actor name', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+
+    $asset = Asset::query()->create([
+        'code' => 'AST-JKT-2026-0001',
+        'name' => 'Printer',
+        'branch_id' => $branch->id,
+    ]);
+
+    AssetHistory::query()->create([
+        'asset_id' => $asset->id,
+        'action' => 'updated',
+        'description' => 'Updated',
+        'changed_by' => $user->id,
+        'payload' => ['x' => 'y'],
+    ]);
+
+    actingAs($user)
+        ->get(route('assets.show', $asset))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('assets/show')
+            ->has('computedBookValue')
+            ->has('histories.0.actor.name')
         );
 });
