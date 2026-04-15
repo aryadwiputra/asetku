@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Queries;
+
+use App\Models\Asset;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
+
+class AssetListQuery
+{
+    /**
+     * @param  array<string, string>  $filters
+     */
+    public static function build(?User $user, ?string $search, array $filters): Builder
+    {
+        $query = Asset::query()
+            ->with([
+                'branch:id,name,code',
+                'department:id,name,code,branch_id',
+                'status:id,name,code',
+                'condition:id,name,code',
+                'category:id,name,code,parent_id',
+                'location:id,name,code,branch_id,parent_id',
+                'personInCharge:id,name',
+                'user:id,name',
+            ])
+            ->forUser($user);
+
+        $search = is_string($search) ? trim($search) : '';
+        if ($search !== '') {
+            $query->where(function (Builder $q) use ($search): void {
+                try {
+                    $q->whereFullText(['code', 'name', 'serial_number', 'brand', 'model'], $search);
+                } catch (QueryException) {
+                    $q->where('code', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhere('serial_number', 'like', "%{$search}%")
+                        ->orWhere('brand', 'like', "%{$search}%")
+                        ->orWhere('model', 'like', "%{$search}%");
+                }
+            });
+        }
+
+        self::applyFilters($query, $filters);
+
+        return $query;
+    }
+
+    /**
+     * @param  array<string, string>  $filters
+     */
+    private static function applyFilters(Builder $query, array $filters): void
+    {
+        $query->when(self::intFilter($filters, 'branch_id'), fn (Builder $q, int $id) => $q->where('branch_id', $id));
+        $query->when(self::intFilter($filters, 'department_id'), fn (Builder $q, int $id) => $q->where('department_id', $id));
+        $query->when(self::intFilter($filters, 'asset_category_id'), fn (Builder $q, int $id) => $q->where('asset_category_id', $id));
+        $query->when(self::intFilter($filters, 'asset_location_id'), fn (Builder $q, int $id) => $q->where('asset_location_id', $id));
+        $query->when(self::intFilter($filters, 'asset_status_id'), fn (Builder $q, int $id) => $q->where('asset_status_id', $id));
+        $query->when(self::intFilter($filters, 'asset_condition_id'), fn (Builder $q, int $id) => $q->where('asset_condition_id', $id));
+        $query->when(self::intFilter($filters, 'person_in_charge_id'), fn (Builder $q, int $id) => $q->where('person_in_charge_id', $id));
+        $query->when(self::intFilter($filters, 'asset_user_id'), fn (Builder $q, int $id) => $q->where('asset_user_id', $id));
+
+        $costMin = self::decimalFilter($filters, 'cost_min');
+        $costMax = self::decimalFilter($filters, 'cost_max');
+
+        if ($costMin !== null) {
+            $query->where('cost', '>=', $costMin);
+        }
+        if ($costMax !== null) {
+            $query->where('cost', '<=', $costMax);
+        }
+    }
+
+    /**
+     * @param  array<string, string>  $filters
+     */
+    private static function intFilter(array $filters, string $key): ?int
+    {
+        $value = $filters[$key] ?? null;
+
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+
+        if (! ctype_digit($value)) {
+            return null;
+        }
+
+        $int = (int) $value;
+
+        return $int > 0 ? $int : null;
+    }
+
+    /**
+     * @param  array<string, string>  $filters
+     */
+    private static function decimalFilter(array $filters, string $key): ?float
+    {
+        $value = $filters[$key] ?? null;
+
+        if (! is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        return max(0, (float) $value);
+    }
+}

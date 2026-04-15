@@ -11,10 +11,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Asset extends Model
 {
     use BelongsToOrganization, HasFactory, SoftDeletes;
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $asset): void {
+            if (! is_string($asset->qr_token) || $asset->qr_token === '') {
+                $asset->qr_token = Str::lower(Str::random(40));
+            }
+        });
+    }
 
     /**
      * @var list<string>
@@ -254,10 +264,24 @@ class Asset extends Model
         }
 
         $monthsUsed = max(0, $this->purchase_date->diffInMonths($asOf));
+        $monthsUsed = min($monthsUsed, $lifeMonths);
 
         if ($this->depreciation_method === 'diminishing') {
             $rate = pow($residual / max($cost, 1), 1 / max($lifeMonths, 1));
             $value = $cost * pow($rate, $monthsUsed);
+
+            return max($value, $residual);
+        }
+
+        if ($this->depreciation_method === 'syd') {
+            // Sum-of-years-digits, implemented at month granularity:
+            // weight(month k) = remaining_months / sum_{i=1..lifeMonths} i
+            $sumDigits = ($lifeMonths * ($lifeMonths + 1)) / 2;
+            $sumUsedWeights = ($monthsUsed * ((2 * $lifeMonths) - $monthsUsed + 1)) / 2;
+
+            $depreciable = max(0, $cost - $residual);
+            $depreciationUsed = $sumDigits > 0 ? ($depreciable * ($sumUsedWeights / $sumDigits)) : 0;
+            $value = $cost - $depreciationUsed;
 
             return max($value, $residual);
         }

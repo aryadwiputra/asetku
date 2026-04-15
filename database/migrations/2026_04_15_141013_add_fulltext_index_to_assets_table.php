@@ -17,6 +17,11 @@ return new class extends Migration
             return;
         }
 
+        $driver = Schema::getConnection()->getDriverName();
+        if ($driver === 'sqlite') {
+            return;
+        }
+
         Schema::table('assets', function (Blueprint $table) {
             $table->fullText(['code', 'name', 'serial_number', 'brand', 'model'], self::INDEX);
         });
@@ -28,6 +33,11 @@ return new class extends Migration
     public function down(): void
     {
         if (! Schema::hasTable('assets')) {
+            return;
+        }
+
+        $driver = Schema::getConnection()->getDriverName();
+        if ($driver === 'sqlite') {
             return;
         }
 
