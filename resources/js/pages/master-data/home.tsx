@@ -9,6 +9,9 @@ import { index as masterDataIndex } from '@/routes/master-data';
 import { index as assetStatusesIndex } from '@/routes/master-data/asset-statuses';
 import { index as assetClassesIndex } from '@/routes/master-data/asset-classes';
 import { index as unitsIndex } from '@/routes/master-data/units';
+import { index as departmentsIndex } from '@/routes/master-data/departments';
+import { index as personInChargesIndex } from '@/routes/master-data/person-in-charges';
+import { index as assetUsersIndex } from '@/routes/master-data/asset-users';
 import { index as settingsIndex } from '@/routes/settings';
 
 type MasterDataItem = {
@@ -40,6 +43,24 @@ export default function MasterDataHome() {
             title: t('units.title'),
             description: t('units.description'),
             href: unitsIndex(),
+        },
+        {
+            key: 'departments',
+            title: t('departments.title'),
+            description: t('departments.description'),
+            href: departmentsIndex(),
+        },
+        {
+            key: 'person_in_charges',
+            title: t('person_in_charges.title'),
+            description: t('person_in_charges.description'),
+            href: personInChargesIndex(),
+        },
+        {
+            key: 'asset_users',
+            title: t('asset_users.title'),
+            description: t('asset_users.description'),
+            href: assetUsersIndex(),
         },
     ];
 

@@ -2,6 +2,9 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFo
 import assetStatuses from './asset-statuses'
 import assetClasses from './asset-classes'
 import units from './units'
+import departments from './departments'
+import personInCharges from './person-in-charges'
+import assetUsers from './asset-users'
 /**
 * @see \App\Http\Controllers\MasterData\MasterDataHomeController::index
 * @see app/Http/Controllers/MasterData/MasterDataHomeController.php:13
@@ -88,6 +91,9 @@ const masterData = {
     assetStatuses: Object.assign(assetStatuses, assetStatuses),
     assetClasses: Object.assign(assetClasses, assetClasses),
     units: Object.assign(units, units),
+    departments: Object.assign(departments, departments),
+    personInCharges: Object.assign(personInCharges, personInCharges),
+    assetUsers: Object.assign(assetUsers, assetUsers),
 }
 
 export default masterData
