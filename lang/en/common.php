@@ -37,6 +37,7 @@ return [
     'confirm' => 'Confirm',
     'cancel' => 'Cancel',
     'continue' => 'Continue',
+    'loading' => 'Loading…',
     'or' => 'or',
     'back' => 'Back',
     'apply' => 'Apply',

@@ -37,6 +37,7 @@ return [
     'confirm' => 'Konfirmasi',
     'cancel' => 'Batal',
     'continue' => 'Lanjutkan',
+    'loading' => 'Memuat…',
     'or' => 'atau',
     'back' => 'Kembali',
     'apply' => 'Terapkan',

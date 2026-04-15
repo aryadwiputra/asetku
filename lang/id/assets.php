@@ -23,6 +23,10 @@ return [
         'imei' => 'IMEI',
         'purchase_date' => 'Tanggal perolehan',
         'cost' => 'Harga perolehan',
+        'book_value' => 'Nilai buku',
+        'depreciation_method' => 'Metode depresiasi',
+        'useful_life_months' => 'Umur ekonomis (bulan)',
+        'residual_value' => 'Nilai residu',
         'latitude' => 'Lintang',
         'longitude' => 'Bujur',
     ],
@@ -49,18 +53,43 @@ return [
         'copy_qr_link' => 'Salin link QR',
     ],
 
+    'views' => [
+        'all' => 'Semua aset',
+        'manage' => 'Kelola tampilan',
+    ],
+
     'filters' => [
         'title' => 'Filter',
         'more' => 'Filter',
+        'active_count' => ':count aktif',
+        'clear_all' => 'Bersihkan semua',
+        'remove' => 'Hapus filter',
         'status' => 'Status',
         'condition' => 'Kondisi',
         'cost_min' => 'Biaya minimum',
         'cost_max' => 'Biaya maksimum',
+        'groups' => [
+            'structure' => 'Struktur',
+            'classification' => 'Klasifikasi',
+            'ownership' => 'Kepemilikan',
+            'finance' => 'Keuangan',
+        ],
+    ],
+
+    'kpis' => [
+        'total_assets' => 'Total aset',
+        'total_value' => 'Total nilai',
+        'by_status' => 'Berdasarkan status',
+        'by_condition' => 'Berdasarkan kondisi',
+        'others' => 'Lainnya',
+        'scoped' => 'Filter saat ini',
     ],
 
     'sections' => [
         'details' => 'Detail',
         'details_desc' => 'Informasi dasar dan kepemilikan.',
+        'financial' => 'Keuangan',
+        'financial_desc' => 'Ringkasan biaya dan depresiasi.',
         'history' => 'Riwayat',
         'history_desc' => 'Perubahan dan aktivitas terbaru.',
         'attachments' => 'Lampiran',
@@ -70,6 +99,11 @@ return [
         'metadata' => 'Metadata',
         'custom_fields' => 'Field tambahan',
         'map' => 'Peta',
+        'map_desc' => 'Koordinat aset (jika tersedia).',
+    ],
+
+    'map' => [
+        'empty' => 'Koordinat belum diatur.',
     ],
 
     'create' => [
