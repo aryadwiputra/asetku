@@ -3,14 +3,14 @@
 namespace App\Policies;
 
 use App\Policies\Concerns\OrganizationMasterDataPolicy;
-use App\Models\AssetStatus;
+use App\Models\Unit;
 use App\Models\User;
 
-class AssetStatusPolicy extends OrganizationMasterDataPolicy
+class UnitPolicy extends OrganizationMasterDataPolicy
 {
     protected function permissionPrefix(): string
     {
-        return 'asset_status';
+        return 'unit';
     }
 
     public function viewAny(User $user): bool
@@ -18,7 +18,7 @@ class AssetStatusPolicy extends OrganizationMasterDataPolicy
         return $this->canViewAny($user);
     }
 
-    public function view(User $user, AssetStatus $assetStatus): bool
+    public function view(User $user, Unit $unit): bool
     {
         return $this->viewAny($user);
     }
@@ -28,12 +28,12 @@ class AssetStatusPolicy extends OrganizationMasterDataPolicy
         return $this->canManage($user, 'create');
     }
 
-    public function update(User $user, AssetStatus $assetStatus): bool
+    public function update(User $user, Unit $unit): bool
     {
         return $this->canManage($user, 'update');
     }
 
-    public function delete(User $user, AssetStatus $assetStatus): bool
+    public function delete(User $user, Unit $unit): bool
     {
         return $this->canManage($user, 'delete');
     }

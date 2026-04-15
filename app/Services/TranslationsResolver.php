@@ -109,6 +109,15 @@ class TranslationsResolver
         if (str_starts_with($routeName, 'master-data.')) {
             $modules[] = 'master_data';
             $modules[] = 'asset_statuses';
+            $modules[] = 'asset_classes';
+            $modules[] = 'units';
+            $modules[] = 'departments';
+            $modules[] = 'person_in_charges';
+            $modules[] = 'asset_users';
+            $modules[] = 'asset_categories';
+            $modules[] = 'asset_locations';
+            $modules[] = 'warranties';
+            $modules[] = 'vendor_contracts';
         }
 
         return array_values(array_unique($modules));
