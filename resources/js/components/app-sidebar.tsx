@@ -38,7 +38,9 @@ export function AppSidebar() {
     const { orgAbilities } = usePage().props as {
         orgAbilities?: { branches?: { view?: boolean } };
     };
-    const { orgRole } = usePage().props as { orgRole?: string | null };
+    const { masterDataAbilities } = usePage().props as {
+        masterDataAbilities?: Record<string, { view: boolean }>;
+    };
     const userPermissions = permissions as string[];
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { t } = useTranslation();
@@ -89,7 +91,7 @@ export function AppSidebar() {
     const canManageMail = userPermissions.includes('settings.mail.manage');
     const canManageFlags = userPermissions.includes('settings.flags.manage');
     const canViewActivity = userPermissions.includes('activity.view');
-    const canViewMasterData = orgRole !== null && orgRole !== undefined;
+    const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
 
     const settingsItems: NavItem[] = [
         ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),

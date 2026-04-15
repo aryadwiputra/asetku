@@ -3,10 +3,20 @@
 namespace App\Inertia;
 
 use App\Models\Branch;
+use App\Models\AssetCategory;
+use App\Models\AssetClass;
+use App\Models\AssetLocation;
+use App\Models\AssetStatus;
+use App\Models\AssetUser;
+use App\Models\Department;
 use App\Models\Organization;
+use App\Models\PersonInCharge;
 use App\Services\FeatureFlagService;
 use App\Services\OrganizationContext;
 use App\Services\TranslationsResolver;
+use App\Models\Unit;
+use App\Models\VendorContract;
+use App\Models\Warranty;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -74,6 +84,69 @@ class SharedProps
             ],
         ];
 
+        $masterDataAbilities = $user ? [
+            'asset_statuses' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetStatus::class),
+                'create' => Gate::forUser($user)->allows('create', AssetStatus::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetStatus),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetStatus),
+            ],
+            'asset_classes' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetClass::class),
+                'create' => Gate::forUser($user)->allows('create', AssetClass::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetClass),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetClass),
+            ],
+            'units' => [
+                'view' => Gate::forUser($user)->allows('viewAny', Unit::class),
+                'create' => Gate::forUser($user)->allows('create', Unit::class),
+                'update' => Gate::forUser($user)->allows('update', new Unit),
+                'delete' => Gate::forUser($user)->allows('delete', new Unit),
+            ],
+            'departments' => [
+                'view' => Gate::forUser($user)->allows('viewAny', Department::class),
+                'create' => Gate::forUser($user)->allows('create', Department::class),
+                'update' => Gate::forUser($user)->allows('update', new Department),
+                'delete' => Gate::forUser($user)->allows('delete', new Department),
+            ],
+            'person_in_charges' => [
+                'view' => Gate::forUser($user)->allows('viewAny', PersonInCharge::class),
+                'create' => Gate::forUser($user)->allows('create', PersonInCharge::class),
+                'update' => Gate::forUser($user)->allows('update', new PersonInCharge),
+                'delete' => Gate::forUser($user)->allows('delete', new PersonInCharge),
+            ],
+            'asset_users' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetUser::class),
+                'create' => Gate::forUser($user)->allows('create', AssetUser::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetUser),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetUser),
+            ],
+            'asset_categories' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetCategory::class),
+                'create' => Gate::forUser($user)->allows('create', AssetCategory::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetCategory),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetCategory),
+            ],
+            'asset_locations' => [
+                'view' => Gate::forUser($user)->allows('viewAny', AssetLocation::class),
+                'create' => Gate::forUser($user)->allows('create', AssetLocation::class),
+                'update' => Gate::forUser($user)->allows('update', new AssetLocation),
+                'delete' => Gate::forUser($user)->allows('delete', new AssetLocation),
+            ],
+            'warranties' => [
+                'view' => Gate::forUser($user)->allows('viewAny', Warranty::class),
+                'create' => Gate::forUser($user)->allows('create', Warranty::class),
+                'update' => Gate::forUser($user)->allows('update', new Warranty),
+                'delete' => Gate::forUser($user)->allows('delete', new Warranty),
+            ],
+            'vendor_contracts' => [
+                'view' => Gate::forUser($user)->allows('viewAny', VendorContract::class),
+                'create' => Gate::forUser($user)->allows('create', VendorContract::class),
+                'update' => Gate::forUser($user)->allows('update', new VendorContract),
+                'delete' => Gate::forUser($user)->allows('delete', new VendorContract),
+            ],
+        ] : (object) [];
+
         return [
             'name' => settings('app.name', config('app.name')),
             'appLogoUrl' => $logoUrl,
@@ -84,6 +157,7 @@ class SharedProps
             'organizations' => $organizations,
             'orgRole' => $currentOrganizationRole,
             'orgAbilities' => $orgAbilities,
+            'masterDataAbilities' => $masterDataAbilities,
             'permissions' => $user ? $user->getAllPermissions()->pluck('name')->toArray() : [],
             'roles' => $user ? $user->getRoleNames()->toArray() : [],
             'features' => $featureFlags->enabledKeysForUser($user),
@@ -139,6 +213,7 @@ declare module '@inertiajs/core' {
                 organizations: { create: boolean; update: boolean; deactivate: boolean };
                 branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
             };
+            masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
             permissions: string[];
             roles: string[];
             features: string[];

@@ -1,4 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import assetStatuses from './asset-statuses'
+import assetClasses from './asset-classes'
+import units from './units'
 /**
 * @see \App\Http\Controllers\MasterData\MasterDataHomeController::index
 * @see app/Http/Controllers/MasterData/MasterDataHomeController.php:13
@@ -82,6 +85,9 @@ index.form = indexForm
 
 const masterData = {
     index: Object.assign(index, index),
+    assetStatuses: Object.assign(assetStatuses, assetStatuses),
+    assetClasses: Object.assign(assetClasses, assetClasses),
+    units: Object.assign(units, units),
 }
 
 export default masterData
