@@ -1,4 +1,5 @@
 import Api from './Api'
+import InvitationAcceptController from './InvitationAcceptController'
 import LocaleController from './LocaleController'
 import OrganizationController from './OrganizationController'
 import OrganizationSwitchController from './OrganizationSwitchController'
@@ -6,6 +7,7 @@ import OrganizationImportTemplateController from './OrganizationImportTemplateCo
 import OrganizationManagementController from './OrganizationManagementController'
 import OrganizationOnboardingController from './OrganizationOnboardingController'
 import BranchController from './BranchController'
+import UserInvitationController from './UserInvitationController'
 import UserController from './UserController'
 import RoleController from './RoleController'
 import ImpersonationController from './ImpersonationController'
@@ -17,6 +19,7 @@ import MediaUploadController from './MediaUploadController'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
+    InvitationAcceptController: Object.assign(InvitationAcceptController, InvitationAcceptController),
     LocaleController: Object.assign(LocaleController, LocaleController),
     OrganizationController: Object.assign(OrganizationController, OrganizationController),
     OrganizationSwitchController: Object.assign(OrganizationSwitchController, OrganizationSwitchController),
@@ -24,6 +27,7 @@ const Controllers = {
     OrganizationManagementController: Object.assign(OrganizationManagementController, OrganizationManagementController),
     OrganizationOnboardingController: Object.assign(OrganizationOnboardingController, OrganizationOnboardingController),
     BranchController: Object.assign(BranchController, BranchController),
+    UserInvitationController: Object.assign(UserInvitationController, UserInvitationController),
     UserController: Object.assign(UserController, UserController),
     RoleController: Object.assign(RoleController, RoleController),
     ImpersonationController: Object.assign(ImpersonationController, ImpersonationController),

@@ -6,7 +6,9 @@ use App\Listeners\ApplyNotificationPreferences;
 use App\Models\Branch;
 use App\Models\MediaAsset;
 use App\Models\Organization;
+use App\Models\UserInvitation;
 use App\Policies\BranchPolicy;
+use App\Policies\InvitationPolicy;
 use App\Policies\MediaAssetPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\RolePolicy;
@@ -77,6 +79,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Organization::class, OrganizationPolicy::class);
         Gate::policy(Branch::class, BranchPolicy::class);
+        Gate::policy(UserInvitation::class, InvitationPolicy::class);
         Gate::policy(MediaAsset::class, MediaAssetPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
 

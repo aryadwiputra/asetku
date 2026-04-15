@@ -3,6 +3,7 @@
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ColumnPreferenceController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\InvitationAcceptController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationImportTemplateController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\OrganizationManagementController;
 use App\Http\Controllers\OrganizationOnboardingController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserInvitationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -17,6 +19,9 @@ use Laravel\Fortify\Features;
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
+
+Route::get('invites/{token}', [InvitationAcceptController::class, 'show'])->name('invites.show');
+Route::post('invites/{token}', [InvitationAcceptController::class, 'store'])->name('invites.accept');
 
 Route::post('locale', LocaleController::class)->name('locale.update');
 
@@ -53,6 +58,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Branches
     Route::resource('branches', BranchController::class);
+
+    // Invitations
+    Route::post('invitations', [UserInvitationController::class, 'store'])->name('invitations.store');
 
     // User Management
     Route::resource('users', UserController::class);

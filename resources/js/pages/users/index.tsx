@@ -1,11 +1,16 @@
 import { Head, router } from '@inertiajs/react';
 import { CircleCheck, CircleX, Eye, Pencil, Plus, Shield, Trash2, UserCog, Users } from 'lucide-react';
 import UserController from '@/actions/App/Http/Controllers/UserController';
+import UserInvitationController from '@/actions/App/Http/Controllers/UserInvitationController';
 import { Can } from '@/components/can';
 import { DataTable } from '@/components/data-table/data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCan } from '@/hooks/use-permission';
 import { useTranslation } from '@/hooks/use-translation';
 import { start as impersonateStart } from '@/routes/impersonate';
@@ -13,6 +18,7 @@ import { index as rolesIndex } from '@/routes/roles';
 import { index as usersIndex } from '@/routes/users';
 import { bulkAction as usersBulkAction, exportMethod as usersExport } from '@/routes/users';
 import type { DataTableColumn, DataTableFilter, PaginatedData, RowAction } from '@/types/datatable';
+import { useState } from 'react';
 
 type UserRow = {
     id: number;
@@ -33,7 +39,11 @@ export default function UsersIndex({ users, roles }: Props) {
     const canEdit = useCan('user.update');
     const canDelete = useCan('user.delete');
     const canImpersonate = useCan('user.impersonate');
+    const canInvite = useCan('invitation.create') || useCan('user.create');
     const { t } = useTranslation();
+    const [inviteOpen, setInviteOpen] = useState(false);
+    const [inviteEmail, setInviteEmail] = useState('');
+    const [inviteRole, setInviteRole] = useState<'Member' | 'Manager' | 'Admin' | 'Owner'>('Member');
 
     const columns: DataTableColumn<UserRow>[] = [
         {
@@ -210,6 +220,78 @@ export default function UsersIndex({ users, roles }: Props) {
                     </div>
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        {canInvite && (
+                            <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" className="w-full sm:w-auto">
+                                        <UserCog className="mr-1 h-4 w-4" />
+                                        Undang
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Undang pengguna</DialogTitle>
+                                        <DialogDescription>
+                                            Kirim undangan via email. Tautan kadaluarsa dalam 48 jam.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-4">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="invite_email">Email</Label>
+                                            <Input
+                                                id="invite_email"
+                                                type="email"
+                                                value={inviteEmail}
+                                                onChange={(e) => setInviteEmail(e.target.value)}
+                                                placeholder="nama@perusahaan.com"
+                                            />
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label>Role organisasi</Label>
+                                            <Select
+                                                value={inviteRole}
+                                                onValueChange={(value) => {
+                                                    if (value === 'Owner' || value === 'Admin' || value === 'Manager' || value === 'Member') {
+                                                        setInviteRole(value);
+                                                    }
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="Member">Anggota</SelectItem>
+                                                    <SelectItem value="Manager">Manajer</SelectItem>
+                                                    <SelectItem value="Admin">Admin</SelectItem>
+                                                    <SelectItem value="Owner">Pemilik</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button
+                                            onClick={() => {
+                                                router.post(
+                                                    UserInvitationController.store().url,
+                                                    { email: inviteEmail, org_role: inviteRole },
+                                                    {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
+                                                            setInviteOpen(false);
+                                                            setInviteEmail('');
+                                                            setInviteRole('Member');
+                                                        },
+                                                    },
+                                                );
+                                            }}
+                                            disabled={inviteEmail.trim() === ''}
+                                        >
+                                            Kirim undangan
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        )}
                         <Can permission="role.view">
                             <Button
                                 variant="outline"

@@ -30,6 +30,8 @@ createInertiaApp({
                 return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
+            case name.startsWith('invites/'):
+                return AuthLayout;
             default:
                 return AppLayout;
         }
