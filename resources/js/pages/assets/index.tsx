@@ -936,16 +936,11 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                     {t('assets.filters.active_count', { count: activeFilterCount })}
                                 </CardDescription>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={clearAllFilters}
-                                    disabled={activeFilterCount === 0}
-                                >
-                                    {t('common.clear')}
-                                </Button>
-                            </div>
+                            {activeFilterCount > 0 ? (
+                                <Badge variant="secondary" className="shrink-0">
+                                    {activeFilterCount}
+                                </Badge>
+                            ) : null}
                         </CardHeader>
                         <CardContent className="px-4">
                             {!filtersMeta ? (
@@ -956,239 +951,247 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                     <div className="h-8 animate-pulse rounded-md bg-muted" />
                                 </div>
                             ) : (
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-                                        <div className="grid w-full gap-1.5 sm:w-[220px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.branch')}</Label>
-                                            <Select
-                                                value={branchId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextBranchId = value === 'all' ? '' : value;
-                                                    setBranchId(nextBranchId);
-                                                    setDepartmentId('');
-                                                    setLocationId('');
-                                                    applyFiltersWith({ branchId: nextBranchId, departmentId: '', locationId: '' });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.branch')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.branch') })}</SelectItem>
-                                                    {filterSelects.branches.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[240px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.department')}</Label>
-                                            <Select
-                                                value={departmentId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextDepartmentId = value === 'all' ? '' : value;
-                                                    setDepartmentId(nextDepartmentId);
-                                                    applyFiltersWith({ departmentId: nextDepartmentId });
-                                                }}
-                                                disabled={filterSelects.departments.length === 0}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.department')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.department') })}</SelectItem>
-                                                    {filterSelects.departments.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[240px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.location')}</Label>
-                                            <Select
-                                                value={locationId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextLocationId = value === 'all' ? '' : value;
-                                                    setLocationId(nextLocationId);
-                                                    applyFiltersWith({ locationId: nextLocationId });
-                                                }}
-                                                disabled={filterSelects.locations.length === 0}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.location')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.location') })}</SelectItem>
-                                                    {filterSelects.locations.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[240px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.category')}</Label>
-                                            <Select
-                                                value={categoryId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextCategoryId = value === 'all' ? '' : value;
-                                                    setCategoryId(nextCategoryId);
-                                                    applyFiltersWith({ categoryId: nextCategoryId });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.category')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.category') })}</SelectItem>
-                                                    {filterSelects.categories.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[200px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.filters.status')}</Label>
-                                            <Select
-                                                value={statusId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextStatusId = value === 'all' ? '' : value;
-                                                    setStatusId(nextStatusId);
-                                                    applyFiltersWith({ statusId: nextStatusId });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.status')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.status') })}</SelectItem>
-                                                    {filterSelects.statuses.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[200px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.filters.condition')}</Label>
-                                            <Select
-                                                value={conditionId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextConditionId = value === 'all' ? '' : value;
-                                                    setConditionId(nextConditionId);
-                                                    applyFiltersWith({ conditionId: nextConditionId });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.condition')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.condition') })}</SelectItem>
-                                                    {filterSelects.conditions.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                <form
+                                    className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        applyFilters();
+                                    }}
+                                >
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.branch')}</Label>
+                                        <Select
+                                            value={branchId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextBranchId = value === 'all' ? '' : value;
+                                                setBranchId(nextBranchId);
+                                                setDepartmentId('');
+                                                setLocationId('');
+                                                applyFiltersWith({ branchId: nextBranchId, departmentId: '', locationId: '' });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.branch')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.branch') })}</SelectItem>
+                                                {filterSelects.branches.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
-                                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-                                        <div className="grid w-full gap-1.5 sm:w-[260px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.pic')}</Label>
-                                            <Select
-                                                value={picId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextPicId = value === 'all' ? '' : value;
-                                                    setPicId(nextPicId);
-                                                    applyFiltersWith({ picId: nextPicId });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.pic')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.pic') })}</SelectItem>
-                                                    {filterSelects.pics.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.department')}</Label>
+                                        <Select
+                                            value={departmentId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextDepartmentId = value === 'all' ? '' : value;
+                                                setDepartmentId(nextDepartmentId);
+                                                applyFiltersWith({ departmentId: nextDepartmentId });
+                                            }}
+                                            disabled={filterSelects.departments.length === 0}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.department')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.department') })}</SelectItem>
+                                                {filterSelects.departments.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
-                                        <div className="grid w-full gap-1.5 sm:w-[260px]">
-                                            <Label className="text-xs text-muted-foreground">{t('assets.fields.asset_user')}</Label>
-                                            <Select
-                                                value={assetUserId || 'all'}
-                                                onValueChange={(value) => {
-                                                    const nextAssetUserId = value === 'all' ? '' : value;
-                                                    setAssetUserId(nextAssetUserId);
-                                                    applyFiltersWith({ assetUserId: nextAssetUserId });
-                                                }}
-                                            >
-                                                <SelectTrigger size="sm" className="w-full">
-                                                    <SelectValue placeholder={t('assets.placeholders.asset_user')} />
-                                                </SelectTrigger>
-                                                <SelectContent align="start">
-                                                    <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.asset_user') })}</SelectItem>
-                                                    {filterSelects.assetUsers.map((opt) => (
-                                                        <SelectItem key={opt.value} value={opt.value}>
-                                                            {opt.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.location')}</Label>
+                                        <Select
+                                            value={locationId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextLocationId = value === 'all' ? '' : value;
+                                                setLocationId(nextLocationId);
+                                                applyFiltersWith({ locationId: nextLocationId });
+                                            }}
+                                            disabled={filterSelects.locations.length === 0}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.location')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.location') })}</SelectItem>
+                                                {filterSelects.locations.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
-                                        <div className="grid w-full gap-1.5 sm:w-[180px]">
-                                            <Label className="text-xs text-muted-foreground" htmlFor="costMin">
-                                                {t('assets.filters.cost_min')}
-                                            </Label>
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.category')}</Label>
+                                        <Select
+                                            value={categoryId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextCategoryId = value === 'all' ? '' : value;
+                                                setCategoryId(nextCategoryId);
+                                                applyFiltersWith({ categoryId: nextCategoryId });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.category')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.category') })}</SelectItem>
+                                                {filterSelects.categories.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.filters.status')}</Label>
+                                        <Select
+                                            value={statusId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextStatusId = value === 'all' ? '' : value;
+                                                setStatusId(nextStatusId);
+                                                applyFiltersWith({ statusId: nextStatusId });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.status')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.status') })}</SelectItem>
+                                                {filterSelects.statuses.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.filters.condition')}</Label>
+                                        <Select
+                                            value={conditionId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextConditionId = value === 'all' ? '' : value;
+                                                setConditionId(nextConditionId);
+                                                applyFiltersWith({ conditionId: nextConditionId });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.condition')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.condition') })}</SelectItem>
+                                                {filterSelects.conditions.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.pic')}</Label>
+                                        <Select
+                                            value={picId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextPicId = value === 'all' ? '' : value;
+                                                setPicId(nextPicId);
+                                                applyFiltersWith({ picId: nextPicId });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.pic')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.pic') })}</SelectItem>
+                                                {filterSelects.pics.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.asset_user')}</Label>
+                                        <Select
+                                            value={assetUserId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextAssetUserId = value === 'all' ? '' : value;
+                                                setAssetUserId(nextAssetUserId);
+                                                applyFiltersWith({ assetUserId: nextAssetUserId });
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.asset_user')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.asset_user') })}</SelectItem>
+                                                {filterSelects.assetUsers.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5 sm:col-span-2 lg:col-span-2">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.cost')}</Label>
+                                        <div className="grid grid-cols-2 gap-2">
                                             <Input
                                                 id="costMin"
                                                 value={costMin}
                                                 onChange={(e) => setCostMin(e.target.value)}
                                                 inputMode="decimal"
+                                                placeholder={t('assets.filters.cost_min')}
                                                 className="h-8"
                                             />
-                                        </div>
-
-                                        <div className="grid w-full gap-1.5 sm:w-[180px]">
-                                            <Label className="text-xs text-muted-foreground" htmlFor="costMax">
-                                                {t('assets.filters.cost_max')}
-                                            </Label>
                                             <Input
                                                 id="costMax"
                                                 value={costMax}
                                                 onChange={(e) => setCostMax(e.target.value)}
                                                 inputMode="decimal"
+                                                placeholder={t('assets.filters.cost_max')}
                                                 className="h-8"
                                             />
                                         </div>
-
-                                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:self-end">
-                                            <Button size="sm" onClick={applyFilters} className="w-full sm:w-auto">
-                                                {t('common.apply')}
-                                            </Button>
-                                        </div>
                                     </div>
-                                </div>
+
+                                    <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:items-end sm:justify-end lg:col-span-2">
+                                        <Button size="sm" type="submit" className="w-full sm:w-auto">
+                                            {t('common.apply')}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full sm:w-auto"
+                                            onClick={clearAllFilters}
+                                            disabled={activeFilterCount === 0}
+                                        >
+                                            {t('assets.filters.clear_all')}
+                                        </Button>
+                                    </div>
+                                </form>
                             )}
                         </CardContent>
                     </Card>
