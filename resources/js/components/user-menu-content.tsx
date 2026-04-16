@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { Building2, Check, LogOut, Monitor, Moon, Plus, Search, Sun, User as UserIcon } from 'lucide-react';
+import { LogOut, Monitor, Moon, Sun, User as UserIcon } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -7,23 +7,15 @@ import {
     DropdownMenuRadioGroup,
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { useTranslation } from '@/hooks/use-translation';
 import { logout } from '@/routes';
 import { update as updateLocale } from '@/routes/locale';
 import { edit } from '@/routes/profile';
-import { index as organizationsIndex, switchMethod as switchOrganization } from '@/routes/organizations';
-import { profile as onboardingProfile } from '@/routes/organizations/onboarding';
 import type { User } from '@/types';
-import { useMemo, useState } from 'react';
 
 type Props = {
     user: User;
@@ -38,55 +30,6 @@ export function UserMenuContent({ user }: Props) {
         availableLocales: string[];
         localeLabels: Record<string, string>;
     };
-    const { organization, organizations, orgAbilities } = usePage().props as {
-        organization: { id: number; name: string } | null;
-        organizations: Array<{ id: number; name: string; slug: string; role: string | null; is_active: boolean }>;
-        orgAbilities: { organizations: { create: boolean } };
-    };
-    const [orgSearch, setOrgSearch] = useState('');
-    const [orgSwitcherOpen, setOrgSwitcherOpen] = useState(false);
-    const orgSearchInputId = 'org-switcher-search';
-
-    const currentOrganization = useMemo(() => {
-        if (!organization) {
-            return null;
-        }
-
-        return organizations.find((org) => org.id === organization.id) ?? null;
-    }, [organization, organizations]);
-
-    const currentOrganizationRoleLabel = useMemo(() => {
-        const role = currentOrganization?.role;
-
-        if (!role) {
-            return null;
-        }
-
-        const labels: Record<string, string> = {
-            Owner: 'Pemilik',
-            Admin: 'Admin',
-            Manager: 'Manajer',
-            Member: 'Anggota',
-        };
-
-        return labels[role] ?? role;
-    }, [currentOrganization?.role]);
-
-    const filteredOrganizations = useMemo(() => {
-        const query = orgSearch.trim().toLowerCase();
-
-        if (query === '') {
-            return organizations;
-        }
-
-        return organizations.filter((org) => {
-            return (
-                org.name.toLowerCase().includes(query) ||
-                org.slug.toLowerCase().includes(query) ||
-                (org.role ?? '').toLowerCase().includes(query)
-            );
-        });
-    }, [orgSearch, organizations]);
 
     const handleLogout = () => {
         cleanup();
@@ -113,141 +56,6 @@ export function UserMenuContent({ user }: Props) {
                         {t('common.profile')}
                     </Link>
                 </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-                <DropdownMenuSub
-                    open={orgSwitcherOpen}
-                    onOpenChange={(open) => {
-                        setOrgSwitcherOpen(open);
-
-                        if (!open) {
-                            setOrgSearch('');
-                            return;
-                        }
-
-                        requestAnimationFrame(() => {
-                            const input = document.getElementById(orgSearchInputId);
-                            if (input instanceof HTMLInputElement) {
-                                input.focus();
-                                input.select();
-                            }
-                        });
-                    }}
-                >
-                    <DropdownMenuSubTrigger className="w-full">
-                        <Building2 className="h-4 w-4" />
-                        <div className="flex min-w-0 flex-1 items-center gap-2">
-                            <span className="truncate font-medium">
-                                {organization?.name ?? 'Pilih organisasi'}
-                            </span>
-                            {currentOrganizationRoleLabel && (
-                                <Badge variant="secondary">{currentOrganizationRoleLabel}</Badge>
-                            )}
-                            {currentOrganization && !currentOrganization.is_active && (
-                                <Badge variant="outline">Nonaktif</Badge>
-                            )}
-                        </div>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className="w-80">
-                        <DropdownMenuLabel>Ganti organisasi</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-
-                        <div className="px-2 pb-2">
-                            <div className="relative">
-                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                <Input
-                                    id={orgSearchInputId}
-                                    value={orgSearch}
-                                    onChange={(e) => setOrgSearch(e.target.value)}
-                                    placeholder="Cari organisasi…"
-                                    className="h-9 pr-9 pl-9"
-                                />
-                                {orgSearch.trim() !== '' && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setOrgSearch('')}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs text-muted-foreground hover:bg-muted/40 hover:text-foreground"
-                                    >
-                                        Bersihkan
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="max-h-72 overflow-y-auto px-1">
-                            {filteredOrganizations.length === 0 ? (
-                                <div className="px-3 pb-2 text-sm text-muted-foreground">
-                                    Organisasi tidak ditemukan.
-                                </div>
-                            ) : (
-                                filteredOrganizations.map((org) => {
-                                    const isCurrent = organization?.id === org.id;
-                                    const roleLabel =
-                                        org.role === null
-                                            ? null
-                                            : ({
-                                                  Owner: 'Pemilik',
-                                                  Admin: 'Admin',
-                                                  Manager: 'Manajer',
-                                                  Member: 'Anggota',
-                                              }[org.role] ?? org.role);
-
-                                    return (
-                                        <DropdownMenuItem
-                                            key={org.id}
-                                            disabled={!org.is_active || isCurrent}
-                                            onSelect={(e) => {
-                                                e.preventDefault();
-                                                cleanup();
-                                                setOrgSearch('');
-                                                router.post(
-                                                    switchOrganization({ organization: org.id }).url,
-                                                    {},
-                                                    { preserveScroll: true },
-                                                );
-                                            }}
-                                            className="flex items-center justify-between gap-2"
-                                        >
-                                            <div className="flex min-w-0 items-center gap-2">
-                                                <span className="truncate font-medium">{org.name}</span>
-                                                {roleLabel && <Badge variant="secondary">{roleLabel}</Badge>}
-                                                {!org.is_active && <Badge variant="outline">Nonaktif</Badge>}
-                                            </div>
-
-                                            {isCurrent && <Check className="h-4 w-4 text-emerald-600" />}
-                                        </DropdownMenuItem>
-                                    );
-                                })
-                            )}
-                        </div>
-
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link
-                                className="block w-full cursor-pointer"
-                                href={organizationsIndex()}
-                                prefetch
-                                onClick={cleanup}
-                            >
-                                Kelola organisasi
-                            </Link>
-                        </DropdownMenuItem>
-                        {orgAbilities.organizations.create && (
-                            <DropdownMenuItem asChild>
-                                <Link
-                                    className="block w-full cursor-pointer"
-                                    href={onboardingProfile()}
-                                    prefetch
-                                    onClick={cleanup}
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Buat organisasi baru
-                                </Link>
-                            </DropdownMenuItem>
-                        )}
-                    </DropdownMenuSubContent>
-                </DropdownMenuSub>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuLabel>{t('common.theme')}</DropdownMenuLabel>

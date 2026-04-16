@@ -1,15 +1,17 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Package, Settings, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Package, Plus, Settings, UploadCloud, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { OrganizationSwitcherMenu } from '@/components/organization-switcher-menu';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
@@ -31,7 +33,7 @@ import { index as mediaIndex } from '@/routes/media';
 import { index as organizationsIndex } from '@/routes/organizations';
 import { index as branchesIndex } from '@/routes/branches';
 import { index as masterDataIndex } from '@/routes/master-data';
-import { index as assetsIndex } from '@/routes/assets';
+import { create as assetsCreate, index as assetsIndex } from '@/routes/assets';
 import { index as assetsImportIndex } from '@/routes/assets/import';
 import type { NavItem } from '@/types';
 
@@ -50,48 +52,53 @@ export function AppSidebar() {
 
     const canViewBranches = orgAbilities?.branches?.view === true;
     const canViewAssets = userPermissions.includes('asset.view') || Boolean(orgRole);
+    const canCreateAsset = userPermissions.includes('asset.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
 
-    const mainNavItems: NavItem[] = [
+    const workspaceNavItems: NavItem[] = [
         {
             title: t('common.dashboard'),
             href: dashboard(),
             icon: LayoutGrid,
         },
         {
-            title: 'Organizations',
+            title: t('common.organizations'),
             href: organizationsIndex(),
             icon: Building2,
         },
         ...(canViewBranches
             ? [
                   {
-                      title: 'Branches',
+                      title: t('common.branches'),
                       href: branchesIndex(),
                       icon: MapPin,
                   },
               ]
             : []),
-        ...(canViewAssets
-            ? [
-                  {
-                      title: t('common.assets'),
-                      href: assetsIndex(),
-                      icon: Package,
-                  },
-                  {
-                      title: t('common.asset_import'),
-                      href: assetsImportIndex(),
-                      icon: null,
-                  },
-              ]
-            : []),
+    ];
+
+    const assetsNavItems: NavItem[] = canViewAssets
+        ? [
+              {
+                  title: t('common.assets'),
+                  href: assetsIndex(),
+                  icon: Package,
+              },
+              {
+                  title: t('common.asset_import'),
+                  href: assetsImportIndex(),
+                  icon: null,
+              },
+          ]
+        : [];
+
+    const adminNavItems: NavItem[] = [
         ...(userPermissions.includes('user.view')
             ? [
                   {
                       title: t('common.user_management'),
                       href: usersIndex(),
                       icon: Users,
-                  },
+                      },
               ]
             : []),
         ...(userPermissions.includes('media.manage')
@@ -123,7 +130,7 @@ export function AppSidebar() {
         isCurrentOrParentUrl(settingsIndex()) ||
         settingsItems.some((item) => isCurrentOrParentUrl(item.href));
 
-    const showSettings = canManageApp || canManageMail || canManageFlags || canViewActivity;
+    const showSettings = canManageApp || canManageMail || canManageFlags || canViewActivity || canViewMasterData;
     const footerNavItems: NavItem[] = [
         {
             title: t('common.repository'),
@@ -148,13 +155,32 @@ export function AppSidebar() {
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                        <OrganizationSwitcherMenu variant="sidebar" />
+                    </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain label={t('common.workspace')} items={workspaceNavItems} />
+                {assetsNavItems.length > 0 ? (
+                    <NavMain
+                        label={t('common.assets')}
+                        items={assetsNavItems}
+                        action={
+                            canCreateAsset ? (
+                                <Link href={assetsCreate()} prefetch aria-label={t('common.new_asset')} title={t('common.new_asset')}>
+                                    <Plus />
+                                </Link>
+                            ) : null
+                        }
+                    />
+                ) : null}
+                {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (
                     <SidebarGroup className="px-2 py-0">
+                        <SidebarGroupLabel>{t('common.settings')}</SidebarGroupLabel>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <Collapsible defaultOpen={settingsActive}>
