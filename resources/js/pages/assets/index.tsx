@@ -1,4 +1,4 @@
-import { Deferred, Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Activity, Banknote, Box, Check, Eye, FileDown, Filter, Pencil, Plus, Printer, Save, Settings2, Tags, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -105,21 +105,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const [picId, setPicId] = useState<string>('');
     const [assetUserId, setAssetUserId] = useState<string>('');
 
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-
-        setCostMin(params.get('filters[cost_min]') ?? '');
-        setCostMax(params.get('filters[cost_max]') ?? '');
-        setBranchId(params.get('filters[branch_id]') ?? '');
-        setDepartmentId(params.get('filters[department_id]') ?? '');
-        setLocationId(params.get('filters[asset_location_id]') ?? '');
-        setCategoryId(params.get('filters[asset_category_id]') ?? '');
-        setStatusId(params.get('filters[asset_status_id]') ?? '');
-        setConditionId(params.get('filters[asset_condition_id]') ?? '');
-        setPicId(params.get('filters[person_in_charge_id]') ?? '');
-        setAssetUserId(params.get('filters[asset_user_id]') ?? '');
-    }, [pageUrl]);
-
     const [saveFilterOpen, setSaveFilterOpen] = useState(false);
     const [renameFilterOpen, setRenameFilterOpen] = useState(false);
     const [deleteFilterOpen, setDeleteFilterOpen] = useState(false);
@@ -128,6 +113,35 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const [setAsDefault, setSetAsDefault] = useState(false);
 
     const savedFiltersResolved = savedFilters ?? [];
+    const appliedParams = useMemo(() => new URLSearchParams(pageUrl.split('?')[1] ?? ''), [pageUrl]);
+    const appliedFilters = useMemo(
+        () => ({
+            costMin: appliedParams.get('filters[cost_min]') ?? '',
+            costMax: appliedParams.get('filters[cost_max]') ?? '',
+            branchId: appliedParams.get('filters[branch_id]') ?? '',
+            departmentId: appliedParams.get('filters[department_id]') ?? '',
+            locationId: appliedParams.get('filters[asset_location_id]') ?? '',
+            categoryId: appliedParams.get('filters[asset_category_id]') ?? '',
+            statusId: appliedParams.get('filters[asset_status_id]') ?? '',
+            conditionId: appliedParams.get('filters[asset_condition_id]') ?? '',
+            picId: appliedParams.get('filters[person_in_charge_id]') ?? '',
+            assetUserId: appliedParams.get('filters[asset_user_id]') ?? '',
+        }),
+        [appliedParams],
+    );
+
+    useEffect(() => {
+        setCostMin(appliedFilters.costMin);
+        setCostMax(appliedFilters.costMax);
+        setBranchId(appliedFilters.branchId);
+        setDepartmentId(appliedFilters.departmentId);
+        setLocationId(appliedFilters.locationId);
+        setCategoryId(appliedFilters.categoryId);
+        setStatusId(appliedFilters.statusId);
+        setConditionId(appliedFilters.conditionId);
+        setPicId(appliedFilters.picId);
+        setAssetUserId(appliedFilters.assetUserId);
+    }, [appliedFilters]);
 
     const columns: DataTableColumn<AssetRow>[] = [
         {
@@ -305,7 +319,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             }
         });
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     function clearAllFilters() {
@@ -332,7 +354,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         setPicId('');
         setAssetUserId('');
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     function openSaveCurrentFilter() {
@@ -347,7 +377,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             return;
         }
 
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(appliedParams);
         const query: Record<string, string> = {};
 
         for (const [k, v] of params.entries()) {
@@ -429,7 +459,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             params.set(k, String(v));
         });
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     const departmentsForBranch = useMemo(() => {
@@ -452,16 +490,8 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         return locations.filter((l) => String(l.branch_id) === String(branchId));
     }, [filtersMeta?.locations, branchId]);
 
-    const hasActiveFilters = useMemo(() => {
-        const params = new URLSearchParams(window.location.search);
-
-        return Array.from(params.keys()).some((k) => k.startsWith('filters[') && (params.get(k) ?? '') !== '');
-    }, [items.current_page]); // re-evaluate on navigation
-
-    const searchValue = useMemo(() => new URLSearchParams(window.location.search).get('search'), [items.current_page]);
-
-    const activeFilterCount = useMemo(() => {
-        return [
+    const draftFilters = useMemo(
+        () => ({
             costMin,
             costMax,
             branchId,
@@ -472,8 +502,41 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             conditionId,
             picId,
             assetUserId,
+        }),
+        [assetUserId, branchId, categoryId, conditionId, costMax, costMin, departmentId, locationId, picId, statusId],
+    );
+
+    const hasActiveFilters = useMemo(
+        () => Object.values(appliedFilters).some((value) => value.trim() !== ''),
+        [appliedFilters],
+    );
+
+    const hasDraftFilters = useMemo(
+        () => Object.values(draftFilters).some((value) => value.trim() !== ''),
+        [draftFilters],
+    );
+
+    const isDirtyFilters = useMemo(
+        () => Object.entries(draftFilters).some(([key, value]) => value !== appliedFilters[key as keyof typeof appliedFilters]),
+        [appliedFilters, draftFilters],
+    );
+
+    const searchValue = useMemo(() => appliedParams.get('search'), [appliedParams]);
+
+    const activeFilterCount = useMemo(() => {
+        return [
+            appliedFilters.costMin,
+            appliedFilters.costMax,
+            appliedFilters.branchId,
+            appliedFilters.departmentId,
+            appliedFilters.locationId,
+            appliedFilters.categoryId,
+            appliedFilters.statusId,
+            appliedFilters.conditionId,
+            appliedFilters.picId,
+            appliedFilters.assetUserId,
         ].filter((v) => String(v ?? '').trim() !== '').length;
-    }, [assetUserId, branchId, categoryId, conditionId, costMax, costMin, departmentId, locationId, picId, statusId]);
+    }, [appliedFilters]);
 
     const meta = filtersMeta ?? {
         branches: [],
@@ -529,7 +592,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     }
 
     function isSavedFilterActive(filter: SavedFilter): boolean {
-        const current = normalizeViewQuery(new URLSearchParams(window.location.search));
+        const current = normalizeViewQuery(new URLSearchParams(appliedParams));
         const expected = normalizeViewQuery(
             new URLSearchParams(
                 Object.entries(filter.query || {})
@@ -574,7 +637,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         setPicId('');
         setAssetUserId('');
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     const optionLabels = useMemo(() => {
@@ -593,79 +664,82 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const activeFilterChips = useMemo(() => {
         const chips: Array<{ key: string; label: string; value: string }> = [];
 
-        if (branchId) {
-            chips.push({ key: 'filters[branch_id]', label: t('assets.fields.branch'), value: optionLabels.branch.get(branchId) ?? branchId });
+        if (appliedFilters.branchId) {
+            chips.push({
+                key: 'filters[branch_id]',
+                label: t('assets.fields.branch'),
+                value: optionLabels.branch.get(appliedFilters.branchId) ?? appliedFilters.branchId,
+            });
         }
 
-        if (departmentId) {
+        if (appliedFilters.departmentId) {
             chips.push({
                 key: 'filters[department_id]',
                 label: t('assets.fields.department'),
-                value: optionLabels.department.get(departmentId) ?? departmentId,
+                value: optionLabels.department.get(appliedFilters.departmentId) ?? appliedFilters.departmentId,
             });
         }
 
-        if (locationId) {
+        if (appliedFilters.locationId) {
             chips.push({
                 key: 'filters[asset_location_id]',
                 label: t('assets.fields.location'),
-                value: optionLabels.location.get(locationId) ?? locationId,
+                value: optionLabels.location.get(appliedFilters.locationId) ?? appliedFilters.locationId,
             });
         }
 
-        if (categoryId) {
+        if (appliedFilters.categoryId) {
             chips.push({
                 key: 'filters[asset_category_id]',
                 label: t('assets.fields.category'),
-                value: optionLabels.category.get(categoryId) ?? categoryId,
+                value: optionLabels.category.get(appliedFilters.categoryId) ?? appliedFilters.categoryId,
             });
         }
 
-        if (statusId) {
-            chips.push({ key: 'filters[asset_status_id]', label: t('assets.filters.status'), value: optionLabels.status.get(statusId) ?? statusId });
+        if (appliedFilters.statusId) {
+            chips.push({
+                key: 'filters[asset_status_id]',
+                label: t('assets.filters.status'),
+                value: optionLabels.status.get(appliedFilters.statusId) ?? appliedFilters.statusId,
+            });
         }
 
-        if (conditionId) {
+        if (appliedFilters.conditionId) {
             chips.push({
                 key: 'filters[asset_condition_id]',
                 label: t('assets.filters.condition'),
-                value: optionLabels.condition.get(conditionId) ?? conditionId,
+                value: optionLabels.condition.get(appliedFilters.conditionId) ?? appliedFilters.conditionId,
             });
         }
 
-        if (picId) {
-            chips.push({ key: 'filters[person_in_charge_id]', label: t('assets.fields.pic'), value: optionLabels.pic.get(picId) ?? picId });
+        if (appliedFilters.picId) {
+            chips.push({
+                key: 'filters[person_in_charge_id]',
+                label: t('assets.fields.pic'),
+                value: optionLabels.pic.get(appliedFilters.picId) ?? appliedFilters.picId,
+            });
         }
 
-        if (assetUserId) {
+        if (appliedFilters.assetUserId) {
             chips.push({
                 key: 'filters[asset_user_id]',
                 label: t('assets.fields.asset_user'),
-                value: optionLabels.assetUser.get(assetUserId) ?? assetUserId,
+                value: optionLabels.assetUser.get(appliedFilters.assetUserId) ?? appliedFilters.assetUserId,
             });
         }
 
-        if (costMin.trim() !== '') {
-            chips.push({ key: 'filters[cost_min]', label: t('assets.filters.cost_min'), value: costMin });
+        if (appliedFilters.costMin.trim() !== '') {
+            chips.push({ key: 'filters[cost_min]', label: t('assets.filters.cost_min'), value: appliedFilters.costMin });
         }
 
-        if (costMax.trim() !== '') {
-            chips.push({ key: 'filters[cost_max]', label: t('assets.filters.cost_max'), value: costMax });
+        if (appliedFilters.costMax.trim() !== '') {
+            chips.push({ key: 'filters[cost_max]', label: t('assets.filters.cost_max'), value: appliedFilters.costMax });
         }
 
         return chips;
     }, [
-        assetUserId,
-        branchId,
-        categoryId,
-        conditionId,
-        costMax,
-        costMin,
-        departmentId,
-        locationId,
+        appliedFilters,
         optionLabels,
-        picId,
-        statusId,
         t,
     ]);
 
@@ -719,7 +793,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             setCostMax('');
         }
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     return (
@@ -749,116 +831,103 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                     </div>
                 </div>
 
-                <Deferred
-                    data={['savedFilters']}
-                    fallback={
-                        <div className="flex gap-4 border-b border-border/60 pb-px">
-                            <div className="h-6 w-24 animate-pulse rounded-md bg-muted" />
-                            <div className="h-6 w-32 animate-pulse rounded-md bg-muted" />
-                            <div className="h-6 w-28 animate-pulse rounded-md bg-muted" />
-                        </div>
-                    }
-                >
-                    <div className="flex items-center justify-between border-b border-border/60">
-                        <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
-                            <button
-                                type="button"
-                                onClick={applyAllAssetsView}
-                                className={cn(
-                                    'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap',
-                                    !hasActiveFilters && !searchValue ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
-                                )}
-                            >
-                                {t('assets.views.all')}
-                            </button>
+                <div className="flex items-center justify-between border-b border-border/60">
+                    <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
+                        <button
+                            type="button"
+                            onClick={applyAllAssetsView}
+                            className={cn(
+                                'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap',
+                                !hasActiveFilters && !searchValue ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
+                            )}
+                        >
+                            {t('assets.views.all')}
+                        </button>
 
-                            {savedFiltersResolved.map((filter) => {
-                                const isActive = isSavedFilterActive(filter);
+                        {savedFiltersResolved.map((filter) => {
+                            const isActive = isSavedFilterActive(filter);
 
-                                return (
-                                    <button
-                                        key={filter.id}
-                                        type="button"
-                                        onClick={() => applySavedFilter(filter)}
-                                        className={cn(
-                                            'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap max-w-[220px] truncate',
-                                            isActive ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
-                                        )}
-                                    >
-                                        {filter.name}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <div className="shrink-0 pl-4 flex items-center h-full pb-2">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                                        <Settings2 className="h-4 w-4" />
-                                        <span className="sr-only">{t('assets.views.manage')}</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-[260px]">
-                                    <DropdownMenuLabel>{t('assets.views.manage')}</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-
-                                    {!savedFilters ? (
-                                        <DropdownMenuItem disabled>{t('common.loading')}</DropdownMenuItem>
-                                    ) : savedFiltersResolved.length === 0 ? (
-                                        <DropdownMenuItem disabled>{t('saved_filters.empty')}</DropdownMenuItem>
-                                    ) : (
-                                        savedFiltersResolved.map((filter) => (
-                                            <DropdownMenuItem key={filter.id} onClick={() => applySavedFilter(filter)} className="flex items-center justify-between gap-2">
-                                                <span className="truncate">{filter.name}</span>
-                                                <span className="shrink-0 text-muted-foreground">
-                                                    {filter.is_default ? <Check className="h-4 w-4" /> : null}
-                                                </span>
-                                            </DropdownMenuItem>
-                                        ))
+                            return (
+                                <button
+                                    key={filter.id}
+                                    type="button"
+                                    onClick={() => applySavedFilter(filter)}
+                                    className={cn(
+                                        'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap max-w-[220px] truncate',
+                                        isActive ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
                                     )}
-
-                                    <DropdownMenuSeparator />
-                                    {canCreate ? (
-                                        <DropdownMenuItem onClick={openSaveCurrentFilter}>
-                                            <Save className="mr-2 h-4 w-4" />
-                                            {t('saved_filters.actions.save')}
-                                        </DropdownMenuItem>
-                                    ) : null}
-
-                                    {savedFiltersResolved.length > 0 ? (
-                                        <>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuLabel>{t('saved_filters.actions.manage')}</DropdownMenuLabel>
-                                            {savedFiltersResolved.map((filter) => (
-                                                <DropdownMenuItem key={`manage-${filter.id}`} onClick={() => openRenameSavedFilter(filter)}>
-                                                    {t('saved_filters.actions.rename', { name: filter.name })}
-                                                </DropdownMenuItem>
-                                            ))}
-                                            {savedFiltersResolved.map((filter) => (
-                                                <DropdownMenuItem
-                                                    key={`default-${filter.id}`}
-                                                    disabled={filter.is_default}
-                                                    onClick={() => setDefaultSavedFilter(filter)}
-                                                >
-                                                    {t('saved_filters.actions.set_default', { name: filter.name })}
-                                                </DropdownMenuItem>
-                                            ))}
-                                            {savedFiltersResolved.map((filter) => (
-                                                <DropdownMenuItem
-                                                    key={`delete-${filter.id}`}
-                                                    className="text-destructive focus:text-destructive"
-                                                    onClick={() => openDeleteSavedFilter(filter)}
-                                                >
-                                                    {t('saved_filters.actions.delete', { name: filter.name })}
-                                                </DropdownMenuItem>
-                                            ))}
-                                        </>
-                                    ) : null}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
+                                >
+                                    {filter.name}
+                                </button>
+                            );
+                        })}
                     </div>
-                </Deferred>
+                    <div className="shrink-0 pl-4 flex items-center h-full pb-2">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                    <Settings2 className="h-4 w-4" />
+                                    <span className="sr-only">{t('assets.views.manage')}</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[260px]">
+                                <DropdownMenuLabel>{t('assets.views.manage')}</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+
+                                {savedFiltersResolved.length === 0 ? (
+                                    <DropdownMenuItem disabled>{t('saved_filters.empty')}</DropdownMenuItem>
+                                ) : (
+                                    savedFiltersResolved.map((filter) => (
+                                        <DropdownMenuItem key={filter.id} onClick={() => applySavedFilter(filter)} className="flex items-center justify-between gap-2">
+                                            <span className="truncate">{filter.name}</span>
+                                            <span className="shrink-0 text-muted-foreground">
+                                                {filter.is_default ? <Check className="h-4 w-4" /> : null}
+                                            </span>
+                                        </DropdownMenuItem>
+                                    ))
+                                )}
+
+                                <DropdownMenuSeparator />
+                                {canCreate ? (
+                                    <DropdownMenuItem onClick={openSaveCurrentFilter}>
+                                        <Save className="mr-2 h-4 w-4" />
+                                        {t('saved_filters.actions.save')}
+                                    </DropdownMenuItem>
+                                ) : null}
+
+                                {savedFiltersResolved.length > 0 ? (
+                                    <>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel>{t('saved_filters.actions.manage')}</DropdownMenuLabel>
+                                        {savedFiltersResolved.map((filter) => (
+                                            <DropdownMenuItem key={`manage-${filter.id}`} onClick={() => openRenameSavedFilter(filter)}>
+                                                {t('saved_filters.actions.rename', { name: filter.name })}
+                                            </DropdownMenuItem>
+                                        ))}
+                                        {savedFiltersResolved.map((filter) => (
+                                            <DropdownMenuItem
+                                                key={`default-${filter.id}`}
+                                                disabled={filter.is_default}
+                                                onClick={() => setDefaultSavedFilter(filter)}
+                                            >
+                                                {t('saved_filters.actions.set_default', { name: filter.name })}
+                                            </DropdownMenuItem>
+                                        ))}
+                                        {savedFiltersResolved.map((filter) => (
+                                            <DropdownMenuItem
+                                                key={`delete-${filter.id}`}
+                                                className="text-destructive focus:text-destructive"
+                                                onClick={() => openDeleteSavedFilter(filter)}
+                                            >
+                                                {t('saved_filters.actions.delete', { name: filter.name })}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </>
+                                ) : null}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card className="py-4">
@@ -967,7 +1036,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setBranchId(nextBranchId);
                                                 setDepartmentId('');
                                                 setLocationId('');
-                                                applyFiltersWith({ branchId: nextBranchId, departmentId: '', locationId: '' });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -991,7 +1059,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextDepartmentId = value === 'all' ? '' : value;
                                                 setDepartmentId(nextDepartmentId);
-                                                applyFiltersWith({ departmentId: nextDepartmentId });
                                             }}
                                             disabled={filterSelects.departments.length === 0}
                                         >
@@ -1016,7 +1083,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextLocationId = value === 'all' ? '' : value;
                                                 setLocationId(nextLocationId);
-                                                applyFiltersWith({ locationId: nextLocationId });
                                             }}
                                             disabled={filterSelects.locations.length === 0}
                                         >
@@ -1041,7 +1107,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextCategoryId = value === 'all' ? '' : value;
                                                 setCategoryId(nextCategoryId);
-                                                applyFiltersWith({ categoryId: nextCategoryId });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -1065,7 +1130,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextStatusId = value === 'all' ? '' : value;
                                                 setStatusId(nextStatusId);
-                                                applyFiltersWith({ statusId: nextStatusId });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -1089,7 +1153,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextConditionId = value === 'all' ? '' : value;
                                                 setConditionId(nextConditionId);
-                                                applyFiltersWith({ conditionId: nextConditionId });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -1113,7 +1176,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextPicId = value === 'all' ? '' : value;
                                                 setPicId(nextPicId);
-                                                applyFiltersWith({ picId: nextPicId });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -1137,7 +1199,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             onValueChange={(value) => {
                                                 const nextAssetUserId = value === 'all' ? '' : value;
                                                 setAssetUserId(nextAssetUserId);
-                                                applyFiltersWith({ assetUserId: nextAssetUserId });
                                             }}
                                         >
                                             <SelectTrigger size="sm" className="w-full">
@@ -1177,7 +1238,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                     </div>
 
                                     <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:items-end sm:justify-end lg:col-span-2">
-                                        <Button size="sm" type="submit" className="w-full sm:w-auto">
+                                        <Button size="sm" type="submit" className="w-full sm:w-auto" disabled={!isDirtyFilters}>
                                             {t('common.apply')}
                                         </Button>
                                         <Button
@@ -1186,7 +1247,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             variant="outline"
                                             className="w-full sm:w-auto"
                                             onClick={clearAllFilters}
-                                            disabled={activeFilterCount === 0}
+                                            disabled={!hasActiveFilters && !hasDraftFilters}
                                         >
                                             {t('assets.filters.clear_all')}
                                         </Button>
