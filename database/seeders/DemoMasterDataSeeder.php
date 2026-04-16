@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Services\OrganizationContext;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class DemoMasterDataSeeder extends Seeder
@@ -106,6 +107,18 @@ class DemoMasterDataSeeder extends Seeder
             ['name' => 'PT Maju Bersama', 'description' => 'Holding perusahaan demo untuk platform aset.'],
         );
 
+        $platformUsers = [
+            'superadmin@example.com' => 'Owner',
+            'admin@example.com' => 'Admin',
+        ];
+
+        /** @var array<string, User> $resolvedPlatformUsers */
+        $resolvedPlatformUsers = User::query()
+            ->whereIn('email', array_keys($platformUsers))
+            ->get()
+            ->keyBy('email')
+            ->all();
+
         foreach (self::ORGANIZATIONS as $row) {
             $organization = Organization::query()->firstOrCreate(
                 ['slug' => $row['slug']],
@@ -133,6 +146,17 @@ class DemoMasterDataSeeder extends Seeder
 
             $owner = $this->ensureOwnerUser($organization);
 
+            foreach ($platformUsers as $email => $role) {
+                $platformUser = $resolvedPlatformUsers[$email] ?? null;
+                if (! $platformUser) {
+                    continue;
+                }
+
+                $platformUser->organizations()->syncWithoutDetaching([
+                    $organization->id => ['role' => $role, 'is_active' => true],
+                ]);
+            }
+
             $branches = $this->seedBranches($organization);
             $departments = $this->seedDepartments($organization, $branches);
 
@@ -146,6 +170,16 @@ class DemoMasterDataSeeder extends Seeder
                 $owner->forceFill(['current_organization_id' => $organization->id])->saveQuietly();
             }
         }
+
+        $this->command?->info('Demo master data seeded: PT Maju Bersama (3 organizations).');
+        $this->command?->info('Demo org owners: maju-logistik@example.com, maju-properti@example.com, maju-teknologi@example.com (password: password).');
+        $this->command?->info('If present, platform users were attached to demo orgs: superadmin@example.com (Owner), admin@example.com (Admin).');
+
+        Log::info('DemoMasterDataSeeder completed', [
+            'group_slug' => 'pt-maju-bersama',
+            'organizations' => array_column(self::ORGANIZATIONS, 'slug'),
+            'attached_platform_users' => array_keys($resolvedPlatformUsers),
+        ]);
     }
 
     private function ensureOwnerUser(Organization $organization): User
