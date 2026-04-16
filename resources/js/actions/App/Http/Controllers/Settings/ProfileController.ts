@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\ProfileController::edit
 * @see app/Http/Controllers/Settings/ProfileController.php:25
@@ -44,43 +44,6 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Settings\ProfileController::edit
-* @see app/Http/Controllers/Settings/ProfileController.php:25
-* @route '/profile'
-*/
-const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::edit
-* @see app/Http/Controllers/Settings/ProfileController.php:25
-* @route '/profile'
-*/
-editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::edit
-* @see app/Http/Controllers/Settings/ProfileController.php:25
-* @route '/profile'
-*/
-editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\Settings\ProfileController::update
 * @see app/Http/Controllers/Settings/ProfileController.php:79
 * @route '/profile'
@@ -113,38 +76,6 @@ update.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(options),
     method: 'patch',
 })
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::update
-* @see app/Http/Controllers/Settings/ProfileController.php:79
-* @route '/profile'
-*/
-const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::update
-* @see app/Http/Controllers/Settings/ProfileController.php:79
-* @route '/profile'
-*/
-updateForm.patch = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\Settings\ProfileController::destroy
@@ -181,38 +112,6 @@ destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Settings\ProfileController::destroy
-* @see app/Http/Controllers/Settings/ProfileController.php:114
-* @route '/profile'
-*/
-const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::destroy
-* @see app/Http/Controllers/Settings/ProfileController.php:114
-* @route '/profile'
-*/
-destroyForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
-
-/**
 * @see \App\Http\Controllers\Settings\ProfileController::updateNotificationPreferences
 * @see app/Http/Controllers/Settings/ProfileController.php:62
 * @route '/profile/notification-preferences'
@@ -245,38 +144,6 @@ updateNotificationPreferences.patch = (options?: RouteQueryOptions): RouteDefini
     url: updateNotificationPreferences.url(options),
     method: 'patch',
 })
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::updateNotificationPreferences
-* @see app/Http/Controllers/Settings/ProfileController.php:62
-* @route '/profile/notification-preferences'
-*/
-const updateNotificationPreferencesForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: updateNotificationPreferences.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\ProfileController::updateNotificationPreferences
-* @see app/Http/Controllers/Settings/ProfileController.php:62
-* @route '/profile/notification-preferences'
-*/
-updateNotificationPreferencesForm.patch = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: updateNotificationPreferences.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-updateNotificationPreferences.form = updateNotificationPreferencesForm
 
 const ProfileController = { edit, update, destroy, updateNotificationPreferences }
 

@@ -3,6 +3,7 @@ import SsoController from './SsoController'
 import InvitationAcceptController from './InvitationAcceptController'
 import TwoFactorSmsRecoveryController from './TwoFactorSmsRecoveryController'
 import LocaleController from './LocaleController'
+import DashboardController from './DashboardController'
 import OrganizationController from './OrganizationController'
 import OrganizationSwitchController from './OrganizationSwitchController'
 import OrganizationImportTemplateController from './OrganizationImportTemplateController'
@@ -34,6 +35,7 @@ const Controllers = {
     InvitationAcceptController: Object.assign(InvitationAcceptController, InvitationAcceptController),
     TwoFactorSmsRecoveryController: Object.assign(TwoFactorSmsRecoveryController, TwoFactorSmsRecoveryController),
     LocaleController: Object.assign(LocaleController, LocaleController),
+    DashboardController: Object.assign(DashboardController, DashboardController),
     OrganizationController: Object.assign(OrganizationController, OrganizationController),
     OrganizationSwitchController: Object.assign(OrganizationSwitchController, OrganizationSwitchController),
     OrganizationImportTemplateController: Object.assign(OrganizationImportTemplateController, OrganizationImportTemplateController),

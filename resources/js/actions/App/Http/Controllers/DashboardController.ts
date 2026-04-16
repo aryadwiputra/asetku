@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
 /**
-* @see \App\Http\Controllers\OrganizationController::index
-* @see app/Http/Controllers/OrganizationController.php:12
-* @route '/organizations'
+* @see \App\Http\Controllers\DashboardController::index
+* @see app/Http/Controllers/DashboardController.php:20
+* @route '/dashboard'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -11,22 +11,22 @@ export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 index.definition = {
     methods: ["get","head"],
-    url: '/organizations',
+    url: '/dashboard',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\OrganizationController::index
-* @see app/Http/Controllers/OrganizationController.php:12
-* @route '/organizations'
+* @see \App\Http\Controllers\DashboardController::index
+* @see app/Http/Controllers/DashboardController.php:20
+* @route '/dashboard'
 */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Http\Controllers\OrganizationController::index
-* @see app/Http/Controllers/OrganizationController.php:12
-* @route '/organizations'
+* @see \App\Http\Controllers\DashboardController::index
+* @see app/Http/Controllers/DashboardController.php:20
+* @route '/dashboard'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -34,15 +34,15 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\OrganizationController::index
-* @see app/Http/Controllers/OrganizationController.php:12
-* @route '/organizations'
+* @see \App\Http\Controllers\DashboardController::index
+* @see app/Http/Controllers/DashboardController.php:20
+* @route '/dashboard'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
-const OrganizationController = { index }
+const DashboardController = { index }
 
-export default OrganizationController
+export default DashboardController
