@@ -6,6 +6,7 @@ use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\OrganizationGroup;
 use Database\Seeders\DemoAssetDataSeeder;
+use Database\Seeders\DemoMasterDataSeeder;
 use Illuminate\Support\Facades\Http;
 
 test('demo asset seeder creates organizations, assets, and photos', function () {
@@ -20,6 +21,7 @@ test('demo asset seeder creates organizations, assets, and photos', function () 
         'https://commons.wikimedia.org/wiki/Special:FilePath/*' => Http::response($png, 200, ['Content-Type' => 'image/png']),
     ]);
 
+    $this->seed(DemoMasterDataSeeder::class);
     $this->seed(DemoAssetDataSeeder::class);
 
     $group = OrganizationGroup::query()->where('slug', 'pt-maju-bersama')->first();
