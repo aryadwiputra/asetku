@@ -21,6 +21,7 @@ use App\Models\User;
 use App\Services\OrganizationContext;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -690,9 +691,30 @@ class DemoAssetDataSeeder extends Seeder
     private function downloadImage(string $url): ?array
     {
         try {
-            $response = Http::timeout(20)->retry(2, 200)->get($url);
+            // Wikimedia requires a User-Agent (and asks to respect robot policy).
+            // Use a stable, descriptive UA so requests are not blocked.
+            $userAgent = trim(sprintf(
+                '%s DemoAssetDataSeeder (+%s)',
+                (string) config('app.name', 'asetku'),
+                (string) config('app.url', 'http://localhost'),
+            ));
+
+            $response = Http::timeout(20)
+                ->withUserAgent($userAgent)
+                ->accept('image/*')
+                // Avoid throwing on 4xx/5xx here; we want best-effort logging.
+                ->retry(2, 200, throw: false)
+                ->get($url);
         } catch (ConnectionException $e) {
             Log::warning('DemoAssetDataSeeder image download failed', ['url' => $url, 'error' => $e->getMessage()]);
+
+            return null;
+        } catch (RequestException $e) {
+            Log::warning('DemoAssetDataSeeder image download request exception', [
+                'url' => $url,
+                'status' => $e->response?->status(),
+                'error' => $e->getMessage(),
+            ]);
 
             return null;
         }
