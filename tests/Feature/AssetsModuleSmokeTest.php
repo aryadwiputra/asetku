@@ -2,11 +2,15 @@
 
 use App\Models\Asset;
 use App\Models\AssetHistory;
+use App\Models\AssetMedia;
 use App\Models\Branch;
+use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\User;
 use App\Services\OrganizationContext;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 use function Pest\Laravel\actingAs;
@@ -31,12 +35,8 @@ test('assets index loads for organization member', function () {
             ->component('assets/index')
             ->has('items')
             ->has('summary.total_count')
-            ->missing('filtersMeta')
-            ->missing('savedFilters')
-            ->loadDeferredProps(fn (Assert $reload) => $reload
-                ->has('filtersMeta')
-                ->has('savedFilters')
-            )
+            ->has('filtersMeta')
+            ->has('savedFilters')
         );
 });
 
@@ -100,6 +100,8 @@ test('asset can be created with auto code and qr token', function () {
 });
 
 test('public qr page returns ok for existing token', function () {
+    Storage::fake('public');
+
     $organization = Organization::factory()->create();
     app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
 
@@ -109,13 +111,79 @@ test('public qr page returns ok for existing token', function () {
         'branch_id' => Branch::factory()->create(['organization_id' => $organization->id])->id,
     ]);
 
+    $photo = MediaAsset::query()->create([
+        'organization_id' => $organization->id,
+        'title' => 'Asset photo',
+    ]);
+
+    $image = UploadedFile::fake()->image('photo.png');
+
+    $photo->addMedia($image->getPathname())
+        ->usingFileName('photo.png')
+        ->toMediaCollection('file');
+
+    AssetMedia::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $asset->id,
+        'media_asset_id' => $photo->id,
+        'kind' => 'photo',
+        'sort_order' => 1,
+        'is_primary' => true,
+    ]);
+
+    $document = MediaAsset::query()->create([
+        'organization_id' => $organization->id,
+        'title' => 'Manual book',
+    ]);
+
+    $document->addMediaFromString('manual-content')
+        ->usingFileName('manual.txt')
+        ->toMediaCollection('file');
+
+    AssetMedia::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $asset->id,
+        'media_asset_id' => $document->id,
+        'kind' => 'document',
+        'sort_order' => 2,
+    ]);
+
     $this->get(route('qr.show', ['token' => $asset->qr_token]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn (Assert $page) => $page
             ->component('qr/show')
             ->has('asset.code')
+            ->has('asset.serial_number')
+            ->has('attachments', 2)
+            ->has('attachments.0.media_asset.url')
+            ->has('histories')
+            ->has('organization')
             ->has('canViewFull')
         );
+});
+
+test('public qr page handles asset without attachments', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $asset = Asset::query()->create([
+        'code' => 'AST-JKT-2026-0002',
+        'name' => 'Scanner',
+        'branch_id' => Branch::factory()->create(['organization_id' => $organization->id])->id,
+    ]);
+
+    $this->get(route('qr.show', ['token' => $asset->qr_token]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('qr/show')
+            ->where('asset.code', 'AST-JKT-2026-0002')
+            ->has('attachments', 0)
+        );
+});
+
+test('public qr page returns 404 for invalid token', function () {
+    $this->get(route('qr.show', ['token' => 'missing-token']))
+        ->assertNotFound();
 });
 
 test('assets export returns a download response', function () {

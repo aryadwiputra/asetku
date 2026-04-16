@@ -5,7 +5,10 @@ use App\Models\AssetMedia;
 use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\OrganizationGroup;
+use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DemoAssetDataSeeder;
+use Database\Seeders\DemoMasterDataSeeder;
 use Illuminate\Support\Facades\Http;
 
 test('demo asset seeder creates organizations, assets, and photos', function () {
@@ -20,6 +23,8 @@ test('demo asset seeder creates organizations, assets, and photos', function () 
         'https://commons.wikimedia.org/wiki/Special:FilePath/*' => Http::response($png, 200, ['Content-Type' => 'image/png']),
     ]);
 
+    $this->seed(DatabaseSeeder::class);
+    $this->seed(DemoMasterDataSeeder::class);
     $this->seed(DemoAssetDataSeeder::class);
 
     $group = OrganizationGroup::query()->where('slug', 'pt-maju-bersama')->first();
@@ -32,4 +37,30 @@ test('demo asset seeder creates organizations, assets, and photos', function () 
     expect(MediaAsset::query()->count())->toBeGreaterThan(0);
 
     expect(AssetMedia::query()->where('kind', 'photo')->count())->toBeGreaterThan(0);
+
+    $platformSuperAdmin = User::query()->where('email', 'superadmin@example.com')->first();
+    $platformAdmin = User::query()->where('email', 'admin@example.com')->first();
+
+    expect($platformSuperAdmin)->not->toBeNull();
+    expect($platformAdmin)->not->toBeNull();
+
+    $demoOrganizations = Organization::query()
+        ->where('organization_group_id', $group->id)
+        ->get(['id', 'slug']);
+
+    expect($demoOrganizations)->toHaveCount(3);
+
+    foreach ($demoOrganizations as $organization) {
+        expect($platformSuperAdmin->organizations()
+            ->whereKey($organization->id)
+            ->wherePivot('role', 'Owner')
+            ->wherePivot('is_active', true)
+            ->exists())->toBeTrue();
+
+        expect($platformAdmin->organizations()
+            ->whereKey($organization->id)
+            ->wherePivot('role', 'Admin')
+            ->wherePivot('is_active', true)
+            ->exists())->toBeTrue();
+    }
 });

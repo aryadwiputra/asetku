@@ -74,4 +74,18 @@ return [
         'account_suspended' => 'Account is suspended.',
         'access_restricted' => 'Access is restricted by organization policy.',
     ],
+
+    'enterprise' => [
+        'tagline' => 'Secure access to your organization assets.',
+        'trust_title' => 'Trust & security',
+        'trust_items' => [
+            'sso' => 'Single Sign-On with Google and Microsoft 365',
+            'two_factor' => 'Two-factor authentication for sensitive actions',
+            'audit' => 'Audit log and activity history for accountability',
+            'multi_org' => 'Multi-organization isolation in a single platform account',
+            'rbac' => 'Role-based access control with granular permissions',
+            'access_policy' => 'Enterprise access policy (IP allowlist & working hours)',
+        ],
+        'help' => 'Need help? Contact your administrator.',
+    ],
 ];

@@ -57,12 +57,12 @@ class AssetController extends Controller
         return Inertia::render('assets/index', [
             'items' => $items,
             'summary' => $this->summary($request->user(), $search, $filters),
-            'savedFilters' => Inertia::defer(fn () => SavedFilter::query()
+            'savedFilters' => SavedFilter::query()
                 ->where('entity', 'assets')
                 ->orderByDesc('is_default')
                 ->orderBy('name')
-                ->get(['id', 'name', 'query', 'is_default'])),
-            'filtersMeta' => Inertia::defer(fn () => $this->filtersMeta()),
+                ->get(['id', 'name', 'query', 'is_default']),
+            'filtersMeta' => $this->filtersMeta(),
         ]);
     }
 

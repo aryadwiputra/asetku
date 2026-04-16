@@ -74,4 +74,18 @@ return [
         'account_suspended' => 'Akun sedang disuspend.',
         'access_restricted' => 'Akses dibatasi oleh kebijakan organisasi.',
     ],
+
+    'enterprise' => [
+        'tagline' => 'Akses aman untuk mengelola aset organisasi Anda.',
+        'trust_title' => 'Kepercayaan & keamanan',
+        'trust_items' => [
+            'sso' => 'Single Sign-On dengan Google dan Microsoft 365',
+            'two_factor' => 'Autentikasi dua faktor untuk aksi sensitif',
+            'audit' => 'Audit log dan riwayat aktivitas untuk akuntabilitas',
+            'multi_org' => 'Isolasi multi-organisasi dalam satu akun platform',
+            'rbac' => 'Kontrol akses berbasis peran dengan permission granular',
+            'access_policy' => 'Kebijakan akses enterprise (IP allowlist & jam kerja)',
+        ],
+        'help' => 'Butuh bantuan? Hubungi administrator Anda.',
+    ],
 ];

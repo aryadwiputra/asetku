@@ -1,11 +1,11 @@
-import { Deferred, Head, Link, router, usePage } from '@inertiajs/react';
-import { Check, Eye, FileDown, Filter, Pencil, Plus, Printer, Save, Settings2, Trash2, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Activity, Banknote, Box, Check, Eye, FileDown, Filter, Pencil, Plus, Printer, Save, Settings2, Tags, Trash2, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
 import AssetSavedFilterController from '@/actions/App/Http/Controllers/AssetSavedFilterController';
-import Heading from '@/components/heading';
 import { DataTable } from '@/components/data-table/data-table';
+import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,8 +21,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 import { index as assetsIndex } from '@/routes/assets';
 import { exportMethod as assetsExport } from '@/routes/assets';
 import { print as printLabels } from '@/routes/assets/labels';
@@ -85,6 +86,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         organization: { currency_code: string } | null;
         locale: string;
     };
+    const pageUrl = usePage().url;
     const { t } = useTranslation();
 
     const canCreate = permissions.includes('asset.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
@@ -92,18 +94,16 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const canDelete = permissions.includes('asset.delete') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
     const canExport = permissions.includes('asset.export') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
 
-    const urlParams = useMemo(() => new URLSearchParams(window.location.search), []);
-
-    const [costMin, setCostMin] = useState<string>(urlParams.get('filters[cost_min]') ?? '');
-    const [costMax, setCostMax] = useState<string>(urlParams.get('filters[cost_max]') ?? '');
-    const [branchId, setBranchId] = useState<string>(urlParams.get('filters[branch_id]') ?? '');
-    const [departmentId, setDepartmentId] = useState<string>(urlParams.get('filters[department_id]') ?? '');
-    const [locationId, setLocationId] = useState<string>(urlParams.get('filters[asset_location_id]') ?? '');
-    const [categoryId, setCategoryId] = useState<string>(urlParams.get('filters[asset_category_id]') ?? '');
-    const [statusId, setStatusId] = useState<string>(urlParams.get('filters[asset_status_id]') ?? '');
-    const [conditionId, setConditionId] = useState<string>(urlParams.get('filters[asset_condition_id]') ?? '');
-    const [picId, setPicId] = useState<string>(urlParams.get('filters[person_in_charge_id]') ?? '');
-    const [assetUserId, setAssetUserId] = useState<string>(urlParams.get('filters[asset_user_id]') ?? '');
+    const [costMin, setCostMin] = useState<string>('');
+    const [costMax, setCostMax] = useState<string>('');
+    const [branchId, setBranchId] = useState<string>('');
+    const [departmentId, setDepartmentId] = useState<string>('');
+    const [locationId, setLocationId] = useState<string>('');
+    const [categoryId, setCategoryId] = useState<string>('');
+    const [statusId, setStatusId] = useState<string>('');
+    const [conditionId, setConditionId] = useState<string>('');
+    const [picId, setPicId] = useState<string>('');
+    const [assetUserId, setAssetUserId] = useState<string>('');
 
     const [saveFilterOpen, setSaveFilterOpen] = useState(false);
     const [renameFilterOpen, setRenameFilterOpen] = useState(false);
@@ -113,29 +113,35 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const [setAsDefault, setSetAsDefault] = useState(false);
 
     const savedFiltersResolved = savedFilters ?? [];
-
-    const selectFilters = useMemo(
-        () => [
-            {
-                key: 'branch_id',
-                label: t('assets.fields.branch'),
-                options: (filtersMeta?.branches || [])
-                    .filter((b) => b.is_active !== false)
-                    .map((b) => ({ value: String(b.id), label: `${b.name}${b.code ? ` (${b.code})` : ''}` })),
-            },
-            {
-                key: 'asset_status_id',
-                label: t('assets.filters.status'),
-                options: (filtersMeta?.statuses || []).map((s) => ({ value: String(s.id), label: s.name })),
-            },
-            {
-                key: 'asset_condition_id',
-                label: t('assets.filters.condition'),
-                options: (filtersMeta?.conditions || []).map((c) => ({ value: String(c.id), label: c.name })),
-            },
-        ],
-        [filtersMeta, t],
+    const appliedParams = useMemo(() => new URLSearchParams(pageUrl.split('?')[1] ?? ''), [pageUrl]);
+    const appliedFilters = useMemo(
+        () => ({
+            costMin: appliedParams.get('filters[cost_min]') ?? '',
+            costMax: appliedParams.get('filters[cost_max]') ?? '',
+            branchId: appliedParams.get('filters[branch_id]') ?? '',
+            departmentId: appliedParams.get('filters[department_id]') ?? '',
+            locationId: appliedParams.get('filters[asset_location_id]') ?? '',
+            categoryId: appliedParams.get('filters[asset_category_id]') ?? '',
+            statusId: appliedParams.get('filters[asset_status_id]') ?? '',
+            conditionId: appliedParams.get('filters[asset_condition_id]') ?? '',
+            picId: appliedParams.get('filters[person_in_charge_id]') ?? '',
+            assetUserId: appliedParams.get('filters[asset_user_id]') ?? '',
+        }),
+        [appliedParams],
     );
+
+    useEffect(() => {
+        setCostMin(appliedFilters.costMin);
+        setCostMax(appliedFilters.costMax);
+        setBranchId(appliedFilters.branchId);
+        setDepartmentId(appliedFilters.departmentId);
+        setLocationId(appliedFilters.locationId);
+        setCategoryId(appliedFilters.categoryId);
+        setStatusId(appliedFilters.statusId);
+        setConditionId(appliedFilters.conditionId);
+        setPicId(appliedFilters.picId);
+        setAssetUserId(appliedFilters.assetUserId);
+    }, [appliedFilters]);
 
     const columns: DataTableColumn<AssetRow>[] = [
         {
@@ -197,6 +203,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             sortable: true,
             render: (row) => {
                 const value = row.cost === null ? null : Number(row.cost);
+
                 return (
                     <span className="text-muted-foreground">
                         {value === null || Number.isNaN(value) ? '—' : currencyFormatter.format(value)}
@@ -256,41 +263,53 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         }
     }
 
-    function applyCostFilter() {
-        const url = new URL(window.location.href);
-        const params = url.searchParams;
-
-        if (costMin.trim() !== '') {
-            params.set('filters[cost_min]', costMin.trim());
-        } else {
-            params.delete('filters[cost_min]');
-        }
-
-        if (costMax.trim() !== '') {
-            params.set('filters[cost_max]', costMax.trim());
-        } else {
-            params.delete('filters[cost_max]');
-        }
-
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+    function applyFilters() {
+        applyFiltersWith({});
     }
 
-    function applyFilters() {
+    function applyFiltersWith(next: Partial<{
+        costMin: string;
+        costMax: string;
+        branchId: string;
+        departmentId: string;
+        locationId: string;
+        categoryId: string;
+        statusId: string;
+        conditionId: string;
+        picId: string;
+        assetUserId: string;
+    }>) {
+        const state = {
+            costMin,
+            costMax,
+            branchId,
+            departmentId,
+            locationId,
+            categoryId,
+            statusId,
+            conditionId,
+            picId,
+            assetUserId,
+            ...next,
+        };
+
         const url = new URL(window.location.href);
         const params = url.searchParams;
 
         const map: Record<string, string> = {
-            'filters[branch_id]': branchId,
-            'filters[department_id]': departmentId,
-            'filters[asset_location_id]': locationId,
-            'filters[asset_category_id]': categoryId,
-            'filters[asset_status_id]': statusId,
-            'filters[asset_condition_id]': conditionId,
-            'filters[person_in_charge_id]': picId,
-            'filters[asset_user_id]': assetUserId,
-            'filters[cost_min]': costMin,
-            'filters[cost_max]': costMax,
+            'filters[branch_id]': state.branchId,
+            'filters[department_id]': state.departmentId,
+            'filters[asset_location_id]': state.locationId,
+            'filters[asset_category_id]': state.categoryId,
+            'filters[asset_status_id]': state.statusId,
+            'filters[asset_condition_id]': state.conditionId,
+            'filters[person_in_charge_id]': state.picId,
+            'filters[asset_user_id]': state.assetUserId,
+            'filters[cost_min]': state.costMin,
+            'filters[cost_max]': state.costMax,
         };
+
+        params.delete('page');
 
         Object.entries(map).forEach(([k, v]) => {
             if (String(v ?? '').trim() === '') {
@@ -300,7 +319,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             }
         });
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     function clearAllFilters() {
@@ -310,6 +337,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             if (k === 'search' || k === 'sort_by' || k === 'sort_direction' || k === 'per_page') {
                 return;
             }
+
             if (k.startsWith('filters[')) {
                 params.delete(k);
             }
@@ -326,7 +354,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         setPicId('');
         setAssetUserId('');
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     function openSaveCurrentFilter() {
@@ -341,8 +377,9 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             return;
         }
 
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(appliedParams);
         const query: Record<string, string> = {};
+
         for (const [k, v] of params.entries()) {
             query[k] = v;
         }
@@ -418,16 +455,24 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             if (v === null || v === undefined) {
                 return;
             }
+
             params.set(k, String(v));
         });
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
-
-    const savedDefault = savedFiltersResolved.find((f) => f.is_default) ?? null;
 
     const departmentsForBranch = useMemo(() => {
         const departments = filtersMeta?.departments ?? [];
+
         if (!branchId) {
             return departments;
         }
@@ -437,6 +482,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
 
     const locationsForBranch = useMemo(() => {
         const locations = filtersMeta?.locations ?? [];
+
         if (!branchId) {
             return locations;
         }
@@ -444,15 +490,8 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         return locations.filter((l) => String(l.branch_id) === String(branchId));
     }, [filtersMeta?.locations, branchId]);
 
-    const hasActiveFilters = useMemo(() => {
-        const params = new URLSearchParams(window.location.search);
-        return Array.from(params.keys()).some((k) => k.startsWith('filters[') && (params.get(k) ?? '') !== '');
-    }, [items.current_page]); // re-evaluate on navigation
-
-    const searchValue = useMemo(() => new URLSearchParams(window.location.search).get('search'), [items.current_page]);
-
-    const activeFilterCount = useMemo(() => {
-        return [
+    const draftFilters = useMemo(
+        () => ({
             costMin,
             costMax,
             branchId,
@@ -463,8 +502,41 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             conditionId,
             picId,
             assetUserId,
+        }),
+        [assetUserId, branchId, categoryId, conditionId, costMax, costMin, departmentId, locationId, picId, statusId],
+    );
+
+    const hasActiveFilters = useMemo(
+        () => Object.values(appliedFilters).some((value) => value.trim() !== ''),
+        [appliedFilters],
+    );
+
+    const hasDraftFilters = useMemo(
+        () => Object.values(draftFilters).some((value) => value.trim() !== ''),
+        [draftFilters],
+    );
+
+    const isDirtyFilters = useMemo(
+        () => Object.entries(draftFilters).some(([key, value]) => value !== appliedFilters[key as keyof typeof appliedFilters]),
+        [appliedFilters, draftFilters],
+    );
+
+    const searchValue = useMemo(() => appliedParams.get('search'), [appliedParams]);
+
+    const activeFilterCount = useMemo(() => {
+        return [
+            appliedFilters.costMin,
+            appliedFilters.costMax,
+            appliedFilters.branchId,
+            appliedFilters.departmentId,
+            appliedFilters.locationId,
+            appliedFilters.categoryId,
+            appliedFilters.statusId,
+            appliedFilters.conditionId,
+            appliedFilters.picId,
+            appliedFilters.assetUserId,
         ].filter((v) => String(v ?? '').trim() !== '').length;
-    }, [assetUserId, branchId, categoryId, conditionId, costMax, costMin, departmentId, locationId, picId, statusId]);
+    }, [appliedFilters]);
 
     const meta = filtersMeta ?? {
         branches: [],
@@ -477,181 +549,20 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         assetUsers: [],
     };
 
-    const filterForm = filtersMeta ? (
-        <Card className="space-y-4 p-4">
-            <div className="grid gap-2">
-                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.structure')}</CardDescription>
-                <Label>{t('assets.fields.branch')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={branchId || ''}
-                    onChange={(e) => {
-                        setBranchId(e.target.value);
-                        setDepartmentId('');
-                        setLocationId('');
-                    }}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.branches
-                        .filter((b) => b.is_active !== false)
-                        .map((b) => (
-                            <option key={b.id} value={String(b.id)}>
-                                {b.name} {b.code ? `(${b.code})` : ''}
-                            </option>
-                        ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <Label>{t('assets.fields.department')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={departmentId || ''}
-                    onChange={(e) => setDepartmentId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {departmentsForBranch.map((d) => (
-                        <option key={d.id} value={String(d.id)}>
-                            {d.name} {d.code ? `(${d.code})` : ''}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <Label>{t('assets.fields.location')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={locationId || ''}
-                    onChange={(e) => setLocationId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {locationsForBranch.map((l) => (
-                        <option key={l.id} value={String(l.id)}>
-                            {l.name} {l.code ? `(${l.code})` : ''}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.classification')}</CardDescription>
-                <Label>{t('assets.fields.category')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={categoryId || ''}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.categories.map((c) => (
-                        <option key={c.id} value={String(c.id)}>
-                            {c.name} {c.code ? `(${c.code})` : ''}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <Label>{t('assets.filters.status')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={statusId || ''}
-                    onChange={(e) => setStatusId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.statuses.map((s) => (
-                        <option key={s.id} value={String(s.id)}>
-                            {s.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <Label>{t('assets.filters.condition')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={conditionId || ''}
-                    onChange={(e) => setConditionId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.conditions.map((c) => (
-                        <option key={c.id} value={String(c.id)}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.ownership')}</CardDescription>
-                <Label>{t('assets.fields.pic')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={picId || ''}
-                    onChange={(e) => setPicId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.pics.map((p) => (
-                        <option key={p.id} value={String(p.id)}>
-                            {p.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <Label>{t('assets.fields.asset_user')}</Label>
-                <select
-                    className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                    value={assetUserId || ''}
-                    onChange={(e) => setAssetUserId(e.target.value)}
-                >
-                    <option value="">{t('common.none')}</option>
-                    {meta.assetUsers.map((u) => (
-                        <option key={u.id} value={String(u.id)}>
-                            {u.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="grid gap-2">
-                <CardDescription className="text-xs font-medium text-foreground">{t('assets.filters.groups.finance')}</CardDescription>
-                <Label htmlFor="costMin">{t('assets.filters.cost_min')}</Label>
-                <Input id="costMin" value={costMin} onChange={(e) => setCostMin(e.target.value)} inputMode="decimal" />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="costMax">{t('assets.filters.cost_max')}</Label>
-                <Input id="costMax" value={costMax} onChange={(e) => setCostMax(e.target.value)} inputMode="decimal" />
-            </div>
-
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <Button onClick={applyFilters} className="w-full sm:w-auto">
-                    {t('common.apply')}
-                </Button>
-                <Button onClick={clearAllFilters} variant="outline" className="w-full sm:w-auto">
-                    {t('assets.filters.clear_all')}
-                </Button>
-            </div>
-        </Card>
-    ) : (
-        <Card className="space-y-3 p-4">
-            <div className="h-4 w-28 rounded bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-4 w-28 rounded bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-4 w-28 rounded bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-4 w-28 rounded bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-            <div className="h-10 rounded-md bg-muted" />
-        </Card>
-    );
+    const filterSelects = useMemo(() => {
+        return {
+            branches: meta.branches
+                .filter((b) => b.is_active !== false)
+                .map((b) => ({ value: String(b.id), label: `${b.name}${b.code ? ` (${b.code})` : ''}` })),
+            departments: departmentsForBranch.map((d) => ({ value: String(d.id), label: `${d.name}${d.code ? ` (${d.code})` : ''}` })),
+            locations: locationsForBranch.map((l) => ({ value: String(l.id), label: `${l.name}${l.code ? ` (${l.code})` : ''}` })),
+            categories: meta.categories.map((c) => ({ value: String(c.id), label: `${c.name}${c.code ? ` (${c.code})` : ''}` })),
+            statuses: meta.statuses.map((s) => ({ value: String(s.id), label: s.name })),
+            conditions: meta.conditions.map((c) => ({ value: String(c.id), label: c.name })),
+            pics: meta.pics.map((p) => ({ value: String(p.id), label: p.name })),
+            assetUsers: meta.assetUsers.map((u) => ({ value: String(u.id), label: u.name })),
+        };
+    }, [departmentsForBranch, locationsForBranch, meta.assetUsers, meta.branches, meta.categories, meta.conditions, meta.pics, meta.statuses]);
 
     const currencyCode = organization?.currency_code || 'IDR';
 
@@ -669,6 +580,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             if (key === 'page') {
                 continue;
             }
+
             if (key === 'sort_by' || key === 'sort_direction' || key === 'per_page') {
                 continue;
             }
@@ -680,7 +592,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     }
 
     function isSavedFilterActive(filter: SavedFilter): boolean {
-        const current = normalizeViewQuery(new URLSearchParams(window.location.search));
+        const current = normalizeViewQuery(new URLSearchParams(appliedParams));
         const expected = normalizeViewQuery(
             new URLSearchParams(
                 Object.entries(filter.query || {})
@@ -690,6 +602,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         );
 
         const keys = new Set([...Object.keys(current), ...Object.keys(expected)]);
+
         for (const key of keys) {
             if ((current[key] ?? '') !== (expected[key] ?? '')) {
                 return false;
@@ -707,6 +620,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             if (k === 'sort_by' || k === 'sort_direction' || k === 'per_page') {
                 return;
             }
+
             if (k === 'search' || k.startsWith('filters[') || k === 'page') {
                 params.delete(k);
             }
@@ -723,7 +637,15 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         setPicId('');
         setAssetUserId('');
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     const optionLabels = useMemo(() => {
@@ -742,70 +664,82 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const activeFilterChips = useMemo(() => {
         const chips: Array<{ key: string; label: string; value: string }> = [];
 
-        if (branchId) {
-            chips.push({ key: 'filters[branch_id]', label: t('assets.fields.branch'), value: optionLabels.branch.get(branchId) ?? branchId });
+        if (appliedFilters.branchId) {
+            chips.push({
+                key: 'filters[branch_id]',
+                label: t('assets.fields.branch'),
+                value: optionLabels.branch.get(appliedFilters.branchId) ?? appliedFilters.branchId,
+            });
         }
-        if (departmentId) {
+
+        if (appliedFilters.departmentId) {
             chips.push({
                 key: 'filters[department_id]',
                 label: t('assets.fields.department'),
-                value: optionLabels.department.get(departmentId) ?? departmentId,
+                value: optionLabels.department.get(appliedFilters.departmentId) ?? appliedFilters.departmentId,
             });
         }
-        if (locationId) {
+
+        if (appliedFilters.locationId) {
             chips.push({
                 key: 'filters[asset_location_id]',
                 label: t('assets.fields.location'),
-                value: optionLabels.location.get(locationId) ?? locationId,
+                value: optionLabels.location.get(appliedFilters.locationId) ?? appliedFilters.locationId,
             });
         }
-        if (categoryId) {
+
+        if (appliedFilters.categoryId) {
             chips.push({
                 key: 'filters[asset_category_id]',
                 label: t('assets.fields.category'),
-                value: optionLabels.category.get(categoryId) ?? categoryId,
+                value: optionLabels.category.get(appliedFilters.categoryId) ?? appliedFilters.categoryId,
             });
         }
-        if (statusId) {
-            chips.push({ key: 'filters[asset_status_id]', label: t('assets.filters.status'), value: optionLabels.status.get(statusId) ?? statusId });
+
+        if (appliedFilters.statusId) {
+            chips.push({
+                key: 'filters[asset_status_id]',
+                label: t('assets.filters.status'),
+                value: optionLabels.status.get(appliedFilters.statusId) ?? appliedFilters.statusId,
+            });
         }
-        if (conditionId) {
+
+        if (appliedFilters.conditionId) {
             chips.push({
                 key: 'filters[asset_condition_id]',
                 label: t('assets.filters.condition'),
-                value: optionLabels.condition.get(conditionId) ?? conditionId,
+                value: optionLabels.condition.get(appliedFilters.conditionId) ?? appliedFilters.conditionId,
             });
         }
-        if (picId) {
-            chips.push({ key: 'filters[person_in_charge_id]', label: t('assets.fields.pic'), value: optionLabels.pic.get(picId) ?? picId });
+
+        if (appliedFilters.picId) {
+            chips.push({
+                key: 'filters[person_in_charge_id]',
+                label: t('assets.fields.pic'),
+                value: optionLabels.pic.get(appliedFilters.picId) ?? appliedFilters.picId,
+            });
         }
-        if (assetUserId) {
+
+        if (appliedFilters.assetUserId) {
             chips.push({
                 key: 'filters[asset_user_id]',
                 label: t('assets.fields.asset_user'),
-                value: optionLabels.assetUser.get(assetUserId) ?? assetUserId,
+                value: optionLabels.assetUser.get(appliedFilters.assetUserId) ?? appliedFilters.assetUserId,
             });
         }
-        if (costMin.trim() !== '') {
-            chips.push({ key: 'filters[cost_min]', label: t('assets.filters.cost_min'), value: costMin });
+
+        if (appliedFilters.costMin.trim() !== '') {
+            chips.push({ key: 'filters[cost_min]', label: t('assets.filters.cost_min'), value: appliedFilters.costMin });
         }
-        if (costMax.trim() !== '') {
-            chips.push({ key: 'filters[cost_max]', label: t('assets.filters.cost_max'), value: costMax });
+
+        if (appliedFilters.costMax.trim() !== '') {
+            chips.push({ key: 'filters[cost_max]', label: t('assets.filters.cost_max'), value: appliedFilters.costMax });
         }
 
         return chips;
     }, [
-        assetUserId,
-        branchId,
-        categoryId,
-        conditionId,
-        costMax,
-        costMin,
-        departmentId,
-        locationId,
+        appliedFilters,
         optionLabels,
-        picId,
-        statusId,
         t,
     ]);
 
@@ -822,35 +756,52 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             params.delete('filters[department_id]');
             params.delete('filters[asset_location_id]');
         }
+
         if (key === 'filters[department_id]') {
             setDepartmentId('');
         }
+
         if (key === 'filters[asset_location_id]') {
             setLocationId('');
         }
+
         if (key === 'filters[asset_category_id]') {
             setCategoryId('');
         }
+
         if (key === 'filters[asset_status_id]') {
             setStatusId('');
         }
+
         if (key === 'filters[asset_condition_id]') {
             setConditionId('');
         }
+
         if (key === 'filters[person_in_charge_id]') {
             setPicId('');
         }
+
         if (key === 'filters[asset_user_id]') {
             setAssetUserId('');
         }
+
         if (key === 'filters[cost_min]') {
             setCostMin('');
         }
+
         if (key === 'filters[cost_max]') {
             setCostMax('');
         }
 
-        router.get(url.pathname + '?' + params.toString(), {}, { preserveScroll: true, preserveState: true });
+        router.get(
+            url.pathname + (params.toString() ? `?${params.toString()}` : ''),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['items', 'summary', 'savedFilters', 'filtersMeta'],
+            },
+        );
     }
 
     return (
@@ -862,25 +813,68 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                     <Heading variant="small" title={t('assets.title')} description={t('assets.description')} />
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        {canExport ? (
+                            <Link href={assetsExport().url}>
+                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                                    <FileDown className="mr-2 h-4 w-4" />
+                                    {t('assets.actions.export')}
+                                </Button>
+                            </Link>
+                        ) : null}
+
+                        {canCreate ? (
+                            <Button onClick={() => router.visit(AssetController.create.url())} size="sm" className="w-full sm:w-auto shadow-inset-button">
+                                <Plus className="mr-2 h-4 w-4" />
+                                {t('assets.actions.new')}
+                            </Button>
+                        ) : null}
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-between border-b border-border/60">
+                    <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
+                        <button
+                            type="button"
+                            onClick={applyAllAssetsView}
+                            className={cn(
+                                'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap',
+                                !hasActiveFilters && !searchValue ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
+                            )}
+                        >
+                            {t('assets.views.all')}
+                        </button>
+
+                        {savedFiltersResolved.map((filter) => {
+                            const isActive = isSavedFilterActive(filter);
+
+                            return (
+                                <button
+                                    key={filter.id}
+                                    type="button"
+                                    onClick={() => applySavedFilter(filter)}
+                                    className={cn(
+                                        'pb-3 text-sm font-medium transition-colors hover:text-foreground/80 whitespace-nowrap max-w-[220px] truncate',
+                                        isActive ? 'border-b-2 border-primary text-foreground' : 'text-muted-foreground border-b-2 border-transparent'
+                                    )}
+                                >
+                                    {filter.name}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <div className="shrink-0 pl-4 flex items-center h-full pb-2">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                                    <Settings2 className="mr-2 h-4 w-4" />
-                                    {t('assets.views.manage')}
-                                    {savedDefault ? (
-                                        <Badge variant="secondary" className="ml-2">
-                                            {savedDefault.name}
-                                        </Badge>
-                                    ) : null}
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                    <Settings2 className="h-4 w-4" />
+                                    <span className="sr-only">{t('assets.views.manage')}</span>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[260px]">
                                 <DropdownMenuLabel>{t('assets.views.manage')}</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
 
-                                {!savedFilters ? (
-                                    <DropdownMenuItem disabled>{t('common.loading')}</DropdownMenuItem>
-                                ) : savedFiltersResolved.length === 0 ? (
+                                {savedFiltersResolved.length === 0 ? (
                                     <DropdownMenuItem disabled>{t('saved_filters.empty')}</DropdownMenuItem>
                                 ) : (
                                     savedFiltersResolved.map((filter) => (
@@ -932,185 +926,364 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                 ) : null}
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full sm:w-auto lg:hidden">
-                                    <Filter className="mr-2 h-4 w-4" />
-                                    {t('assets.filters.more')}
-                                    {hasActiveFilters ? (
-                                        <Badge variant="secondary" className="ml-2">
-                                            {activeFilterCount}
-                                        </Badge>
-                                    ) : null}
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-[calc(100vw-1.5rem)] max-w-sm">
-                                <SheetHeader>
-                                    <SheetTitle>{t('assets.filters.title')}</SheetTitle>
-                                </SheetHeader>
-
-                                <div className="mt-6">{filterForm}</div>
-                            </SheetContent>
-                        </Sheet>
-
-                        {canExport ? (
-                            <Link href={assetsExport().url}>
-                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                                    <FileDown className="mr-2 h-4 w-4" />
-                                    {t('assets.actions.export')}
-                                </Button>
-                            </Link>
-                        ) : null}
-
-                        {canCreate ? (
-                            <Button onClick={() => router.visit(AssetController.create.url())} className="w-full sm:w-auto">
-                                <Plus className="mr-2 h-4 w-4" />
-                                {t('assets.actions.new')}
-                            </Button>
-                        ) : null}
                     </div>
                 </div>
-
-                <Deferred
-                    data={['savedFilters']}
-                    fallback={
-                        <div className="flex flex-wrap gap-2">
-                            <div className="h-8 w-24 animate-pulse rounded-md bg-muted" />
-                            <div className="h-8 w-32 animate-pulse rounded-md bg-muted" />
-                            <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
-                        </div>
-                    }
-                >
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Button
-                            size="sm"
-                            variant={!hasActiveFilters && !searchValue ? 'default' : 'outline'}
-                            onClick={applyAllAssetsView}
-                        >
-                            {t('assets.views.all')}
-                        </Button>
-
-                        {savedFiltersResolved.map((filter) => (
-                            <Button
-                                key={filter.id}
-                                size="sm"
-                                variant={isSavedFilterActive(filter) ? 'default' : 'outline'}
-                                onClick={() => applySavedFilter(filter)}
-                                className="max-w-[220px] justify-start"
-                            >
-                                <span className="truncate">{filter.name}</span>
-                            </Button>
-                        ))}
-                    </div>
-                </Deferred>
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card className="py-4">
-                        <CardHeader className="px-4">
-                            <CardTitle className="text-sm">{t('assets.kpis.total_assets')}</CardTitle>
-                            <CardDescription className="text-xs">{t('assets.kpis.scoped')}</CardDescription>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-2">
+                            <CardTitle className="text-sm font-medium">{t('assets.kpis.total_assets')}</CardTitle>
+                            <Box className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="px-4">
-                            <div className="text-2xl font-semibold">{numberFormatter.format(summary.total_count)}</div>
+                            <div className="text-2xl font-bold">{numberFormatter.format(summary.total_count)}</div>
+                            <p className="text-xs text-muted-foreground">{t('assets.kpis.scoped')}</p>
                         </CardContent>
                     </Card>
 
                     <Card className="py-4">
-                        <CardHeader className="px-4">
-                            <CardTitle className="text-sm">{t('assets.kpis.total_value')}</CardTitle>
-                            <CardDescription className="text-xs">{currencyCode}</CardDescription>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-2">
+                            <CardTitle className="text-sm font-medium">{t('assets.kpis.total_value')}</CardTitle>
+                            <Banknote className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent className="px-4">
-                            <div className="text-2xl font-semibold">
+                            <div className="text-2xl font-bold">
                                 {currencyFormatter.format(Number(summary.total_cost || 0))}
                             </div>
+                            <p className="text-xs text-muted-foreground">{currencyCode}</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="py-4">
-                        <CardHeader className="px-4">
-                            <CardTitle className="text-sm">{t('assets.kpis.by_status')}</CardTitle>
+                    <Card className="py-2 flex flex-col max-h-32">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-2 h-auto shrink-0">
+                            <CardTitle className="text-sm font-medium">{t('assets.kpis.by_status')}</CardTitle>
+                            <Activity className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4">
-                            <div className="space-y-1 text-sm">
-                                {summary.by_status.length === 0 ? (
-                                    <div className="text-muted-foreground">—</div>
-                                ) : (
-                                    summary.by_status.map((row) => (
-                                        <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
-                                            <span className="truncate text-muted-foreground">{row.name}</span>
-                                            <span className="shrink-0">{numberFormatter.format(row.count)}</span>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                        <CardContent className="px-4 overflow-y-auto no-scrollbar scroll-smooth flex-1 space-y-1 text-sm">
+                            {summary.by_status.length === 0 ? (
+                                <div className="text-muted-foreground text-xs">—</div>
+                            ) : (
+                                summary.by_status.map((row) => (
+                                    <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
+                                        <span className="truncate text-muted-foreground">{row.name}</span>
+                                        <span className="shrink-0">{numberFormatter.format(row.count)}</span>
+                                    </div>
+                                ))
+                            )}
                         </CardContent>
                     </Card>
 
-                    <Card className="py-4">
-                        <CardHeader className="px-4">
-                            <CardTitle className="text-sm">{t('assets.kpis.by_condition')}</CardTitle>
+                    <Card className="py-2 flex flex-col max-h-32">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-2 h-auto shrink-0">
+                            <CardTitle className="text-sm font-medium">{t('assets.kpis.by_condition')}</CardTitle>
+                            <Tags className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
-                        <CardContent className="px-4">
-                            <div className="space-y-1 text-sm">
-                                {summary.by_condition.length === 0 ? (
-                                    <div className="text-muted-foreground">—</div>
-                                ) : (
-                                    summary.by_condition.map((row) => (
-                                        <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
-                                            <span className="truncate text-muted-foreground">{row.name}</span>
-                                            <span className="shrink-0">{numberFormatter.format(row.count)}</span>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                        <CardContent className="px-4 overflow-y-auto no-scrollbar scroll-smooth flex-1 space-y-1 text-sm">
+                            {summary.by_condition.length === 0 ? (
+                                <div className="text-muted-foreground text-xs">—</div>
+                            ) : (
+                                summary.by_condition.map((row) => (
+                                    <div key={`${row.id ?? 'other'}-${row.name}`} className="flex items-center justify-between gap-3">
+                                        <span className="truncate text-muted-foreground">{row.name}</span>
+                                        <span className="shrink-0">{numberFormatter.format(row.count)}</span>
+                                    </div>
+                                ))
+                            )}
                         </CardContent>
                     </Card>
                 </div>
 
-                <div className="flex flex-col gap-6 lg:flex-row">
-                    <div className="hidden lg:block lg:w-80">
-                        <div className="sticky top-6">
-                            <div className="mb-3 flex items-center justify-between">
-                                <div className="text-sm font-medium">{t('assets.filters.title')}</div>
-                                {activeFilterCount > 0 ? (
-                                    <Badge variant="secondary" className="shrink-0">
-                                        {activeFilterCount}
-                                    </Badge>
-                                ) : null}
+                <div className="min-w-0">
+                    <Card className="py-4">
+                        <CardHeader className="flex flex-row items-start justify-between space-y-0 px-4 pb-3">
+                            <div className="space-y-1">
+                                <CardTitle className="flex items-center gap-2 text-base">
+                                    <Filter className="h-4 w-4 text-muted-foreground" />
+                                    {t('assets.filters.title')}
+                                </CardTitle>
+                                <CardDescription className="text-sm">
+                                    {t('assets.filters.active_count', { count: activeFilterCount })}
+                                </CardDescription>
                             </div>
-                            {filterForm}
-                        </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                        {activeFilterChips.length > 0 ? (
-                            <div className="mb-3 flex flex-wrap items-center gap-2">
-                                <div className="mr-1 text-sm text-muted-foreground">
-                                    {t('assets.filters.active_count', { count: activeFilterChips.length })}
+                            {activeFilterCount > 0 ? (
+                                <Badge variant="secondary" className="shrink-0">
+                                    {activeFilterCount}
+                                </Badge>
+                            ) : null}
+                        </CardHeader>
+                        <CardContent className="px-4">
+                            {!filtersMeta ? (
+                                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                                    <div className="h-8 animate-pulse rounded-md bg-muted" />
+                                    <div className="h-8 animate-pulse rounded-md bg-muted" />
+                                    <div className="h-8 animate-pulse rounded-md bg-muted" />
+                                    <div className="h-8 animate-pulse rounded-md bg-muted" />
                                 </div>
-                                {activeFilterChips.map((chip) => (
-                                    <Badge key={chip.key} variant="secondary" className="flex items-center gap-1">
-                                        <span className="max-w-[220px] truncate">
-                                            {chip.label}: {chip.value}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded hover:bg-muted"
-                                            onClick={() => removeFilterChip(chip.key)}
-                                            aria-label={t('assets.filters.remove')}
+                            ) : (
+                                <form
+                                    className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        applyFilters();
+                                    }}
+                                >
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.branch')}</Label>
+                                        <Select
+                                            value={branchId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextBranchId = value === 'all' ? '' : value;
+                                                setBranchId(nextBranchId);
+                                                setDepartmentId('');
+                                                setLocationId('');
+                                            }}
                                         >
-                                            <X className="h-3 w-3" />
-                                        </button>
-                                    </Badge>
-                                ))}
-                                <Button variant="ghost" size="sm" onClick={clearAllFilters} className="ml-auto">
-                                    {t('assets.filters.clear_all')}
-                                </Button>
-                            </div>
-                        ) : null}
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.branch')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.branch') })}</SelectItem>
+                                                {filterSelects.branches.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.department')}</Label>
+                                        <Select
+                                            value={departmentId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextDepartmentId = value === 'all' ? '' : value;
+                                                setDepartmentId(nextDepartmentId);
+                                            }}
+                                            disabled={filterSelects.departments.length === 0}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.department')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.department') })}</SelectItem>
+                                                {filterSelects.departments.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.location')}</Label>
+                                        <Select
+                                            value={locationId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextLocationId = value === 'all' ? '' : value;
+                                                setLocationId(nextLocationId);
+                                            }}
+                                            disabled={filterSelects.locations.length === 0}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.location')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.location') })}</SelectItem>
+                                                {filterSelects.locations.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.category')}</Label>
+                                        <Select
+                                            value={categoryId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextCategoryId = value === 'all' ? '' : value;
+                                                setCategoryId(nextCategoryId);
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.category')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.category') })}</SelectItem>
+                                                {filterSelects.categories.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.filters.status')}</Label>
+                                        <Select
+                                            value={statusId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextStatusId = value === 'all' ? '' : value;
+                                                setStatusId(nextStatusId);
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.status')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.status') })}</SelectItem>
+                                                {filterSelects.statuses.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.filters.condition')}</Label>
+                                        <Select
+                                            value={conditionId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextConditionId = value === 'all' ? '' : value;
+                                                setConditionId(nextConditionId);
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.condition')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.filters.condition') })}</SelectItem>
+                                                {filterSelects.conditions.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.pic')}</Label>
+                                        <Select
+                                            value={picId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextPicId = value === 'all' ? '' : value;
+                                                setPicId(nextPicId);
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.pic')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.pic') })}</SelectItem>
+                                                {filterSelects.pics.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.asset_user')}</Label>
+                                        <Select
+                                            value={assetUserId || 'all'}
+                                            onValueChange={(value) => {
+                                                const nextAssetUserId = value === 'all' ? '' : value;
+                                                setAssetUserId(nextAssetUserId);
+                                            }}
+                                        >
+                                            <SelectTrigger size="sm" className="w-full">
+                                                <SelectValue placeholder={t('assets.placeholders.asset_user')} />
+                                            </SelectTrigger>
+                                            <SelectContent align="start">
+                                                <SelectItem value="all">{t('datatable.filter_all', { label: t('assets.fields.asset_user') })}</SelectItem>
+                                                {filterSelects.assetUsers.map((opt) => (
+                                                    <SelectItem key={opt.value} value={opt.value}>
+                                                        {opt.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="grid gap-1.5 sm:col-span-2 lg:col-span-2">
+                                        <Label className="text-xs text-muted-foreground">{t('assets.fields.cost')}</Label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Input
+                                                id="costMin"
+                                                value={costMin}
+                                                onChange={(e) => setCostMin(e.target.value)}
+                                                inputMode="decimal"
+                                                placeholder={t('assets.filters.cost_min')}
+                                                className="h-8"
+                                            />
+                                            <Input
+                                                id="costMax"
+                                                value={costMax}
+                                                onChange={(e) => setCostMax(e.target.value)}
+                                                inputMode="decimal"
+                                                placeholder={t('assets.filters.cost_max')}
+                                                className="h-8"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:items-end sm:justify-end lg:col-span-2">
+                                        <Button size="sm" type="submit" className="w-full sm:w-auto" disabled={!isDirtyFilters}>
+                                            {t('common.apply')}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full sm:w-auto"
+                                            onClick={clearAllFilters}
+                                            disabled={!hasActiveFilters && !hasDraftFilters}
+                                        >
+                                            {t('assets.filters.clear_all')}
+                                        </Button>
+                                    </div>
+                                </form>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {activeFilterChips.length > 0 ? (
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                            <div className="mr-1 text-sm text-muted-foreground">
+                                {t('assets.filters.active_count', { count: activeFilterChips.length })}
+                            </div>
+                            {activeFilterChips.map((chip) => (
+                                <Badge key={chip.key} variant="secondary" className="flex items-center gap-1 bg-secondary/40 px-2 py-0.5 text-xs font-normal">
+                                    <span className="max-w-[220px] truncate">
+                                        <span className="text-muted-foreground">{chip.label}:</span> {chip.value}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className="ml-1 inline-flex items-center justify-center rounded-full hover:bg-muted"
+                                        onClick={() => removeFilterChip(chip.key)}
+                                        aria-label={t('assets.filters.remove')}
+                                    >
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </Badge>
+                            ))}
+                            <Button variant="ghost" size="sm" onClick={clearAllFilters} className="ml-auto h-7 text-xs">
+                                {t('assets.filters.clear_all')}
+                            </Button>
+                        </div>
+                    ) : null}
+
+                    <div className="mt-4">
                         <DataTable
                             tableId="assets"
                             data={items}
@@ -1119,7 +1292,6 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                             bulkActions={bulkActions}
                             onBulkAction={onBulkAction}
                             routePrefix={assetsIndex.url()}
-                            filters={selectFilters}
                             exportable={canExport}
                             exportUrl={assetsExport().url}
                             mobileView="cards"

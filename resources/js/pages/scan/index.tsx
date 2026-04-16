@@ -173,7 +173,7 @@ export default function ScanIndex() {
         <>
             <Head title={t('qr.scan.title')} />
 
-            <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6">
+            <div className="flex w-full flex-1 flex-col gap-6">
                 <Heading variant="small" title={t('qr.scan.title')} description={t('qr.scan.description')} />
 
                 <Card className="space-y-4 p-6">
@@ -238,5 +238,4 @@ export default function ScanIndex() {
     );
 }
 
-ScanIndex.layout = null;
-
+// Uses PublicLayout via inertia layout resolver.

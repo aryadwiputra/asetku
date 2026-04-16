@@ -21,14 +21,13 @@ use App\Models\User;
 use App\Services\OrganizationContext;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class DemoAssetDataSeeder extends Seeder
 {
-    private const ASSET_CODE_FORMAT = '{PREFIX}-{BRANCH}-{YEAR}-{SEQ4}';
-
     /**
      * Wikimedia Commons stable URLs (Special:FilePath).
      *
@@ -59,387 +58,92 @@ class DemoAssetDataSeeder extends Seeder
 
     public function run(): void
     {
-        $group = OrganizationGroup::query()->firstOrCreate(
-            ['slug' => 'pt-maju-bersama'],
-            ['name' => 'PT Maju Bersama', 'description' => 'Holding perusahaan demo untuk platform aset.'],
-        );
+        // Ensure org + master data exist before assets are created.
+        $this->call(DemoMasterDataSeeder::class);
 
-        $organizations = [
-            ['name' => 'PT Maju Logistik', 'slug' => 'maju-logistik', 'prefix' => 'MLG'],
-            ['name' => 'PT Maju Properti', 'slug' => 'maju-properti', 'prefix' => 'MPR'],
-            ['name' => 'PT Maju Teknologi', 'slug' => 'maju-teknologi', 'prefix' => 'MTK'],
-        ];
+        $group = OrganizationGroup::query()->where('slug', 'pt-maju-bersama')->first();
+        if (! $group) {
+            return;
+        }
 
-        foreach ($organizations as $row) {
-            $organization = Organization::query()->firstOrCreate(
-                ['slug' => $row['slug']],
-                [
-                    'name' => $row['name'],
-                    'organization_group_id' => $group->id,
-                    'asset_code_prefix' => $row['prefix'],
-                    'asset_code_format' => self::ASSET_CODE_FORMAT,
-                    'currency_code' => 'IDR',
-                    'timezone' => 'Asia/Jakarta',
-                    'is_active' => true,
-                ],
-            );
+        $organizations = Organization::query()
+            ->where('organization_group_id', $group->id)
+            ->orderBy('name')
+            ->get();
 
-            if ((int) $organization->organization_group_id !== (int) $group->id) {
-                $organization->forceFill(['organization_group_id' => $group->id])->saveQuietly();
-            }
-            $organization->forceFill([
-                'asset_code_prefix' => $organization->asset_code_prefix ?: $row['prefix'],
-                'asset_code_format' => $organization->asset_code_format ?: self::ASSET_CODE_FORMAT,
-                'currency_code' => $organization->currency_code ?: 'IDR',
-                'timezone' => $organization->timezone ?: 'Asia/Jakarta',
-            ])->saveQuietly();
-
+        foreach ($organizations as $organization) {
             app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
 
-            $owner = User::factory()->inOrganization($organization, role: 'Owner')->create([
-                'name' => 'Owner '.$organization->name,
-                'email' => Str::slug($row['slug']).'@example.com',
-                'email_verified_at' => now(),
-            ]);
-
-            $branches = $this->seedBranches($organization);
-            $departments = $this->seedDepartments($organization, $branches);
-            $masters = $this->seedMasterData($organization);
-            $locations = $this->seedLocations($organization, $branches);
-
-            $pics = $this->seedPeopleInCharge();
-            $assetUsers = $this->seedAssetUsers($departments);
-
-            $this->seedAssets(
-                organization: $organization,
-                branches: $branches,
-                departments: $departments,
-                locations: $locations,
-                masters: $masters,
-                pics: $pics,
-                assetUsers: $assetUsers,
-                uploadedBy: $owner->id,
-            );
-        }
-    }
-
-    /**
-     * @return array<string, Branch>
-     */
-    private function seedBranches(Organization $organization): array
-    {
-        $defs = [
-            'JKT' => ['name' => 'Jakarta', 'address' => 'Jl. Sudirman No. 1, Jakarta', 'lat' => -6.21462, 'lng' => 106.84513],
-            'SBY' => ['name' => 'Surabaya', 'address' => 'Jl. Basuki Rahmat No. 10, Surabaya', 'lat' => -7.25747, 'lng' => 112.75209],
-            'BDG' => ['name' => 'Bandung', 'address' => 'Jl. Asia Afrika No. 20, Bandung', 'lat' => -6.91746, 'lng' => 107.61912],
-        ];
-
-        $branches = [];
-
-        foreach ($defs as $code => $meta) {
-            $branches[$code] = Branch::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => $code],
-                [
-                    'name' => $meta['name'],
-                    'is_active' => true,
-                    'address' => $meta['address'],
-                    'latitude' => $meta['lat'],
-                    'longitude' => $meta['lng'],
-                ],
-            );
-        }
-
-        return $branches;
-    }
-
-    /**
-     * @param  array<string, Branch>  $branches
-     * @return array<string, Department>
-     */
-    private function seedDepartments(Organization $organization, array $branches): array
-    {
-        $definitions = [
-            ['code' => 'IT', 'name' => 'IT'],
-            ['code' => 'GA', 'name' => 'General Affairs'],
-            ['code' => 'FIN', 'name' => 'Finance'],
-        ];
-
-        $departments = [];
-
-        foreach ($branches as $branchCode => $branch) {
-            foreach ($definitions as $def) {
-                $code = $def['code'].'-'.$branchCode;
-
-                $departments[$code] = Department::query()->firstOrCreate(
-                    ['organization_id' => $organization->id, 'code' => $code],
-                    [
-                        'branch_id' => $branch->id,
-                        'name' => $def['name'].' ('.$branchCode.')',
-                        'description' => null,
-                    ],
-                );
+            $uploadedBy = $this->resolveDemoOwnerUserId($organization);
+            if (! $uploadedBy) {
+                continue;
             }
-        }
 
-        return $departments;
+            $this->seedAssets($organization, $uploadedBy);
+        }
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function seedMasterData(Organization $organization): array
+    private function resolveDemoOwnerUserId(Organization $organization): ?int
     {
-        $statuses = [
-            'ACTIVE' => ['name' => 'Active', 'description' => 'Asset aktif digunakan.'],
-            'BORROWED' => ['name' => 'Borrowed', 'description' => 'Sedang dipinjam.'],
-            'REPAIR' => ['name' => 'Repair', 'description' => 'Dalam perbaikan.'],
-            'DISPOSED' => ['name' => 'Disposed', 'description' => 'Sudah tidak digunakan.'],
-        ];
+        $email = Str::slug($organization->slug).'@example.com';
 
-        $conditions = [
-            'GOOD' => ['name' => 'Good', 'description' => 'Kondisi baik.'],
-            'ATTN' => ['name' => 'Needs attention', 'description' => 'Perlu perhatian.'],
-            'BROKEN' => ['name' => 'Broken', 'description' => 'Rusak.'],
-            'INACTIVE' => ['name' => 'Inactive', 'description' => 'Tidak aktif.'],
-            'DISPOSAL' => ['name' => 'Disposal', 'description' => 'Untuk disposal.'],
-        ];
-
-        $units = [
-            'PCS' => ['name' => 'Piece', 'symbol' => 'pcs', 'description' => null],
-        ];
-
-        $classes = [
-            'IT' => ['name' => 'IT', 'description' => null],
-            'VEH' => ['name' => 'Vehicle', 'description' => null],
-            'FURN' => ['name' => 'Furniture', 'description' => null],
-        ];
-
-        $it = AssetCategory::query()->firstOrCreate(
-            ['organization_id' => $organization->id, 'code' => 'IT'],
-            ['name' => 'IT', 'description' => null, 'parent_id' => null, 'depreciation_method' => 'straight_line', 'useful_life_months' => 36, 'residual_value' => 0],
-        );
-        $vehicle = AssetCategory::query()->firstOrCreate(
-            ['organization_id' => $organization->id, 'code' => 'VEH'],
-            ['name' => 'Vehicle', 'description' => null, 'parent_id' => null, 'depreciation_method' => 'diminishing', 'useful_life_months' => 60, 'residual_value' => 0],
-        );
-        $furniture = AssetCategory::query()->firstOrCreate(
-            ['organization_id' => $organization->id, 'code' => 'FURN'],
-            ['name' => 'Furniture', 'description' => null, 'parent_id' => null, 'depreciation_method' => 'straight_line', 'useful_life_months' => 48, 'residual_value' => 0],
-        );
-
-        $categories = [
-            'IT-LAP' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'IT-LAP'],
-                ['name' => 'Laptop', 'description' => null, 'parent_id' => $it->id, 'depreciation_method' => 'straight_line', 'useful_life_months' => 36, 'residual_value' => 0],
-            ),
-            'IT-PRN' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'IT-PRN'],
-                ['name' => 'Printer', 'description' => null, 'parent_id' => $it->id, 'depreciation_method' => 'straight_line', 'useful_life_months' => 48, 'residual_value' => 0],
-            ),
-            'IT-NET' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'IT-NET'],
-                ['name' => 'Network', 'description' => null, 'parent_id' => $it->id, 'depreciation_method' => 'syd', 'useful_life_months' => 48, 'residual_value' => 0],
-            ),
-            'VEH-VAN' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'VEH-VAN'],
-                ['name' => 'Van', 'description' => null, 'parent_id' => $vehicle->id, 'depreciation_method' => 'diminishing', 'useful_life_months' => 60, 'residual_value' => 0],
-            ),
-            'VEH-FLT' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'VEH-FLT'],
-                ['name' => 'Forklift', 'description' => null, 'parent_id' => $vehicle->id, 'depreciation_method' => 'diminishing', 'useful_life_months' => 60, 'residual_value' => 0],
-            ),
-            'FURN-CHR' => AssetCategory::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => 'FURN-CHR'],
-                ['name' => 'Office chair', 'description' => null, 'parent_id' => $furniture->id, 'depreciation_method' => 'straight_line', 'useful_life_months' => 48, 'residual_value' => 0],
-            ),
-        ];
-
-        $statusModels = [];
-        foreach ($statuses as $code => $data) {
-            $statusModels[$code] = AssetStatus::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => $code],
-                ['name' => $data['name'], 'description' => $data['description']],
-            );
+        $id = User::query()->where('email', $email)->value('id');
+        if ($id) {
+            return (int) $id;
         }
 
-        $conditionModels = [];
-        foreach ($conditions as $code => $data) {
-            $conditionModels[$code] = AssetCondition::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => $code],
-                ['name' => $data['name'], 'description' => $data['description']],
-            );
-        }
+        $fallbackId = User::query()
+            ->whereHas('organizations', fn ($query) => $query->whereKey($organization->id))
+            ->orderBy('id')
+            ->value('id');
 
-        $unitModels = [];
-        foreach ($units as $code => $data) {
-            $unitModels[$code] = Unit::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'symbol' => $data['symbol']],
-                ['name' => $data['name'], 'description' => $data['description']],
-            );
-        }
-
-        $classModels = [];
-        foreach ($classes as $code => $data) {
-            $classModels[$code] = AssetClass::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => $code],
-                ['name' => $data['name'], 'description' => $data['description']],
-            );
-        }
-
-        return [
-            'status' => $statusModels,
-            'condition' => $conditionModels,
-            'unit' => $unitModels,
-            'class' => $classModels,
-            'category' => $categories,
-        ];
+        return $fallbackId ? (int) $fallbackId : null;
     }
 
-    /**
-     * @param  array<string, Branch>  $branches
-     * @return array<string, AssetLocation>
-     */
-    private function seedLocations(Organization $organization, array $branches): array
+    private function seedAssets(Organization $organization, int $uploadedBy): void
     {
-        $locations = [];
+        $branches = Branch::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $departments = Department::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $locations = AssetLocation::query()->where('organization_id', $organization->id)->get()->keyBy('code');
 
-        foreach ($branches as $branchCode => $branch) {
-            $building = AssetLocation::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => "BLD-A-{$branchCode}"],
-                [
-                    'branch_id' => $branch->id,
-                    'type' => 'building',
-                    'name' => "Building A ({$branchCode})",
-                    'description' => null,
-                    'parent_id' => null,
-                ],
-            );
+        $statuses = AssetStatus::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $conditions = AssetCondition::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $categories = AssetCategory::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $classes = AssetClass::query()->where('organization_id', $organization->id)->get()->keyBy('code');
+        $units = Unit::query()->where('organization_id', $organization->id)->get()->keyBy('symbol');
 
-            $floor = AssetLocation::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => "FL-01-{$branchCode}"],
-                [
-                    'branch_id' => $branch->id,
-                    'type' => 'floor',
-                    'name' => "Floor 1 ({$branchCode})",
-                    'description' => null,
-                    'parent_id' => $building->id,
-                ],
-            );
+        $pics = PersonInCharge::query()->where('organization_id', $organization->id)->get()->keyBy('email');
+        $assetUsers = AssetUser::query()->where('organization_id', $organization->id)->get()->keyBy('email');
 
-            $room = AssetLocation::query()->firstOrCreate(
-                ['organization_id' => $organization->id, 'code' => "RM-101-{$branchCode}"],
-                [
-                    'branch_id' => $branch->id,
-                    'type' => 'room',
-                    'name' => "Room 101 ({$branchCode})",
-                    'description' => null,
-                    'parent_id' => $floor->id,
-                ],
-            );
-
-            $locations[$branchCode] = $room;
-        }
-
-        return $locations;
-    }
-
-    /**
-     * @return array<string, PersonInCharge>
-     */
-    private function seedPeopleInCharge(): array
-    {
-        $defs = [
-            ['name' => 'Budi Santoso', 'email' => 'budi.santoso@example.com', 'phone' => '081234567890'],
-            ['name' => 'Siti Aisyah', 'email' => 'siti.aisyah@example.com', 'phone' => '081298765432'],
-            ['name' => 'Andi Wijaya', 'email' => 'andi.wijaya@example.com', 'phone' => '081277788899'],
-        ];
-
-        $pics = [];
-
-        foreach ($defs as $def) {
-            $pics[$def['email']] = PersonInCharge::query()->firstOrCreate(
-                ['email' => $def['email']],
-                ['name' => $def['name'], 'phone' => $def['phone'], 'notes' => null],
-            );
-        }
-
-        return $pics;
-    }
-
-    /**
-     * @param  array<string, Department>  $departments
-     * @return array<string, AssetUser>
-     */
-    private function seedAssetUsers(array $departments): array
-    {
-        $defs = [
-            ['name' => 'Dewi Lestari', 'email' => 'dewi.lestari@example.com', 'phone' => '081211122233', 'dept' => 'IT-JKT'],
-            ['name' => 'Rizky Pratama', 'email' => 'rizky.pratama@example.com', 'phone' => '081233344455', 'dept' => 'GA-SBY'],
-            ['name' => 'Nadia Putri', 'email' => 'nadia.putri@example.com', 'phone' => '081255566677', 'dept' => 'FIN-BDG'],
-        ];
-
-        $users = [];
-
-        foreach ($defs as $def) {
-            $department = $departments[$def['dept']] ?? null;
-
-            $users[$def['email']] = AssetUser::query()->firstOrCreate(
-                ['email' => $def['email']],
-                [
-                    'name' => $def['name'],
-                    'phone' => $def['phone'],
-                    'department_id' => $department?->id,
-                    'notes' => null,
-                ],
-            );
-        }
-
-        return $users;
-    }
-
-    /**
-     * @param  array<string, Branch>  $branches
-     * @param  array<string, Department>  $departments
-     * @param  array<string, AssetLocation>  $locations
-     * @param  array<string, mixed>  $masters
-     * @param  array<string, PersonInCharge>  $pics
-     * @param  array<string, AssetUser>  $assetUsers
-     */
-    private function seedAssets(
-        Organization $organization,
-        array $branches,
-        array $departments,
-        array $locations,
-        array $masters,
-        array $pics,
-        array $assetUsers,
-        int $uploadedBy,
-    ): void {
         $assets = $this->assetDefinitions($organization);
 
         foreach ($assets as $def) {
             /** @var Branch|null $branch */
-            $branch = $branches[$def['branch']] ?? null;
-            $department = $departments[$def['department']] ?? null;
-            $location = $locations[$def['branch']] ?? null;
+            $branch = $branches->get($def['branch']);
+            /** @var Department|null $department */
+            $department = $departments->get($def['department']);
+            /** @var AssetLocation|null $location */
+            $location = $locations->get("RM-101-{$def['branch']}");
 
-            if (! $branch) {
+            /** @var AssetStatus|null $status */
+            $status = $statuses->get($def['status']);
+            /** @var AssetCondition|null $condition */
+            $condition = $conditions->get($def['condition']);
+            /** @var AssetCategory|null $category */
+            $category = $categories->get($def['category']);
+            /** @var AssetClass|null $class */
+            $class = $classes->get($def['class']);
+            /** @var Unit|null $unit */
+            $unit = $units->get('pcs');
+
+            if (! $branch || ! $status || ! $condition || ! $category || ! $class || ! $unit) {
                 continue;
             }
 
-            /** @var AssetStatus $status */
-            $status = $masters['status'][$def['status']];
-            /** @var AssetCondition $condition */
-            $condition = $masters['condition'][$def['condition']];
-            /** @var AssetCategory $category */
-            $category = $masters['category'][$def['category']];
-            /** @var AssetClass $class */
-            $class = $masters['class'][$def['class']];
-            /** @var Unit $unit */
-            $unit = $masters['unit']['PCS'];
-
-            $pic = $pics[$def['pic_email']] ?? null;
-            $assetUser = $assetUsers[$def['asset_user_email']] ?? null;
+            /** @var PersonInCharge|null $pic */
+            $pic = $pics->get($def['pic_email']);
+            /** @var AssetUser|null $assetUser */
+            $assetUser = $assetUsers->get($def['asset_user_email']);
 
             /** @var Asset $asset */
             $asset = Asset::query()->updateOrCreate(
@@ -477,8 +181,7 @@ class DemoAssetDataSeeder extends Seeder
                 continue;
             }
 
-            $urls = self::IMAGE_URLS[$def['image_kind']] ?? [];
-            $urls = array_slice($urls, 0, 3);
+            $urls = array_slice(self::IMAGE_URLS[$def['image_kind']] ?? [], 0, 3);
 
             foreach ($urls as $index => $url) {
                 $downloaded = $this->downloadImage($url);
@@ -690,9 +393,29 @@ class DemoAssetDataSeeder extends Seeder
     private function downloadImage(string $url): ?array
     {
         try {
-            $response = Http::timeout(20)->retry(2, 200)->get($url);
+            // Wikimedia requires a User-Agent (and asks to respect robot policy).
+            // Use a stable, descriptive UA so requests are not blocked.
+            $userAgent = trim(sprintf(
+                '%s DemoAssetDataSeeder (+%s)',
+                (string) config('app.name', 'asetku'),
+                (string) config('app.url', 'http://localhost'),
+            ));
+
+            $response = Http::timeout(20)
+                ->withUserAgent($userAgent)
+                ->accept('image/*')
+                ->retry(2, 200, throw: false)
+                ->get($url);
         } catch (ConnectionException $e) {
             Log::warning('DemoAssetDataSeeder image download failed', ['url' => $url, 'error' => $e->getMessage()]);
+
+            return null;
+        } catch (RequestException $e) {
+            Log::warning('DemoAssetDataSeeder image download request exception', [
+                'url' => $url,
+                'status' => $e->response?->status(),
+                'error' => $e->getMessage(),
+            ]);
 
             return null;
         }
