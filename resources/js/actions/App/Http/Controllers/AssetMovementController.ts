@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetMovementController::store
-* @see app/Http/Controllers/AssetMovementController.php:20
+* @see app/Http/Controllers/AssetMovementController.php:21
 * @route '/assets/{asset}/movements'
 */
 export const store = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetMovementController::store
-* @see app/Http/Controllers/AssetMovementController.php:20
+* @see app/Http/Controllers/AssetMovementController.php:21
 * @route '/assets/{asset}/movements'
 */
 store.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -49,7 +49,7 @@ store.url = (args: { asset: number | { id: number } } | [asset: number | { id: n
 
 /**
 * @see \App\Http\Controllers\AssetMovementController::store
-* @see app/Http/Controllers/AssetMovementController.php:20
+* @see app/Http/Controllers/AssetMovementController.php:21
 * @route '/assets/{asset}/movements'
 */
 store.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -59,7 +59,7 @@ store.post = (args: { asset: number | { id: number } } | [asset: number | { id: 
 
 /**
 * @see \App\Http\Controllers\AssetMovementController::store
-* @see app/Http/Controllers/AssetMovementController.php:20
+* @see app/Http/Controllers/AssetMovementController.php:21
 * @route '/assets/{asset}/movements'
 */
 const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -69,7 +69,7 @@ const storeForm = (args: { asset: number | { id: number } } | [asset: number | {
 
 /**
 * @see \App\Http\Controllers\AssetMovementController::store
-* @see app/Http/Controllers/AssetMovementController.php:20
+* @see app/Http/Controllers/AssetMovementController.php:21
 * @route '/assets/{asset}/movements'
 */
 storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

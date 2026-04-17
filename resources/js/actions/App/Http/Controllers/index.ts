@@ -23,6 +23,9 @@ import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
+import AssetLifecycleController from './AssetLifecycleController'
+import AssetLifecycleStatusController from './AssetLifecycleStatusController'
+import AssetLifecycleConditionController from './AssetLifecycleConditionController'
 import AssetAttachmentController from './AssetAttachmentController'
 import AssetLifecycleEventController from './AssetLifecycleEventController'
 import AssetMovementController from './AssetMovementController'
@@ -57,6 +60,9 @@ const Controllers = {
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
+    AssetLifecycleController: Object.assign(AssetLifecycleController, AssetLifecycleController),
+    AssetLifecycleStatusController: Object.assign(AssetLifecycleStatusController, AssetLifecycleStatusController),
+    AssetLifecycleConditionController: Object.assign(AssetLifecycleConditionController, AssetLifecycleConditionController),
     AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
     AssetLifecycleEventController: Object.assign(AssetLifecycleEventController, AssetLifecycleEventController),
     AssetMovementController: Object.assign(AssetMovementController, AssetMovementController),

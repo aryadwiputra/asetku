@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import lifecycle from './lifecycle'
 import attachments from './attachments'
 import lifecycleEvents from './lifecycle-events'
 import movements from './movements'
@@ -727,6 +728,7 @@ const assets = {
     edit: Object.assign(edit, edit),
     update: Object.assign(update, update),
     destroy: Object.assign(destroy, destroy),
+    lifecycle: Object.assign(lifecycle, lifecycle),
     attachments: Object.assign(attachments, attachments),
     lifecycleEvents: Object.assign(lifecycleEvents, lifecycleEvents),
     movements: Object.assign(movements, movements),
