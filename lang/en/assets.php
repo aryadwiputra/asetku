@@ -160,4 +160,81 @@ return [
             'detached' => 'Attachment removed.',
         ],
     ],
+
+    'lifecycle' => [
+        'actions' => [
+            'record_event' => 'Record lifecycle event',
+            'record_movement' => 'Record movement',
+        ],
+
+        'fields' => [
+            'stage' => 'Stage',
+            'document_type' => 'Document type',
+            'movement_type' => 'Movement type',
+            'performed_at' => 'Performed at',
+            'notes' => 'Notes',
+        ],
+
+        'placeholders' => [
+            'stage' => 'Select stage',
+            'document_type' => 'Select document type',
+        ],
+
+        'stages' => [
+            'acquisition' => 'Acquisition',
+            'receiving' => 'Receiving',
+            'placement' => 'Placement',
+            'usage' => 'Usage',
+            'maintenance' => 'Maintenance',
+            'mutation' => 'Mutation',
+            'disposal' => 'Disposal',
+        ],
+
+        'document_types' => [
+            'invoice' => 'Invoice',
+            'po' => 'Purchase order (PO)',
+            'bast' => 'BAST',
+            'receipt' => 'Receipt',
+            'work_order' => 'Work order',
+            'service_report' => 'Service report',
+            'assignment_letter' => 'Assignment letter',
+            'loan_form' => 'Loan form',
+            'disposal_report' => 'Disposal report',
+            'sale_proof' => 'Sale proof',
+            'other' => 'Other',
+        ],
+
+        'movement_types' => [
+            'placement' => 'Placement',
+            'transfer' => 'Transfer',
+            'borrow' => 'Borrow',
+            'return' => 'Return',
+        ],
+
+        'toast' => [
+            'recorded' => 'Lifecycle event recorded.',
+            'movement_recorded' => 'Movement recorded.',
+        ],
+
+        'history' => [
+            'lifecycle_recorded' => 'Recorded lifecycle stage: :stage.',
+            'status_changed' => 'Status changed.',
+            'condition_changed' => 'Condition changed.',
+            'assigned' => 'Assignee updated.',
+            'relocated' => 'Placement updated.',
+            'attachment_added' => 'Attachment added.',
+            'attachment_removed' => 'Attachment removed.',
+            'placed' => 'Placed.',
+            'transferred' => 'Transferred.',
+            'borrowed' => 'Borrowed.',
+            'returned' => 'Returned.',
+        ],
+
+        'validation' => [
+            'destination_required' => 'Select at least one destination field.',
+            'borrow_requires_user' => 'Borrow requires an assignee.',
+            'department_branch_mismatch' => 'Department must belong to the selected branch.',
+            'location_branch_mismatch' => 'Location must belong to the selected branch.',
+        ],
+    ],
 ];

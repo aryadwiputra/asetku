@@ -160,4 +160,81 @@ return [
             'detached' => 'Lampiran dihapus.',
         ],
     ],
+
+    'lifecycle' => [
+        'actions' => [
+            'record_event' => 'Catat event siklus hidup',
+            'record_movement' => 'Catat mutasi/peminjaman',
+        ],
+
+        'fields' => [
+            'stage' => 'Tahap',
+            'document_type' => 'Jenis dokumen',
+            'movement_type' => 'Jenis pergerakan',
+            'performed_at' => 'Waktu kejadian',
+            'notes' => 'Catatan',
+        ],
+
+        'placeholders' => [
+            'stage' => 'Pilih tahap',
+            'document_type' => 'Pilih jenis dokumen',
+        ],
+
+        'stages' => [
+            'acquisition' => 'Perolehan',
+            'receiving' => 'Penerimaan',
+            'placement' => 'Penempatan',
+            'usage' => 'Penggunaan',
+            'maintenance' => 'Pemeliharaan',
+            'mutation' => 'Mutasi',
+            'disposal' => 'Penghapusan',
+        ],
+
+        'document_types' => [
+            'invoice' => 'Invoice',
+            'po' => 'Purchase Order (PO)',
+            'bast' => 'BAST',
+            'receipt' => 'Kwitansi',
+            'work_order' => 'Work order',
+            'service_report' => 'Laporan servis',
+            'assignment_letter' => 'Surat penugasan',
+            'loan_form' => 'Form peminjaman',
+            'disposal_report' => 'Berita acara penghapusan',
+            'sale_proof' => 'Bukti penjualan',
+            'other' => 'Lainnya',
+        ],
+
+        'movement_types' => [
+            'placement' => 'Penempatan',
+            'transfer' => 'Transfer',
+            'borrow' => 'Dipinjamkan',
+            'return' => 'Dikembalikan',
+        ],
+
+        'toast' => [
+            'recorded' => 'Event siklus hidup tercatat.',
+            'movement_recorded' => 'Pergerakan tercatat.',
+        ],
+
+        'history' => [
+            'lifecycle_recorded' => 'Mencatat tahap siklus hidup: :stage.',
+            'status_changed' => 'Status berubah.',
+            'condition_changed' => 'Kondisi berubah.',
+            'assigned' => 'Pemegang diperbarui.',
+            'relocated' => 'Penempatan diperbarui.',
+            'attachment_added' => 'Lampiran ditambahkan.',
+            'attachment_removed' => 'Lampiran dihapus.',
+            'placed' => 'Ditempatkan.',
+            'transferred' => 'Dipindahkan.',
+            'borrowed' => 'Dipinjamkan.',
+            'returned' => 'Dikembalikan.',
+        ],
+
+        'validation' => [
+            'destination_required' => 'Pilih minimal satu tujuan.',
+            'borrow_requires_user' => 'Peminjaman wajib memilih pemegang.',
+            'department_branch_mismatch' => 'Departemen harus berada pada cabang yang dipilih.',
+            'location_branch_mismatch' => 'Lokasi harus berada pada cabang yang dipilih.',
+        ],
+    ],
 ];
