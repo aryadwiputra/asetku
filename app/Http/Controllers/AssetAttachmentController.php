@@ -29,7 +29,7 @@ class AssetAttachmentController extends Controller
             }
         }
 
-        DB::transaction(function () use ($asset, $data, $kind, $isPrimary): void {
+        DB::transaction(function () use ($asset, $data, $kind, $isPrimary, $stage, $documentType, $request, $audit): void {
             if ($isPrimary) {
                 AssetMedia::query()
                     ->where('asset_id', $asset->id)
