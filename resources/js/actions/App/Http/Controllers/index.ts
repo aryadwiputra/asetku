@@ -24,6 +24,8 @@ import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
 import AssetAttachmentController from './AssetAttachmentController'
+import AssetLifecycleEventController from './AssetLifecycleEventController'
+import AssetMovementController from './AssetMovementController'
 import AssetLabelController from './AssetLabelController'
 import AssetExportController from './AssetExportController'
 import AssetSavedFilterController from './AssetSavedFilterController'
@@ -56,6 +58,8 @@ const Controllers = {
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
     AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
+    AssetLifecycleEventController: Object.assign(AssetLifecycleEventController, AssetLifecycleEventController),
+    AssetMovementController: Object.assign(AssetMovementController, AssetMovementController),
     AssetLabelController: Object.assign(AssetLabelController, AssetLabelController),
     AssetExportController: Object.assign(AssetExportController, AssetExportController),
     AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),
