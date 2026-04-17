@@ -7,6 +7,7 @@ use App\Models\Asset;
 use App\Models\AssetLocation;
 use App\Models\AssetMedia;
 use App\Models\AssetMovement;
+use App\Models\AssetStatus;
 use App\Models\Department;
 use App\Services\AssetAuditLogger;
 use Carbon\CarbonImmutable;
@@ -39,6 +40,7 @@ class AssetMovementController extends Controller
             'department_id' => $asset->department_id,
             'asset_location_id' => $asset->asset_location_id,
             'asset_user_id' => $asset->asset_user_id,
+            'asset_status_id' => $asset->asset_status_id,
         ];
 
         $toBranchId = $data['to_branch_id'] ?? null;
@@ -93,6 +95,11 @@ class AssetMovementController extends Controller
                     'return' => null,
                     default => $data['to_asset_user_id'] ?? $asset->asset_user_id,
                 },
+                'asset_status_id' => match ($type) {
+                    'borrow' => AssetStatus::query()->where('code', 'borrowed')->value('id'),
+                    'return' => AssetStatus::query()->where('code', 'active')->value('id'),
+                    default => $asset->asset_status_id,
+                } ?? $asset->asset_status_id,
             ])->save();
 
             if (isset($data['media_asset_id'])) {
@@ -126,7 +133,19 @@ class AssetMovementController extends Controller
             'department_id' => $asset->department_id,
             'asset_location_id' => $asset->asset_location_id,
             'asset_user_id' => $asset->asset_user_id,
+            'asset_status_id' => $asset->asset_status_id,
         ];
+
+        if (($before['asset_status_id'] ?? null) !== ($after['asset_status_id'] ?? null)) {
+            $audit->logStatusChanged(
+                asset: $asset,
+                actor: $user,
+                fromStatusId: is_numeric($before['asset_status_id'] ?? null) ? (int) $before['asset_status_id'] : null,
+                toStatusId: is_numeric($after['asset_status_id'] ?? null) ? (int) $after['asset_status_id'] : null,
+                performedAt: $performedAt,
+                notes: isset($data['notes']) ? (string) $data['notes'] : null,
+            );
+        }
 
         $audit->logMovement(
             asset: $asset,
