@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
 * @see app/Http/Controllers/OrganizationImportTemplateController.php:16
@@ -60,5 +60,42 @@ OrganizationImportTemplateController.head = (args: { type: string | number } | [
     url: OrganizationImportTemplateController.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+const OrganizationImportTemplateControllerForm = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: OrganizationImportTemplateController.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+OrganizationImportTemplateControllerForm.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: OrganizationImportTemplateController.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+OrganizationImportTemplateControllerForm.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: OrganizationImportTemplateController.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+OrganizationImportTemplateController.form = OrganizationImportTemplateControllerForm
 
 export default OrganizationImportTemplateController

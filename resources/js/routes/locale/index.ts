@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\LocaleController::__invoke
 * @see app/Http/Controllers/LocaleController.php:14
@@ -32,6 +32,28 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\LocaleController::__invoke
+* @see app/Http/Controllers/LocaleController.php:14
+* @route '/locale'
+*/
+const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\LocaleController::__invoke
+* @see app/Http/Controllers/LocaleController.php:14
+* @route '/locale'
+*/
+updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+update.form = updateForm
 
 const locale = {
     update: Object.assign(update, update),

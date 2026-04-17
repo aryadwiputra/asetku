@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::profile
 * @see app/Http/Controllers/OrganizationOnboardingController.php:22
@@ -44,6 +44,43 @@ profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationOnboardingController::profile
+* @see app/Http/Controllers/OrganizationOnboardingController.php:22
+* @route '/organizations/onboarding/profile'
+*/
+const profileForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: profile.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::profile
+* @see app/Http/Controllers/OrganizationOnboardingController.php:22
+* @route '/organizations/onboarding/profile'
+*/
+profileForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: profile.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::profile
+* @see app/Http/Controllers/OrganizationOnboardingController.php:22
+* @route '/organizations/onboarding/profile'
+*/
+profileForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: profile.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+profile.form = profileForm
+
+/**
 * @see \App\Http\Controllers\OrganizationOnboardingController::storeProfile
 * @see app/Http/Controllers/OrganizationOnboardingController.php:29
 * @route '/organizations/onboarding/profile'
@@ -76,6 +113,28 @@ storeProfile.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeProfile.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::storeProfile
+* @see app/Http/Controllers/OrganizationOnboardingController.php:29
+* @route '/organizations/onboarding/profile'
+*/
+const storeProfileForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeProfile.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::storeProfile
+* @see app/Http/Controllers/OrganizationOnboardingController.php:29
+* @route '/organizations/onboarding/profile'
+*/
+storeProfileForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeProfile.url(options),
+    method: 'post',
+})
+
+storeProfile.form = storeProfileForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::plan
@@ -122,6 +181,43 @@ plan.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationOnboardingController::plan
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
+* @route '/organizations/onboarding/plan'
+*/
+const planForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: plan.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::plan
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
+* @route '/organizations/onboarding/plan'
+*/
+planForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: plan.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::plan
+* @see app/Http/Controllers/OrganizationOnboardingController.php:101
+* @route '/organizations/onboarding/plan'
+*/
+planForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: plan.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+plan.form = planForm
+
+/**
 * @see \App\Http\Controllers\OrganizationOnboardingController::updatePlan
 * @see app/Http/Controllers/OrganizationOnboardingController.php:113
 * @route '/organizations/onboarding/plan'
@@ -154,6 +250,28 @@ updatePlan.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updatePlan.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updatePlan
+* @see app/Http/Controllers/OrganizationOnboardingController.php:113
+* @route '/organizations/onboarding/plan'
+*/
+const updatePlanForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updatePlan.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updatePlan
+* @see app/Http/Controllers/OrganizationOnboardingController.php:113
+* @route '/organizations/onboarding/plan'
+*/
+updatePlanForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updatePlan.url(options),
+    method: 'post',
+})
+
+updatePlan.form = updatePlanForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::locale
@@ -200,6 +318,43 @@ locale.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationOnboardingController::locale
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
+* @route '/organizations/onboarding/locale'
+*/
+const localeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: locale.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::locale
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
+* @route '/organizations/onboarding/locale'
+*/
+localeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: locale.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::locale
+* @see app/Http/Controllers/OrganizationOnboardingController.php:130
+* @route '/organizations/onboarding/locale'
+*/
+localeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: locale.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+locale.form = localeForm
+
+/**
 * @see \App\Http\Controllers\OrganizationOnboardingController::updateLocale
 * @see app/Http/Controllers/OrganizationOnboardingController.php:143
 * @route '/organizations/onboarding/locale'
@@ -232,6 +387,28 @@ updateLocale.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updateLocale.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updateLocale
+* @see app/Http/Controllers/OrganizationOnboardingController.php:143
+* @route '/organizations/onboarding/locale'
+*/
+const updateLocaleForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateLocale.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updateLocale
+* @see app/Http/Controllers/OrganizationOnboardingController.php:143
+* @route '/organizations/onboarding/locale'
+*/
+updateLocaleForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateLocale.url(options),
+    method: 'post',
+})
+
+updateLocale.form = updateLocaleForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
@@ -278,6 +455,43 @@ assetCode.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
+* @route '/organizations/onboarding/asset-code'
+*/
+const assetCodeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: assetCode.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
+* @route '/organizations/onboarding/asset-code'
+*/
+assetCodeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: assetCode.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::assetCode
+* @see app/Http/Controllers/OrganizationOnboardingController.php:160
+* @route '/organizations/onboarding/asset-code'
+*/
+assetCodeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: assetCode.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+assetCode.form = assetCodeForm
+
+/**
 * @see \App\Http\Controllers\OrganizationOnboardingController::updateAssetCode
 * @see app/Http/Controllers/OrganizationOnboardingController.php:172
 * @route '/organizations/onboarding/asset-code'
@@ -310,6 +524,28 @@ updateAssetCode.post = (options?: RouteQueryOptions): RouteDefinition<'post'> =>
     url: updateAssetCode.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updateAssetCode
+* @see app/Http/Controllers/OrganizationOnboardingController.php:172
+* @route '/organizations/onboarding/asset-code'
+*/
+const updateAssetCodeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateAssetCode.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::updateAssetCode
+* @see app/Http/Controllers/OrganizationOnboardingController.php:172
+* @route '/organizations/onboarding/asset-code'
+*/
+updateAssetCodeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateAssetCode.url(options),
+    method: 'post',
+})
+
+updateAssetCode.form = updateAssetCodeForm
 
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
@@ -356,6 +592,43 @@ importMethod.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
+* @route '/organizations/onboarding/import'
+*/
+const importMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
+* @route '/organizations/onboarding/import'
+*/
+importMethodForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importMethod.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::importMethod
+* @see app/Http/Controllers/OrganizationOnboardingController.php:189
+* @route '/organizations/onboarding/import'
+*/
+importMethodForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importMethod.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+importMethod.form = importMethodForm
+
+/**
 * @see \App\Http\Controllers\OrganizationOnboardingController::storeImport
 * @see app/Http/Controllers/OrganizationOnboardingController.php:201
 * @route '/organizations/onboarding/import'
@@ -388,6 +661,28 @@ storeImport.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: storeImport.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::storeImport
+* @see app/Http/Controllers/OrganizationOnboardingController.php:201
+* @route '/organizations/onboarding/import'
+*/
+const storeImportForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeImport.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::storeImport
+* @see app/Http/Controllers/OrganizationOnboardingController.php:201
+* @route '/organizations/onboarding/import'
+*/
+storeImportForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: storeImport.url(options),
+    method: 'post',
+})
+
+storeImport.form = storeImportForm
 
 const OrganizationOnboardingController = { profile, storeProfile, plan, updatePlan, locale, updateLocale, assetCode, updateAssetCode, importMethod, storeImport, import: importMethod }
 

@@ -1,5 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { AlertTriangle, ArrowUpRight, Import, Plus } from 'lucide-react';
+import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
+import AssetController from '@/actions/App/Http/Controllers/AssetController';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import type { ActivityItem } from '@/components/dashboard/recent-activity';
 import { StatCard } from '@/components/dashboard/stat-card';
@@ -7,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
-import AssetController from '@/actions/App/Http/Controllers/AssetController';
 import { create as assetsCreate, index as assetsIndex } from '@/routes/assets';
 import { index as assetsImportIndex } from '@/routes/assets/import';
 
@@ -39,6 +40,14 @@ export default function Dashboard() {
             asset_count: number;
             total_value: number;
         }>;
+        assetsByStatus: Array<{
+            status: { id: number; name: string; code: string };
+            asset_count: number;
+        }>;
+        assetsByCondition: Array<{
+            condition: { id: number; name: string; code: string };
+            asset_count: number;
+        }>;
         recentActivity: Array<{
             id: number;
             action: string;
@@ -54,6 +63,8 @@ export default function Dashboard() {
             canViewMasterData: boolean;
         };
     };
+
+    const COLORS = ['var(--color-primary)', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6', '#64748b'];
 
     const currencyFormatter = new Intl.NumberFormat(locale ?? 'en', {
         style: 'currency',
@@ -72,7 +83,7 @@ export default function Dashboard() {
     return (
         <>
             <Head title={t('dashboard.title')} />
-            <div className="mx-auto flex h-full w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 lg:gap-8">
+            <div className="flex flex-1 flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 lg:gap-8">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div className="min-w-0">
                         <h1 className="truncate text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -125,8 +136,47 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+                    <div className="lg:col-span-2 rounded-xl ring-1 ring-border bg-card p-6 shadow-sm">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.charts.assets_by_status')}</h2>
+                        <div className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={page.assetsByStatus.map(s => ({ name: s.status.name, count: s.asset_count }))}>
+                                    <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                                    <RechartsTooltip cursor={{fill: 'var(--muted)'}} contentStyle={{borderRadius: '8px'}} />
+                                    <Bar dataKey="count" fill="currentColor" radius={[4, 4, 0, 0]} className="fill-primary" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl ring-1 ring-border bg-card p-6 shadow-sm">
+                        <h2 className="text-lg font-semibold text-foreground mb-4">{t('dashboard.charts.assets_by_condition')}</h2>
+                        <div className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={page.assetsByCondition.map(c => ({ name: c.condition.name, value: c.asset_count }))}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={60}
+                                        outerRadius={80}
+                                        paddingAngle={5}
+                                    >
+                                        {page.assetsByCondition.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <RechartsTooltip contentStyle={{borderRadius: '8px'}} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+
                     <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-                        <div className="rounded-xl border border-border bg-card p-6">
+                        <div className="rounded-xl ring-1 ring-border bg-card p-6 shadow-sm">
                             <div className="flex items-center justify-between gap-2">
                                 <h2 className="text-lg font-semibold text-foreground">{t('dashboard.attention_required')}</h2>
                                 <Button asChild variant="ghost" size="sm">
@@ -185,7 +235,7 @@ export default function Dashboard() {
                     </div>
 
                     <div className="space-y-6 lg:space-y-8">
-                        <div className="rounded-xl border border-border bg-card p-6">
+                        <div className="rounded-xl ring-1 ring-border bg-card p-6 shadow-sm">
                             <h2 className="text-lg font-semibold text-foreground">{t('dashboard.top_branches')}</h2>
                             {page.topBranches?.length ? (
                                 <div className="mt-4 space-y-4">
@@ -243,6 +293,7 @@ Dashboard.layout = {
 
 function formatRelative(iso: string, locale: string): string {
     const date = new Date(iso);
+
     if (Number.isNaN(date.getTime())) {
         return '—';
     }
@@ -255,9 +306,11 @@ function formatRelative(iso: string, locale: string): string {
     if (abs < 60) {
         return rtf.format(seconds, 'second');
     }
+
     if (abs < 3600) {
         return rtf.format(Math.round(seconds / 60), 'minute');
     }
+
     if (abs < 86400) {
         return rtf.format(Math.round(seconds / 3600), 'hour');
     }

@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
 * @see app/Http/Controllers/OrganizationSwitchController.php:13
@@ -56,5 +56,27 @@ OrganizationSwitchController.post = (args: { organization: number | { id: number
     url: OrganizationSwitchController.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationSwitchController::__invoke
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
+* @route '/organizations/{organization}/switch'
+*/
+const OrganizationSwitchControllerForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: OrganizationSwitchController.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationSwitchController::__invoke
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
+* @route '/organizations/{organization}/switch'
+*/
+OrganizationSwitchControllerForm.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: OrganizationSwitchController.url(args, options),
+    method: 'post',
+})
+
+OrganizationSwitchController.form = OrganizationSwitchControllerForm
 
 export default OrganizationSwitchController

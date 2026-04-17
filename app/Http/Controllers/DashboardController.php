@@ -37,6 +37,8 @@ class DashboardController extends Controller
                 'items' => $this->attentionItems($baseQuery, $attentionConditionIds),
             ],
             'topBranches' => $this->topBranches($baseQuery),
+            'assetsByStatus' => $this->assetsByStatus($baseQuery),
+            'assetsByCondition' => $this->assetsByCondition($baseQuery),
             'recentActivity' => $this->recentActivity($user),
             'quickActions' => $this->quickActions($user),
         ]);
@@ -280,5 +282,91 @@ class DashboardController extends Controller
         }
 
         return (($current - $previous) / $previous) * 100;
+    }
+
+    /**
+     * @return list<array{
+     *  status:array{id:int,name:string,code:string},
+     *  asset_count:int
+     * }>
+     */
+    private function assetsByStatus(Builder $baseQuery): array
+    {
+        $stats = (clone $baseQuery)
+            ->whereNotNull('asset_status_id')
+            ->select('asset_status_id', DB::raw('COUNT(*) as asset_count'))
+            ->groupBy('asset_status_id')
+            ->orderByDesc('asset_count')
+            ->get();
+
+        if ($stats->isEmpty()) {
+            return [];
+        }
+
+        $statuses = AssetStatus::query()
+            ->whereIn('id', $stats->pluck('asset_status_id')->all())
+            ->get(['id', 'name', 'code'])
+            ->keyBy('id');
+
+        return $stats
+            ->map(function ($row) use ($statuses) {
+                $statusId = (int) $row->asset_status_id;
+                $status = $statuses->get($statusId);
+                if (! $status) return null;
+                return [
+                    'status' => [
+                        'id' => $status->id,
+                        'name' => $status->name,
+                        'code' => $status->code,
+                    ],
+                    'asset_count' => (int) $row->asset_count,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<array{
+     *  condition:array{id:int,name:string,code:string},
+     *  asset_count:int
+     * }>
+     */
+    private function assetsByCondition(Builder $baseQuery): array
+    {
+        $stats = (clone $baseQuery)
+            ->whereNotNull('asset_condition_id')
+            ->select('asset_condition_id', DB::raw('COUNT(*) as asset_count'))
+            ->groupBy('asset_condition_id')
+            ->orderByDesc('asset_count')
+            ->get();
+
+        if ($stats->isEmpty()) {
+            return [];
+        }
+
+        $conditions = AssetCondition::query()
+            ->whereIn('id', $stats->pluck('asset_condition_id')->all())
+            ->get(['id', 'name', 'code'])
+            ->keyBy('id');
+
+        return $stats
+            ->map(function ($row) use ($conditions) {
+                $conditionId = (int) $row->asset_condition_id;
+                $condition = $conditions->get($conditionId);
+                if (! $condition) return null;
+                return [
+                    'condition' => [
+                        'id' => $condition->id,
+                        'name' => $condition->name,
+                        'code' => $condition->code,
+                    ],
+                    'asset_count' => (int) $row->asset_count,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
     }
 }

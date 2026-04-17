@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\MailSettingsController::edit
 * @see app/Http/Controllers/Settings/MailSettingsController.php:21
@@ -44,6 +44,43 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Settings\MailSettingsController::edit
+* @see app/Http/Controllers/Settings/MailSettingsController.php:21
+* @route '/settings/mail'
+*/
+const editForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\MailSettingsController::edit
+* @see app/Http/Controllers/Settings/MailSettingsController.php:21
+* @route '/settings/mail'
+*/
+editForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\MailSettingsController::edit
+* @see app/Http/Controllers/Settings/MailSettingsController.php:21
+* @route '/settings/mail'
+*/
+editForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\Settings\MailSettingsController::update
 * @see app/Http/Controllers/Settings/MailSettingsController.php:58
 * @route '/settings/mail'
@@ -78,6 +115,38 @@ update.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Settings\MailSettingsController::update
+* @see app/Http/Controllers/Settings/MailSettingsController.php:58
+* @route '/settings/mail'
+*/
+const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\MailSettingsController::update
+* @see app/Http/Controllers/Settings/MailSettingsController.php:58
+* @route '/settings/mail'
+*/
+updateForm.patch = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\Settings\MailSettingsController::test
 * @see app/Http/Controllers/Settings/MailSettingsController.php:118
 * @route '/settings/mail/test'
@@ -110,6 +179,28 @@ test.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: test.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\Settings\MailSettingsController::test
+* @see app/Http/Controllers/Settings/MailSettingsController.php:118
+* @route '/settings/mail/test'
+*/
+const testForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: test.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\MailSettingsController::test
+* @see app/Http/Controllers/Settings/MailSettingsController.php:118
+* @route '/settings/mail/test'
+*/
+testForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: test.url(options),
+    method: 'post',
+})
+
+test.form = testForm
 
 const mailSettings = {
     edit: Object.assign(edit, edit),

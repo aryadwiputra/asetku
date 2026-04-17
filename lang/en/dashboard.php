@@ -22,6 +22,10 @@ return [
     'actions' => [
         'view_all' => 'View all',
     ],
+    'charts' => [
+        'assets_by_status' => 'Assets by Status',
+        'assets_by_condition' => 'Assets by Condition',
+    ],
     'labels' => [
         'asset_count' => ':count assets',
         'no_branch' => 'No branch',

@@ -67,12 +67,17 @@
 }
 
 :root {
+    /* Foundation Colors */
     --background: #f7f4ed;
     --foreground: #1c1c1c;
-    --card: #f7f4ed;
+    
+    /* Surfaces */
+    --card: #ffffff; /* Clean white layer above cream background */
     --card-foreground: #1c1c1c;
-    --popover: #f7f4ed;
+    --popover: #ffffff;
     --popover-foreground: #1c1c1c;
+    
+    /* Semantic Actions */
     --primary: #1c1c1c;
     --primary-foreground: #fcfbf8;
     --secondary: rgba(28,28,28,0.04);
@@ -81,52 +86,86 @@
     --muted-foreground: #5f5f5d;
     --accent: rgba(28, 28, 28, 0.04);
     --accent-foreground: #1c1c1c;
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: #eceae4;
-    --input: #eceae4;
-    --ring: rgba(59, 130, 246, 0.5);
+    
+    /* Semantic Status */
+    --destructive: #be123c; /* crisp semantic earthy red */
+    --destructive-foreground: #fcfbf8;
+    --success: #15803d; /* deep forest green */
+    --success-foreground: #fcfbf8;
+    --warning: #b45309; /* amber/ochre */
+    --warning-foreground: #fcfbf8;
+    --info: #0369a1; /* subdued royal blue */
+    --info-foreground: #fcfbf8;
+    
+    /* Structural Elements */
+    --border: rgba(28, 28, 28, 0.08); /* soft but visible divider */
+    --input: rgba(28, 28, 28, 0.05); /* muted input background */
+    --ring: rgba(28, 28, 28, 0.15); /* focus glow */
+    
+    /* Charts */
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.75rem;
-    --sidebar: #f7f4ed;
+    
+    --radius: 0.75rem; /* 12px pill/soft rounded look */
+    
+    /* Sidebar Layout Elements */
+    --sidebar: #f7f4ed; /* matches background */
     --sidebar-foreground: #1c1c1c;
     --sidebar-primary: #1c1c1c;
     --sidebar-primary-foreground: #fcfbf8;
     --sidebar-accent: rgba(28, 28, 28, 0.04);
     --sidebar-accent-foreground: #1c1c1c;
     --sidebar-border: rgba(28,28,28,0.05);
-    --sidebar-ring: rgba(59, 130, 246, 0.5);
+    --sidebar-ring: rgba(28, 28, 28, 0.15);
 }
 
 .dark {
+    /* Foundation Colors */
     --background: #151515;
     --foreground: #f7f4ed;
-    --card: #1c1c1c;
+    
+    /* Surfaces */
+    --card: #1f1f1f; /* Clean raised dark tone layer */
     --card-foreground: #f7f4ed;
-    --popover: #1c1c1c;
+    --popover: #1f1f1f;
     --popover-foreground: #f7f4ed;
+    
+    /* Semantic Actions */
     --primary: #f7f4ed;
     --primary-foreground: #1c1c1c;
     --secondary: rgba(247, 244, 237, 0.1);
     --secondary-foreground: #f7f4ed;
-    --muted: rgba(247, 244, 237, 0.1);
+    --muted: rgba(247, 244, 237, 0.05);
     --muted-foreground: rgba(247, 244, 237, 0.6);
     --accent: rgba(247, 244, 237, 0.1);
     --accent-foreground: #f7f4ed;
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
+    
+    /* Semantic Status */
+    --destructive: #fb7185;
+    --destructive-foreground: #151515;
+    --success: #4ade80;
+    --success-foreground: #151515;
+    --warning: #fbbf24;
+    --warning-foreground: #151515;
+    --info: #38bdf8;
+    --info-foreground: #151515;
+    
+    /* Structural Elements */
     --border: rgba(247, 244, 237, 0.1);
-    --input: rgba(247, 244, 237, 0.1);
-    --ring: rgba(59, 130, 246, 0.5);
+    --input: rgba(247, 244, 237, 0.05);
+    --ring: rgba(247, 244, 237, 0.2);
+    
+    /* Charts */
     --chart-1: oklch(0.488 0.243 264.376);
     --chart-2: oklch(0.696 0.17 162.48);
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
+    
+    /* Sidebar Layout Elements */
     --sidebar: #151515;
     --sidebar-foreground: #f7f4ed;
     --sidebar-primary: #f7f4ed;
@@ -134,7 +173,7 @@
     --sidebar-accent: rgba(247, 244, 237, 0.1);
     --sidebar-accent-foreground: #f7f4ed;
     --sidebar-border: rgba(247, 244, 237, 0.1);
-    --sidebar-ring: rgba(59, 130, 246, 0.5);
+    --sidebar-ring: rgba(247, 244, 237, 0.2);
 }
 
 @layer base {
@@ -144,5 +183,6 @@
 
     body {
         @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
     }
 }
