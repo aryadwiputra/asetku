@@ -1,8 +1,8 @@
-# Starter Kit — Laravel 13 + Inertia.js (React)
+# Asetku — Asset Management Platform (Multi-Organization, Single Database)
 
-Starter kit yang opinionated untuk membangun dashboard admin modern dan aplikasi bergaya SaaS dengan **Laravel 13**, **Inertia v3**, **React 19**, dan **Tailwind CSS v4**.
+Platform manajemen aset “enterprise-ready” berbasis **Laravel 13**, **Inertia v3**, **React 19**, dan **Tailwind CSS v4**. Asetku dirancang untuk **multi-organization** dalam **satu database** (single DB) dengan isolasi data melalui `organization_id` + Global Scope.
 
-Repository ini berisi kumpulan modul yang terus bertambah dan siap dipakai di production: settings tersimpan di DB (dengan cache Redis), manajemen role/permission, media library, notifikasi, audit log, API v1 (Sanctum), i18n, dan lainnya.
+Repository ini berisi modul inti untuk: organisasi & cabang, master data aset, registrasi aset + lampiran foto/dokumen, QR/scan publik, siklus hidup aset (audit trail immutable), user management modern (invites, SSO, 2FA), i18n, API v1, serta tooling dev (Horizon/Telescope).
 
 ---
 
@@ -11,27 +11,33 @@ Repository ini berisi kumpulan modul yang terus bertambah dan siap dipakai di pr
 - **Backend**: Laravel 13 (PHP 8.3)
 - **Frontend**: Inertia.js v3 + React 19 + Vite
 - **UI**: Tailwind CSS v4 + Radix UI primitives
-- **Auth**: Laravel Fortify (+ optional 2FA)
-- **RBAC**: Spatie Laravel Permission
-- **Audit log**: Spatie Activitylog
-- **Media**: Spatie Media Library
+- **Auth**: Laravel Fortify (termasuk 2FA TOTP) + Socialite (SSO)
+- **RBAC**: Spatie Laravel Permission (platform-wide) + role org-level via pivot `organization_user`
+- **Audit log**: Spatie Activitylog + event history aset (`asset_histories`)
+- **Media & Upload**: Spatie Media Library + `MediaAsset` + chunked uploads
+- **Import/Export**: Maatwebsite Excel + DomPDF
+- **Maps/QR/Barcode**: Leaflet + QRCode (JS) + JsBarcode
 - **API**: `/api/v1/*` dengan Sanctum (personal access tokens)
-- **Dokumentasi**: Scramble (OpenAPI UI)
-- **Monitoring (optional)**: Sentry
-- **Performa (tooling)**: Telescope (dev) + Horizon (monitor queue)
+- **Dokumentasi API**: Scramble (OpenAPI UI)
+- **Tooling**: Telescope (dev) + Horizon (monitor queue), Sentry (optional)
+
+---
+
+## Konsep Utama (Multi-tenancy)
+
+- **Single database**: semua data domain aset dan modul tertentu discope dengan `organization_id`.
+- **Global Scope Laravel** memastikan query otomatis terfilter ke organisasi aktif.
+- User dapat menjadi anggota banyak organisasi via pivot `organization_user`, dan organisasi aktif disimpan di `users.current_organization_id`.
+- **Organization switcher** tersedia di sidebar (workspace-style).
 
 ---
 
 ## Kebutuhan
 
-- PHP **8.3**
-- Composer
+- PHP **8.3** + Composer
 - Node.js + npm
-- A database (SQLite / MySQL)
 - Database (SQLite / MySQL)
-- Redis (direkomendasikan)
-  - Dibutuhkan untuk: **Horizon**, cache bertag, dan sebagian cache settings
-  - Aplikasi berusaha **fail-open** saat Redis bersifat opsional
+- Redis (direkomendasikan; dibutuhkan untuk Horizon dan sebagian cache/queue bila `QUEUE_CONNECTION=redis`)
 
 ---
 
@@ -43,8 +49,9 @@ Dari root repo:
 composer install
 cp .env.example .env
 php artisan key:generate
-php artisan migrate --seed
 npm install
+php artisan storage:link
+php artisan migrate --seed
 npm run dev
 ```
 
@@ -79,7 +86,83 @@ composer run dev
 
 ## Modul Aplikasi (Ringkasan)
 
-### Settings (DB-backed + cache Redis)
+### Organizations & Branches (Workspace)
+
+- Multi-organization per platform account (holding/group → organization → branch → department → asset)
+- Onboarding organisasi (profile, plan, locale, asset code format)
+- Manajemen cabang (aktif/nonaktif), detail alamat, PIC, koordinat (lat/lng)
+- Switch organisasi: `POST /organizations/{organization}/switch`
+
+### Master Data (Settings → Master Data)
+
+CRUD org-scoped (i18n) untuk master data aset:
+
+- Status aset, kondisi aset, kelas aset, unit
+- Department (terikat branch), PIC (Person-in-charge), asset users
+- Kategori aset (hierarki), lokasi aset (hierarki + branch)
+- Warranty, vendor contracts
+
+Path: `GET /settings/master-data`
+
+### Assets Module
+
+- Registrasi aset + metadata/custom fields per kategori
+- Lampiran **foto** & **dokumen** via `MediaAsset` + `asset_media`
+- Search/filter + saved filters
+- Export (CSV/Excel/PDF) mengikuti filter aktif
+- Print label A4 (QR + barcode)
+- Map view (Leaflet) untuk aset yang memiliki koordinat
+
+### Public QR & Scan
+
+- Public page: `GET /q/{token}` menampilkan detail aset + foto + dokumen (read-only, tanpa login)
+- Scan page: `GET /scan` (kamera browser)
+
+**Security note**: halaman `/q/{token}` menggunakan akses berbasis token (“possession-based”). Anggap `qr_token` sebagai “secret link” — jangan disebarkan publik. Jika token bocor, lakukan rotasi token (fitur rotasi bisa ditambahkan) dan cetak ulang label.
+
+### Asset Lifecycle (Audit Trail Immutable)
+
+- Sistem merekam perjalanan aset dari perolehan hingga penghapusan melalui `asset_histories`.
+- History menggunakan `performed_at` untuk “waktu kejadian” dan bersifat **immutable** (tidak bisa dihapus/mutasi dari aplikasi).
+- Movement types pada `asset_movements.type`: `placement|transfer|borrow|return`
+- Dokumen pendukung bisa ditag dengan `asset_media.stage` + `document_type`.
+
+### Siklus Aset (Menu Operasional)
+
+Modul operasional agar user bisa melakukan perubahan lifecycle tanpa membuka detail aset:
+
+- Path: `GET /asset-lifecycle`
+- Asset picker (search + scan QR), lalu aksi cepat:
+  - Status, kondisi, lifecycle event, movement (transfer/borrow/return), documents, timeline
+
+### User Management v2 (Invites + SSO + 2FA + Access Policy)
+
+- Undang user via email (token expire 48 jam) untuk join organisasi aktif
+- SSO login Google & Microsoft 365 (hanya untuk user yang sudah ada/di-invite)
+- 2FA: TOTP + SMS recovery (driver default: log)
+- Access restriction per organization: IP allowlist + jam kerja
+- Login history events (success/failed/logout), suspend/reactivate, delegation sementara
+
+---
+
+## Demo Data (Realistic Seed + Internet Images)
+
+Seeder demo membuat holding “PT Maju Bersama” + 3 organisasi + cabang + master data + aset realistis, termasuk download foto aset dari **Wikimedia Commons** (best-effort).
+
+Aktifkan demo seed:
+
+```bash
+SEED_DEMO_ASSETS=true php artisan migrate:fresh --seed
+```
+
+Catatan:
+- Membutuhkan internet untuk download gambar (gagal download tidak membatalkan seeding).
+- File media disimpan ke disk `public`. Pastikan sudah menjalankan `php artisan storage:link`.
+- User default (`superadmin@example.com`, `admin@example.com`) akan di-attach sebagai member demo organizations agar bisa switch org dan melihat data demo.
+
+---
+
+## Settings (DB-backed + cache Redis)
 
 - Settings admin ada di `/settings/*`:
   - **App Settings**: name, logo, timezone, locale, maintenance mode
@@ -88,39 +171,9 @@ composer run dev
 - Akses berbasis permission:
   - `settings.app.manage`, `settings.mail.manage`, `settings.flags.manage`
 
-### User Management
+---
 
-- CRUD **Users** and **Roles** (Spatie Permission)
-- Role `super-admin` bersifat **read-only**
-- Permissions are created via seeder `database/seeders/RolePermissionSeeder.php`
-
-### Media Library
-
-- Modul media khusus admin di `/media`
-- Upload files/images and manage assets
-- Thumbnail/WebP conversions via Spatie Media Library
-- Chunked uploads supported (large files)
-
-### Notifications
-
-- Notifikasi in-app:
-  - Bell polling endpoint: `/notifications/poll`
-  - Full list: `/notifications`
-  - Mark read / mark all read
-- Preferensi notifikasi tersimpan per user
-
-### Audit Trail (Activity Log)
-
-- Admin page: `/settings/activity`
-- Logs changes on key models with before/after diffs (secrets masked)
-
-### i18n (Internasionalisasi)
-
-- Terjemahan backend via Laravel `lang/*`
-- Frontend translations shared via Inertia and consumed via `useTranslation()`
-- Locale switcher tersimpan (session untuk guest, `users.locale` untuk user login)
-
-### API Layer (v1)
+## API Layer (v1)
 
 - Base API routes: `routes/api.php`
 - Versioned routes: `/api/v1/*`
@@ -135,6 +188,31 @@ composer run dev
 
 - Health check:
   - `GET /api/health` → checks database/cache/queue/storage and returns 200 or 503
+
+---
+
+## Routes Cheat Sheet (Developer)
+
+```text
+GET  /dashboard
+GET  /organizations
+POST /organizations/{organization}/switch
+GET  /branches
+GET  /settings/master-data
+
+GET  /assets
+GET  /assets-import
+GET  /assets-export
+GET  /assets-labels/print
+GET  /asset-lifecycle
+
+GET  /q/{token}
+GET  /scan
+
+GET  /horizon     (optional)
+GET  /telescope   (dev only)
+GET  /api/docs
+```
 
 ---
 
@@ -157,7 +235,7 @@ composer run dev
 
 ## Developer Experience (DX)
 
-Starter kit ini menekankan DX agar developer bisa produktif dari hari pertama:
+Asetku menekankan DX agar developer bisa produktif dari hari pertama:
 
 - Generator module: `php artisan make:module Post`
 - Type-safe shared props Inertia: `composer inertia:types`
@@ -178,6 +256,16 @@ Lihat `.env.example` untuk daftar lengkap. Beberapa yang sering dipakai:
 - `QUEUE_CONNECTION=redis`
 - `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`
 - `SENTRY_DSN` (optional)
+- `SEED_DEMO_ASSETS=true` (optional) untuk demo realistic seed
+
+### SSO (Google & Microsoft 365)
+
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URL`
+- `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET`, `MICROSOFT_REDIRECT_URL`, `MICROSOFT_TENANT_ID` (default `common`)
+
+### SMS Recovery (2FA)
+
+- `SMS_DRIVER=log` (default) — mengirim SMS recovery via log (siap diganti provider nyata).
 
 ---
 
