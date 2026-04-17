@@ -11,12 +11,19 @@ class AssetHistory extends Model
 {
     use BelongsToOrganization, HasFactory;
 
+    protected static function booted(): void
+    {
+        static::updating(fn (): bool => false);
+        static::deleting(fn (): bool => false);
+    }
+
     /**
      * @var list<string>
      */
     protected $fillable = [
         'asset_id',
         'action',
+        'performed_at',
         'description',
         'changed_by',
         'payload',
@@ -31,6 +38,7 @@ class AssetHistory extends Model
     {
         return [
             'payload' => 'array',
+            'performed_at' => 'datetime',
         ];
     }
 

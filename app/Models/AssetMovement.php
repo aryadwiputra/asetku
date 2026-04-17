@@ -17,6 +17,7 @@ class AssetMovement extends Model
      */
     protected $fillable = [
         'asset_id',
+        'type',
         'from_branch_id',
         'to_branch_id',
         'from_location_id',
