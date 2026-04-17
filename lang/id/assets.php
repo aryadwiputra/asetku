@@ -162,6 +162,28 @@ return [
     ],
 
     'lifecycle' => [
+        'page' => [
+            'description' => 'Catat dan kelola siklus aset tanpa membuka halaman detail aset.',
+            'search_label' => 'Cari aset',
+            'search_placeholder' => 'Cari berdasarkan kode, nama, nomor seri…',
+            'search_action' => 'Cari',
+            'scan_action' => 'Scan QR',
+            'results' => 'Hasil',
+            'empty' => 'Ketik kata kunci atau scan QR untuk mulai.',
+            'select_asset_hint' => 'Pilih aset dari daftar untuk mulai mencatat siklus aset.',
+            'actions' => 'Aksi',
+            'tabs' => [
+                'status' => 'Status',
+                'condition' => 'Kondisi',
+                'documents' => 'Dokumen',
+            ],
+            'read_only_notice' => 'Kamu bisa melihat data, tetapi tidak punya izin untuk mengubahnya.',
+            'scan_title' => 'Scan QR aset',
+            'scan_not_supported' => 'Fitur scan QR tidak didukung di browser ini. Coba Chrome/Safari versi terbaru di mobile.',
+            'scan_start' => 'Mulai scan',
+            'scan_stop' => 'Berhenti',
+        ],
+
         'actions' => [
             'record_event' => 'Catat event siklus hidup',
             'record_movement' => 'Catat mutasi/peminjaman',

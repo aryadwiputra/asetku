@@ -162,6 +162,28 @@ return [
     ],
 
     'lifecycle' => [
+        'page' => [
+            'description' => 'Record and manage an asset lifecycle without opening the asset detail page.',
+            'search_label' => 'Find asset',
+            'search_placeholder' => 'Search by code, name, serial number…',
+            'search_action' => 'Search',
+            'scan_action' => 'Scan QR',
+            'results' => 'Results',
+            'empty' => 'Type a keyword or scan a QR code to start.',
+            'select_asset_hint' => 'Select an asset from the list to start recording lifecycle events.',
+            'actions' => 'Actions',
+            'tabs' => [
+                'status' => 'Status',
+                'condition' => 'Condition',
+                'documents' => 'Documents',
+            ],
+            'read_only_notice' => 'You can view the data, but you do not have permission to make changes.',
+            'scan_title' => 'Scan asset QR',
+            'scan_not_supported' => 'QR scanning is not supported on this browser. Try a newer Chrome/Safari on mobile.',
+            'scan_start' => 'Start scanning',
+            'scan_stop' => 'Stop',
+        ],
+
         'actions' => [
             'record_event' => 'Record lifecycle event',
             'record_movement' => 'Record movement',
