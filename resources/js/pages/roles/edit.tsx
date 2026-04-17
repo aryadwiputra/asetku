@@ -52,7 +52,7 @@ export default function EditRole({ role, permission_groups }: Props) {
                 />
 
                 <Form
-                    {...toForm(RoleController.update({ role: String(role.id) }))}
+                    {...toForm(RoleController.update({ role: role.id }))}
                     className="max-w-3xl space-y-6"
                 >
                     {({ processing, errors }) => (
