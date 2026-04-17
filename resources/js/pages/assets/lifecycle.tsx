@@ -542,7 +542,7 @@ function MovementForm({ assetId, meta, canUpdate }: { assetId: number; meta: Pro
                             <SelectValue placeholder={t('assets.placeholders.asset_user')} />
                         </SelectTrigger>
                         <SelectContent>
-                            {type === 'return' ? <SelectItem value="">{t('common.none')}</SelectItem> : null}
+                            {type === 'return' ? <SelectItem value="__none__">{t('common.none')}</SelectItem> : null}
                             {meta.assetUsers.map((u) => (
                                 <SelectItem key={u.id} value={String(u.id)}>
                                     {u.name}
@@ -578,7 +578,7 @@ function MovementForm({ assetId, meta, canUpdate }: { assetId: number; meta: Pro
                             to_branch_id: toBranchId || null,
                             to_department_id: toDepartmentId || null,
                             to_location_id: toLocationId || null,
-                            to_asset_user_id: toAssetUserId || null,
+                            to_asset_user_id: !toAssetUserId || toAssetUserId === '__none__' ? null : toAssetUserId,
                             performed_at: performedAt || null,
                             notes: notes || null,
                         },
@@ -595,7 +595,7 @@ function MovementForm({ assetId, meta, canUpdate }: { assetId: number; meta: Pro
 
 function StatusForm({ assetId, statuses, canUpdate }: { assetId: number; statuses: Lookup[]; canUpdate: boolean }) {
     const { t } = useTranslation();
-    const [statusId, setStatusId] = useState('');
+    const [statusId, setStatusId] = useState<string | undefined>(undefined);
     const [performedAt, setPerformedAt] = useState('');
     const [notes, setNotes] = useState('');
 
@@ -608,7 +608,7 @@ function StatusForm({ assetId, statuses, canUpdate }: { assetId: number; statuse
                         <SelectValue placeholder={t('assets.placeholders.status')} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">{t('common.none')}</SelectItem>
+                        <SelectItem value="__none__">{t('common.none')}</SelectItem>
                         {statuses.map((s) => (
                             <SelectItem key={s.id} value={String(s.id)}>
                                 {s.name}
@@ -630,7 +630,7 @@ function StatusForm({ assetId, statuses, canUpdate }: { assetId: number; statuse
                 onClick={() =>
                     router.post(
                         lifecycle.status.url({ asset: assetId }),
-                        { asset_status_id: statusId ? Number(statusId) : null, performed_at: performedAt || null, notes: notes || null },
+                        { asset_status_id: !statusId || statusId === '__none__' ? null : Number(statusId), performed_at: performedAt || null, notes: notes || null },
                         { preserveScroll: true },
                     )
                 }
@@ -644,7 +644,7 @@ function StatusForm({ assetId, statuses, canUpdate }: { assetId: number; statuse
 
 function ConditionForm({ assetId, conditions, canUpdate }: { assetId: number; conditions: Lookup[]; canUpdate: boolean }) {
     const { t } = useTranslation();
-    const [conditionId, setConditionId] = useState('');
+    const [conditionId, setConditionId] = useState<string | undefined>(undefined);
     const [performedAt, setPerformedAt] = useState('');
     const [notes, setNotes] = useState('');
 
@@ -657,7 +657,7 @@ function ConditionForm({ assetId, conditions, canUpdate }: { assetId: number; co
                         <SelectValue placeholder={t('assets.placeholders.condition')} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">{t('common.none')}</SelectItem>
+                        <SelectItem value="__none__">{t('common.none')}</SelectItem>
                         {conditions.map((c) => (
                             <SelectItem key={c.id} value={String(c.id)}>
                                 {c.name}
@@ -679,7 +679,7 @@ function ConditionForm({ assetId, conditions, canUpdate }: { assetId: number; co
                 onClick={() =>
                     router.post(
                         lifecycle.condition.url({ asset: assetId }),
-                        { asset_condition_id: conditionId ? Number(conditionId) : null, performed_at: performedAt || null, notes: notes || null },
+                        { asset_condition_id: !conditionId || conditionId === '__none__' ? null : Number(conditionId), performed_at: performedAt || null, notes: notes || null },
                         { preserveScroll: true },
                     )
                 }
