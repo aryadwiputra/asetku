@@ -6,7 +6,9 @@ use App\Http\Controllers\AssetExportController;
 use App\Http\Controllers\AssetImportController;
 use App\Http\Controllers\AssetLabelController;
 use App\Http\Controllers\AssetLifecycleController;
+use App\Http\Controllers\AssetLifecycleConditionController;
 use App\Http\Controllers\AssetLifecycleEventController;
+use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
 use App\Http\Controllers\QrController;
@@ -22,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('asset-lifecycle', [AssetLifecycleController::class, 'index'])->name('assets.lifecycle.index');
     Route::get('asset-lifecycle/by-token/{token}', [AssetLifecycleController::class, 'byToken'])->name('assets.lifecycle.by-token');
     Route::get('asset-lifecycle/{asset}', [AssetLifecycleController::class, 'show'])->name('assets.lifecycle.show');
+    Route::post('asset-lifecycle/{asset}/status', [AssetLifecycleStatusController::class, 'store'])->name('assets.lifecycle.status');
+    Route::post('asset-lifecycle/{asset}/condition', [AssetLifecycleConditionController::class, 'store'])->name('assets.lifecycle.condition');
 
     Route::post('assets/{asset}/attachments', [AssetAttachmentController::class, 'store'])->name('assets.attachments.store');
     Route::delete('assets/{asset}/attachments/{assetMedia}', [AssetAttachmentController::class, 'destroy'])->name('assets.attachments.destroy');

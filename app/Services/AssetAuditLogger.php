@@ -30,32 +30,34 @@ class AssetAuditLogger
         );
     }
 
-    public function logStatusChanged(Asset $asset, User $actor, ?int $fromStatusId, ?int $toStatusId): void
+    public function logStatusChanged(Asset $asset, User $actor, ?int $fromStatusId, ?int $toStatusId, ?CarbonInterface $performedAt = null, ?string $notes = null): void
     {
         $this->createHistory(
             asset: $asset,
             actor: $actor,
             action: 'status_changed',
             description: __('assets.lifecycle.history.status_changed'),
-            performedAt: null,
+            performedAt: $performedAt,
             payload: [
                 'before' => ['asset_status_id' => $fromStatusId],
                 'after' => ['asset_status_id' => $toStatusId],
+                'notes' => $notes,
             ],
         );
     }
 
-    public function logConditionChanged(Asset $asset, User $actor, ?int $fromConditionId, ?int $toConditionId): void
+    public function logConditionChanged(Asset $asset, User $actor, ?int $fromConditionId, ?int $toConditionId, ?CarbonInterface $performedAt = null, ?string $notes = null): void
     {
         $this->createHistory(
             asset: $asset,
             actor: $actor,
             action: 'condition_changed',
             description: __('assets.lifecycle.history.condition_changed'),
-            performedAt: null,
+            performedAt: $performedAt,
             payload: [
                 'before' => ['asset_condition_id' => $fromConditionId],
                 'after' => ['asset_condition_id' => $toConditionId],
+                'notes' => $notes,
             ],
         );
     }
