@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ColumnPreferenceController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\InvitationAcceptController;
 use App\Http\Controllers\LocaleController;
@@ -41,7 +42,7 @@ Route::get('api/docs', fn () => redirect()->route('scramble.docs.ui'))->name('ap
 Route::get('api/docs.json', fn () => redirect()->route('scramble.docs.document'))->name('api.docs.document');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Organization
     Route::get('organizations', [OrganizationController::class, 'index'])->name('organizations.index');

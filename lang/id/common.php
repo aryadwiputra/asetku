@@ -27,6 +27,7 @@ return [
     'audit_log' => 'Audit log',
     'master_data' => 'Master data',
     'assets' => 'Aset',
+    'asset_lifecycle' => 'Siklus aset',
     'asset_import' => 'Import aset',
     'new_asset' => 'Aset baru',
     'profile' => 'Profil',

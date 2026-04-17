@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/hooks/use-translation";
 
 export interface ActivityItem {
   id: string | number;
@@ -11,14 +12,20 @@ export interface ActivityItem {
 
 interface RecentActivityProps {
   items: ActivityItem[];
+  title?: string;
   className?: string;
 }
 
-export function RecentActivity({ items, className }: RecentActivityProps) {
+export function RecentActivity({ items, title, className }: RecentActivityProps) {
+  const { t } = useTranslation();
+
   return (
     <div className={cn("bg-card border border-border rounded-xl p-6", className)}>
-      <h3 className="text-xl font-medium text-foreground mb-6">Recent Activity</h3>
+      <h3 className="text-xl font-medium text-foreground mb-6">{title ?? t("dashboard.recent_activity")}</h3>
       <div className="flex flex-col gap-6">
+        {items.length === 0 ? (
+          <div className="text-sm text-muted-foreground">{t("dashboard.empty_states.recent_activity")}</div>
+        ) : null}
         {items.map((item) => (
           <div key={item.id} className="flex gap-4 items-start">
             <div className="size-10 rounded-full bg-secondary flex items-center justify-center shrink-0 border border-border overflow-hidden">

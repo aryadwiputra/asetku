@@ -1038,7 +1038,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setLocationId('');
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.branch')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1062,7 +1062,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             }}
                                             disabled={filterSelects.departments.length === 0}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.department')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1086,7 +1086,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                             }}
                                             disabled={filterSelects.locations.length === 0}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.location')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1109,7 +1109,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setCategoryId(nextCategoryId);
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.category')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1132,7 +1132,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setStatusId(nextStatusId);
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.status')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1155,7 +1155,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setConditionId(nextConditionId);
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.condition')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1178,7 +1178,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setPicId(nextPicId);
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.pic')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">
@@ -1201,7 +1201,7 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                                                 setAssetUserId(nextAssetUserId);
                                             }}
                                         >
-                                            <SelectTrigger size="sm" className="w-full">
+                                            <SelectTrigger className="w-full">
                                                 <SelectValue placeholder={t('assets.placeholders.asset_user')} />
                                             </SelectTrigger>
                                             <SelectContent align="start">

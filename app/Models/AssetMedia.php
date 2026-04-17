@@ -18,6 +18,8 @@ class AssetMedia extends Model
         'asset_id',
         'media_asset_id',
         'kind',
+        'stage',
+        'document_type',
         'sort_order',
         'is_primary',
     ];

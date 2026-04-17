@@ -5,7 +5,7 @@ namespace App\Queries;
 use App\Models\Asset;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
+use Throwable;
 
 class AssetListQuery
 {
@@ -37,15 +37,24 @@ class AssetListQuery
         $search = is_string($search) ? trim($search) : '';
         if ($search !== '') {
             $query->where(function (Builder $q) use ($search): void {
-                try {
-                    $q->whereFullText(['code', 'name', 'serial_number', 'brand', 'model'], $search);
-                } catch (QueryException) {
-                    $q->where('code', 'like', "%{$search}%")
-                        ->orWhere('name', 'like', "%{$search}%")
-                        ->orWhere('serial_number', 'like', "%{$search}%")
-                        ->orWhere('brand', 'like', "%{$search}%")
-                        ->orWhere('model', 'like', "%{$search}%");
+                $driver = $q->getQuery()->getConnection()->getDriverName();
+
+                if (in_array($driver, ['mysql', 'mariadb'], true)) {
+                    try {
+                        $q->whereFullText(['code', 'name', 'serial_number', 'brand', 'model'], $search);
+
+                        return;
+                    } catch (Throwable) {
+                        // Fallback to LIKE for engines that don't support FULLTEXT or when index is missing.
+                    }
                 }
+
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('serial_number', 'like', "%{$search}%")
+                    ->orWhere('brand', 'like', "%{$search}%")
+                    ->orWhere('model', 'like', "%{$search}%");
+
             });
         }
 

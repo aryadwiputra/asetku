@@ -3,6 +3,7 @@ import SsoController from './SsoController'
 import InvitationAcceptController from './InvitationAcceptController'
 import TwoFactorSmsRecoveryController from './TwoFactorSmsRecoveryController'
 import LocaleController from './LocaleController'
+import DashboardController from './DashboardController'
 import OrganizationController from './OrganizationController'
 import OrganizationSwitchController from './OrganizationSwitchController'
 import OrganizationImportTemplateController from './OrganizationImportTemplateController'
@@ -22,7 +23,12 @@ import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
+import AssetLifecycleController from './AssetLifecycleController'
+import AssetLifecycleStatusController from './AssetLifecycleStatusController'
+import AssetLifecycleConditionController from './AssetLifecycleConditionController'
 import AssetAttachmentController from './AssetAttachmentController'
+import AssetLifecycleEventController from './AssetLifecycleEventController'
+import AssetMovementController from './AssetMovementController'
 import AssetLabelController from './AssetLabelController'
 import AssetExportController from './AssetExportController'
 import AssetSavedFilterController from './AssetSavedFilterController'
@@ -34,6 +40,7 @@ const Controllers = {
     InvitationAcceptController: Object.assign(InvitationAcceptController, InvitationAcceptController),
     TwoFactorSmsRecoveryController: Object.assign(TwoFactorSmsRecoveryController, TwoFactorSmsRecoveryController),
     LocaleController: Object.assign(LocaleController, LocaleController),
+    DashboardController: Object.assign(DashboardController, DashboardController),
     OrganizationController: Object.assign(OrganizationController, OrganizationController),
     OrganizationSwitchController: Object.assign(OrganizationSwitchController, OrganizationSwitchController),
     OrganizationImportTemplateController: Object.assign(OrganizationImportTemplateController, OrganizationImportTemplateController),
@@ -53,7 +60,12 @@ const Controllers = {
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
+    AssetLifecycleController: Object.assign(AssetLifecycleController, AssetLifecycleController),
+    AssetLifecycleStatusController: Object.assign(AssetLifecycleStatusController, AssetLifecycleStatusController),
+    AssetLifecycleConditionController: Object.assign(AssetLifecycleConditionController, AssetLifecycleConditionController),
     AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
+    AssetLifecycleEventController: Object.assign(AssetLifecycleEventController, AssetLifecycleEventController),
+    AssetMovementController: Object.assign(AssetMovementController, AssetMovementController),
     AssetLabelController: Object.assign(AssetLabelController, AssetLabelController),
     AssetExportController: Object.assign(AssetExportController, AssetExportController),
     AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),

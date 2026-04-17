@@ -271,7 +271,7 @@ export function DataTable<T extends { id: number }>({
                                                             <div className="w-28 shrink-0 truncate text-xs uppercase tracking-wide">
                                                                 {column.label}
                                                             </div>
-                                                            <div className="min-w-0 flex-1 break-words text-foreground/90">
+                                                            <div className="min-w-0 flex-1 wrap-break-word text-foreground/90">
                                                                 {renderCell(item, column)}
                                                             </div>
                                                         </div>
@@ -294,11 +294,11 @@ export function DataTable<T extends { id: number }>({
             )}
 
             {/* Table */}
-            <div className={showMobileCards ? 'hidden overflow-hidden rounded-lg border md:block' : 'overflow-hidden rounded-lg border'}>
+            <div className={showMobileCards ? 'hidden overflow-hidden rounded-xl ring-1 ring-border bg-card shadow-sm md:block' : 'overflow-hidden rounded-xl ring-1 ring-border bg-card shadow-sm'}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="border-b bg-muted/50">
+                            <tr className="border-b bg-muted/30">
                                 {bulkActions.length > 0 && (
                                     <th className="w-[40px] px-4 py-3">
                                         <Checkbox
@@ -308,7 +308,7 @@ export function DataTable<T extends { id: number }>({
                                     </th>
                                 )}
                                 {visibleColumns.map((column) => (
-                                    <th key={column.key} className="px-4 py-3 text-left font-medium text-muted-foreground">
+                                    <th key={column.key} className="px-4 py-3 text-left text-xs uppercase tracking-wider font-semibold text-muted-foreground">
                                         {column.sortable !== false ? (
                                             <button className="inline-flex items-center gap-1 hover:text-foreground" onClick={() => setSort(column.key)}>
                                                 {column.label}

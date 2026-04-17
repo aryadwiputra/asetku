@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, FolderGit2, LayoutGrid, MapPin, Package, Plus, Settings, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, ChevronDown, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, UploadCloud, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -35,6 +35,7 @@ import { index as branchesIndex } from '@/routes/branches';
 import { index as masterDataIndex } from '@/routes/master-data';
 import { create as assetsCreate, index as assetsIndex } from '@/routes/assets';
 import { index as assetsImportIndex } from '@/routes/assets/import';
+import { index as assetLifecycleIndex } from '@/routes/assets/lifecycle';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -82,6 +83,11 @@ export function AppSidebar() {
                   title: t('common.assets'),
                   href: assetsIndex(),
                   icon: Package,
+              },
+              {
+                  title: t('common.asset_lifecycle'),
+                  href: assetLifecycleIndex(),
+                  icon: History,
               },
               {
                   title: t('common.asset_import'),

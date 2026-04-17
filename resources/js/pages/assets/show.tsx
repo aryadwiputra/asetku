@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 
 import AssetAttachmentController from '@/actions/App/Http/Controllers/AssetAttachmentController';
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
+import AssetLifecycleEventController from '@/actions/App/Http/Controllers/AssetLifecycleEventController';
+import AssetMovementController from '@/actions/App/Http/Controllers/AssetMovementController';
 import BranchLocationPicker from '@/components/branch-location-picker';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -23,6 +25,8 @@ import { useTranslation } from '@/hooks/use-translation';
 type Attachment = {
     id: number;
     kind: 'photo' | 'document';
+    stage: string | null;
+    document_type: string | null;
     sort_order: number;
     is_primary: boolean;
     media_asset: {
@@ -38,6 +42,7 @@ type Attachment = {
 type HistoryRow = {
     id: number;
     action: string;
+    performed_at: string | null;
     description: string | null;
     changed_by: number | null;
     actor: { id: number; name: string } | null;
@@ -76,10 +81,16 @@ type Props = {
     asset: Asset;
     histories: HistoryRow[];
     attachments: Attachment[];
+    formMeta: {
+        branches: Array<{ id: number; name: string; code: string }>;
+        departments: Array<{ id: number; name: string; code: string; branch_id: number }>;
+        locations: Array<{ id: number; name: string; code: string; branch_id: number; parent_id: number | null; type: string | null }>;
+        assetUsers: Array<{ id: number; name: string }>;
+    };
     computedBookValue: number;
 };
 
-export default function AssetShow({ asset, histories, attachments, computedBookValue }: Props) {
+export default function AssetShow({ asset, histories, attachments, formMeta, computedBookValue }: Props) {
     const { permissions, orgRole, organization, locale } = usePage().props as {
         permissions: string[];
         orgRole: string | null;
@@ -93,6 +104,28 @@ export default function AssetShow({ asset, histories, attachments, computedBookV
 
     const qrUrl = qrShow(asset.qr_token).url;
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [lifecycleOpen, setLifecycleOpen] = useState(false);
+    const [movementOpen, setMovementOpen] = useState(false);
+
+    const [lifecycleStage, setLifecycleStage] = useState<string>('receiving');
+    const [lifecyclePerformedAt, setLifecyclePerformedAt] = useState<string>('');
+    const [lifecycleNotes, setLifecycleNotes] = useState<string>('');
+
+    const [movementType, setMovementType] = useState<'transfer' | 'borrow' | 'return' | 'placement'>('transfer');
+    const [toBranchId, setToBranchId] = useState<string>('');
+    const [toDepartmentId, setToDepartmentId] = useState<string>('');
+    const [toLocationId, setToLocationId] = useState<string>('');
+    const [toAssetUserId, setToAssetUserId] = useState<string>('');
+    const [movementPerformedAt, setMovementPerformedAt] = useState<string>('');
+    const [movementNotes, setMovementNotes] = useState<string>('');
+
+    const movementHasDestination = Boolean(toBranchId || toDepartmentId || toLocationId || toAssetUserId);
+    const movementCanSubmit =
+        movementType === 'borrow'
+            ? Boolean(toAssetUserId)
+            : movementType === 'transfer' || movementType === 'placement'
+              ? movementHasDestination
+              : true;
 
     const currencyCode = organization?.currency_code || 'IDR';
     const currencyFormatter = useMemo(
@@ -222,26 +255,36 @@ export default function AssetShow({ asset, histories, attachments, computedBookV
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('assets.sections.history')}</CardTitle>
-                                <CardDescription>{t('assets.sections.history_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                {histories.length === 0 ? (
-                                    <div className="text-sm text-muted-foreground">{t('assets.history.empty')}</div>
-                                ) : (
-                                    histories.map((h) => (
-                                        <div key={h.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
+	                            <CardDescription>{t('assets.sections.history_desc')}</CardDescription>
+	                        </CardHeader>
+	                        <CardContent className="space-y-3">
+	                            {canUpdate ? (
+	                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+	                                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setLifecycleOpen(true)}>
+	                                        {t('assets.lifecycle.actions.record_event')}
+	                                    </Button>
+	                                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setMovementOpen(true)}>
+	                                        {t('assets.lifecycle.actions.record_movement')}
+	                                    </Button>
+	                                </div>
+	                            ) : null}
+	                            {histories.length === 0 ? (
+	                                <div className="text-sm text-muted-foreground">{t('assets.history.empty')}</div>
+	                            ) : (
+	                                histories.map((h) => (
+	                                    <div key={h.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
                                             <div className="min-w-0">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <Badge variant="secondary">{h.action}</Badge>
                                                     <div className="truncate text-sm font-medium">{h.description || '—'}</div>
-                                                </div>
-                                                <div className="mt-1 text-xs text-muted-foreground">
-                                                    {dateTimeFormatter.format(new Date(h.created_at))}
-                                                    {h.actor?.name ? ` • ${h.actor.name}` : ''}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
+	                                        </div>
+	                                        <div className="mt-1 text-xs text-muted-foreground">
+	                                            {dateTimeFormatter.format(new Date(h.performed_at ?? h.created_at))}
+	                                            {h.actor?.name ? ` • ${h.actor.name}` : ''}
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            ))
                                 )}
                             </CardContent>
                         </Card>
@@ -325,6 +368,213 @@ export default function AssetShow({ asset, histories, attachments, computedBookV
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <Dialog open={lifecycleOpen} onOpenChange={setLifecycleOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('assets.lifecycle.actions.record_event')}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.stage')}</Label>
+                            <Select value={lifecycleStage} onValueChange={setLifecycleStage}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allowedStages.map((stage) => (
+                                        <SelectItem key={stage} value={stage}>
+                                            {t(`assets.lifecycle.stages.${stage}`)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.performed_at')}</Label>
+                            <Input type="datetime-local" value={lifecyclePerformedAt} onChange={(e) => setLifecyclePerformedAt(e.target.value)} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.notes')}</Label>
+                            <Input value={lifecycleNotes} onChange={(e) => setLifecycleNotes(e.target.value)} />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setLifecycleOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                router.post(
+                                    AssetLifecycleEventController.store.url({ asset: asset.id }),
+                                    {
+                                        stage: lifecycleStage,
+                                        performed_at: lifecyclePerformedAt || null,
+                                        notes: lifecycleNotes || null,
+                                    },
+                                    {
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            setLifecycleOpen(false);
+                                            setLifecycleNotes('');
+                                        },
+                                    },
+                                );
+                            }}
+                            className="w-full sm:w-auto"
+                        >
+                            {t('common.save')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={movementOpen} onOpenChange={setMovementOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('assets.lifecycle.actions.record_movement')}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.movement_type')}</Label>
+                            <Select value={movementType} onValueChange={(v) => setMovementType(v as any)}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allowedMovementTypes.map((type) => (
+                                        <SelectItem key={type} value={type}>
+                                            {t(`assets.lifecycle.movement_types.${type}`)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-2">
+                                <Label>{t('assets.fields.branch')}</Label>
+                                <Select value={toBranchId} onValueChange={setToBranchId}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('assets.placeholders.branch')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {formMeta.branches.map((b) => (
+                                            <SelectItem key={b.id} value={String(b.id)}>
+                                                {b.code} — {b.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('assets.fields.department')}</Label>
+                                <Select value={toDepartmentId} onValueChange={setToDepartmentId}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('assets.placeholders.department')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {formMeta.departments
+                                            .filter((d) => !toBranchId || String(d.branch_id) === toBranchId)
+                                            .map((d) => (
+                                                <SelectItem key={d.id} value={String(d.id)}>
+                                                    {d.code} — {d.name}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-2">
+                                <Label>{t('assets.fields.location')}</Label>
+                                <Select value={toLocationId} onValueChange={setToLocationId}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('assets.placeholders.location')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {formMeta.locations
+                                            .filter((l) => !toBranchId || String(l.branch_id) === toBranchId)
+                                            .map((l) => (
+                                                <SelectItem key={l.id} value={String(l.id)}>
+                                                    {l.name}
+                                                </SelectItem>
+                                            ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('assets.fields.asset_user')}</Label>
+                                <Select value={toAssetUserId} onValueChange={setToAssetUserId}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder={t('assets.placeholders.asset_user')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {movementType === 'return' ? (
+                                            <SelectItem value="">{t('common.none')}</SelectItem>
+                                        ) : null}
+                                        {formMeta.assetUsers.map((u) => (
+                                            <SelectItem key={u.id} value={String(u.id)}>
+                                                {u.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-2">
+                                <Label>{t('assets.lifecycle.fields.performed_at')}</Label>
+                                <Input type="datetime-local" value={movementPerformedAt} onChange={(e) => setMovementPerformedAt(e.target.value)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label>{t('assets.lifecycle.fields.notes')}</Label>
+                                <Input value={movementNotes} onChange={(e) => setMovementNotes(e.target.value)} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setMovementOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            disabled={!movementCanSubmit}
+                            onClick={() => {
+                                router.post(
+                                    AssetMovementController.store.url({ asset: asset.id }),
+                                    {
+                                        type: movementType,
+                                        to_branch_id: toBranchId || null,
+                                        to_department_id: toDepartmentId || null,
+                                        to_location_id: toLocationId || null,
+                                        to_asset_user_id: toAssetUserId || null,
+                                        performed_at: movementPerformedAt || null,
+                                        notes: movementNotes || null,
+                                    },
+                                    {
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            setMovementOpen(false);
+                                            setMovementNotes('');
+                                        },
+                                    },
+                                );
+                            }}
+                            className="w-full sm:w-auto"
+                        >
+                            {t('common.save')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
@@ -347,6 +597,8 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
     const [file, setFile] = useState<File | null>(null);
     const [kind, setKind] = useState<'photo' | 'document'>('photo');
     const [isPrimary, setIsPrimary] = useState(false);
+    const [stage, setStage] = useState<string>('');
+    const [documentType, setDocumentType] = useState<string>('other');
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -421,13 +673,21 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
                 await new Promise<void>((resolve) => {
                     router.post(
                         AssetAttachmentController.store.url({ asset: assetId }),
-                        { media_asset_id: completeJson.asset_id, kind, is_primary: kind === 'photo' ? isPrimary : false },
+                        {
+                            media_asset_id: completeJson.asset_id,
+                            kind,
+                            is_primary: kind === 'photo' ? isPrimary : false,
+                            stage: kind === 'document' && stage ? stage : null,
+                            document_type: kind === 'document' ? documentType : null,
+                        },
                         { preserveScroll: true, onFinish: () => resolve() },
                     );
                 });
 
                 setFile(null);
                 setIsPrimary(false);
+                setStage('');
+                setDocumentType('other');
             } catch (e) {
                 await fetch(destroyUpload(init.upload_id).url, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' } });
                 throw e;
@@ -466,6 +726,40 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
                                     </SelectContent>
                                 </Select>
                             </div>
+                            {kind === 'document' ? (
+                                <>
+                                    <div className="grid gap-2">
+                                        <Label>{t('assets.lifecycle.fields.stage')}</Label>
+                                        <Select value={stage} onValueChange={setStage}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('assets.lifecycle.placeholders.stage')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {allowedStages.map((s) => (
+                                                    <SelectItem key={s} value={s}>
+                                                        {t(`assets.lifecycle.stages.${s}`)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label>{t('assets.lifecycle.fields.document_type')}</Label>
+                                        <Select value={documentType} onValueChange={setDocumentType}>
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {allowedDocumentTypes.map((dt) => (
+                                                    <SelectItem key={dt} value={dt}>
+                                                        {t(`assets.lifecycle.document_types.${dt}`)}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </>
+                            ) : null}
                         </div>
 
                         {kind === 'photo' ? (
@@ -534,18 +828,26 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
 
                 <div className="space-y-3">
                     <div className="text-sm font-medium">{t('assets.attachments.kinds.document')}</div>
-                    {documents.length === 0 ? (
-                        <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
-                    ) : (
-                        <div className="space-y-2">
-                            {documents.map((a) => (
-                                <div key={a.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
-                                    <div className="min-w-0 truncate text-sm">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
-                                    <div className="shrink-0 flex items-center gap-2">
-                                        {a.media_asset?.url ? (
-                                            <a href={a.media_asset.url} target="_blank" rel="noreferrer">
-                                                <Button variant="outline" size="sm">
-                                                    <Download className="h-4 w-4" />
+	                    {documents.length === 0 ? (
+	                        <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
+	                    ) : (
+	                        <div className="space-y-2">
+	                            {documents.map((a) => (
+	                                <div key={a.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
+	                                    <div className="min-w-0">
+	                                        <div className="truncate text-sm">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
+	                                        {a.stage || a.document_type ? (
+	                                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+	                                                {a.stage ? <span>{t(`assets.lifecycle.stages.${a.stage}`)}</span> : null}
+	                                                {a.document_type ? <span>• {t(`assets.lifecycle.document_types.${a.document_type}`)}</span> : null}
+	                                            </div>
+	                                        ) : null}
+	                                    </div>
+	                                    <div className="shrink-0 flex items-center gap-2">
+	                                        {a.media_asset?.url ? (
+	                                            <a href={a.media_asset.url} target="_blank" rel="noreferrer">
+	                                                <Button variant="outline" size="sm">
+	                                                    <Download className="h-4 w-4" />
                                                 </Button>
                                             </a>
                                         ) : null}
@@ -568,3 +870,20 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
         </Card>
     );
 }
+
+const allowedStages = ['acquisition', 'receiving', 'placement', 'usage', 'maintenance', 'mutation', 'disposal'] as const;
+const allowedDocumentTypes = [
+    'invoice',
+    'po',
+    'bast',
+    'receipt',
+    'work_order',
+    'service_report',
+    'assignment_letter',
+    'loan_form',
+    'disposal_report',
+    'sale_proof',
+    'other',
+] as const;
+
+const allowedMovementTypes = ['placement', 'transfer', 'borrow', 'return'] as const;

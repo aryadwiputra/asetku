@@ -160,4 +160,103 @@ return [
             'detached' => 'Attachment removed.',
         ],
     ],
+
+    'lifecycle' => [
+        'page' => [
+            'description' => 'Record and manage an asset lifecycle without opening the asset detail page.',
+            'search_label' => 'Find asset',
+            'search_placeholder' => 'Search by code, name, serial number…',
+            'search_action' => 'Search',
+            'scan_action' => 'Scan QR',
+            'results' => 'Results',
+            'empty' => 'Type a keyword or scan a QR code to start.',
+            'select_asset_hint' => 'Select an asset from the list to start recording lifecycle events.',
+            'actions' => 'Actions',
+            'tabs' => [
+                'status' => 'Status',
+                'condition' => 'Condition',
+                'documents' => 'Documents',
+            ],
+            'read_only_notice' => 'You can view the data, but you do not have permission to make changes.',
+            'scan_title' => 'Scan asset QR',
+            'scan_not_supported' => 'QR scanning is not supported on this browser. Try a newer Chrome/Safari on mobile.',
+            'scan_start' => 'Start scanning',
+            'scan_stop' => 'Stop',
+        ],
+
+        'actions' => [
+            'record_event' => 'Record lifecycle event',
+            'record_movement' => 'Record movement',
+        ],
+
+        'fields' => [
+            'stage' => 'Stage',
+            'document_type' => 'Document type',
+            'movement_type' => 'Movement type',
+            'performed_at' => 'Performed at',
+            'notes' => 'Notes',
+        ],
+
+        'placeholders' => [
+            'stage' => 'Select stage',
+            'document_type' => 'Select document type',
+        ],
+
+        'stages' => [
+            'acquisition' => 'Acquisition',
+            'receiving' => 'Receiving',
+            'placement' => 'Placement',
+            'usage' => 'Usage',
+            'maintenance' => 'Maintenance',
+            'mutation' => 'Mutation',
+            'disposal' => 'Disposal',
+        ],
+
+        'document_types' => [
+            'invoice' => 'Invoice',
+            'po' => 'Purchase order (PO)',
+            'bast' => 'BAST',
+            'receipt' => 'Receipt',
+            'work_order' => 'Work order',
+            'service_report' => 'Service report',
+            'assignment_letter' => 'Assignment letter',
+            'loan_form' => 'Loan form',
+            'disposal_report' => 'Disposal report',
+            'sale_proof' => 'Sale proof',
+            'other' => 'Other',
+        ],
+
+        'movement_types' => [
+            'placement' => 'Placement',
+            'transfer' => 'Transfer',
+            'borrow' => 'Borrow',
+            'return' => 'Return',
+        ],
+
+        'toast' => [
+            'recorded' => 'Lifecycle event recorded.',
+            'movement_recorded' => 'Movement recorded.',
+        ],
+
+        'history' => [
+            'lifecycle_recorded' => 'Recorded lifecycle stage: :stage.',
+            'status_changed' => 'Status changed.',
+            'condition_changed' => 'Condition changed.',
+            'assigned' => 'Assignee updated.',
+            'relocated' => 'Placement updated.',
+            'attachment_added' => 'Attachment added.',
+            'attachment_removed' => 'Attachment removed.',
+            'placed' => 'Placed.',
+            'transferred' => 'Transferred.',
+            'borrowed' => 'Borrowed.',
+            'returned' => 'Returned.',
+        ],
+
+        'validation' => [
+            'destination_required' => 'Select at least one destination field.',
+            'borrow_requires_user' => 'Borrow requires an assignee.',
+            'department_branch_mismatch' => 'Department must belong to the selected branch.',
+            'location_branch_mismatch' => 'Location must belong to the selected branch.',
+        ],
+    ],
 ];
