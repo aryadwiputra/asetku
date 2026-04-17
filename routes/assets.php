@@ -5,6 +5,8 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AssetExportController;
 use App\Http\Controllers\AssetImportController;
 use App\Http\Controllers\AssetLabelController;
+use App\Http\Controllers\AssetLifecycleEventController;
+use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
 use App\Http\Controllers\QrController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('assets/{asset}/attachments', [AssetAttachmentController::class, 'store'])->name('assets.attachments.store');
     Route::delete('assets/{asset}/attachments/{assetMedia}', [AssetAttachmentController::class, 'destroy'])->name('assets.attachments.destroy');
+
+    Route::post('assets/{asset}/lifecycle-events', [AssetLifecycleEventController::class, 'store'])->name('assets.lifecycle-events.store');
+    Route::post('assets/{asset}/movements', [AssetMovementController::class, 'store'])->name('assets.movements.store');
 
     Route::get('assets-labels/print', [AssetLabelController::class, 'print'])->name('assets.labels.print');
     Route::get('assets-export', [AssetExportController::class, 'export'])->name('assets.export');

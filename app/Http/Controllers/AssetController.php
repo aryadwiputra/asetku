@@ -171,6 +171,8 @@ class AssetController extends Controller
                 return [
                     'id' => $row->id,
                     'kind' => $row->kind,
+                    'stage' => $row->stage,
+                    'document_type' => $row->document_type,
                     'sort_order' => $row->sort_order,
                     'is_primary' => (bool) $row->is_primary,
                     'media_asset' => $asset ? [
