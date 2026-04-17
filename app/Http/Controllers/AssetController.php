@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\VendorContract;
 use App\Models\Warranty;
 use App\Queries\AssetListQuery;
+use App\Services\AssetAuditLogger;
 use App\Services\AssetCodeGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
@@ -140,14 +141,15 @@ class AssetController extends Controller
         ]);
 
         $histories = $asset->histories()
-            ->latest()
+            ->orderByRaw('COALESCE(performed_at, created_at) DESC')
             ->limit(100)
             ->with('changedBy:id,name')
-            ->get(['id', 'action', 'description', 'changed_by', 'payload', 'created_at']);
+            ->get(['id', 'action', 'performed_at', 'description', 'changed_by', 'payload', 'created_at']);
 
         $histories = $histories->map(fn (AssetHistory $history): array => [
             'id' => $history->id,
             'action' => $history->action,
+            'performed_at' => $history->performed_at,
             'description' => $history->description,
             'changed_by' => $history->changed_by,
             'actor' => $history->changedBy ? [
@@ -230,23 +232,67 @@ class AssetController extends Controller
         $dirty = [];
 
         DB::transaction(function () use (&$dirty, $asset, $data, $user): void {
+            $audit = app(AssetAuditLogger::class);
+
             $asset->fill($data);
             $dirty = $asset->getDirty();
             $original = $asset->getOriginal();
 
             $asset->save();
 
-            if ($dirty !== []) {
-                AssetHistory::query()->create([
-                    'asset_id' => $asset->id,
-                    'action' => 'updated',
-                    'description' => __('assets.history.updated'),
-                    'changed_by' => $user->id,
-                    'payload' => [
-                        'before' => Arr::only($original, array_keys($dirty)),
-                        'after' => Arr::only($asset->getAttributes(), array_keys($dirty)),
-                    ],
-                ]);
+            if ($dirty === []) {
+                return;
+            }
+
+            $importantBuckets = [
+                'asset_status_id',
+                'asset_condition_id',
+                'branch_id',
+                'department_id',
+                'asset_location_id',
+                'person_in_charge_id',
+                'asset_user_id',
+            ];
+
+            $changedKeys = array_keys($dirty);
+            $importantChanged = array_values(array_intersect($changedKeys, $importantBuckets));
+
+            if (in_array('asset_status_id', $importantChanged, true)) {
+                $audit->logStatusChanged(
+                    asset: $asset,
+                    actor: $user,
+                    fromStatusId: is_numeric($original['asset_status_id'] ?? null) ? (int) $original['asset_status_id'] : null,
+                    toStatusId: is_numeric($asset->asset_status_id) ? (int) $asset->asset_status_id : null,
+                );
+            }
+
+            if (in_array('asset_condition_id', $importantChanged, true)) {
+                $audit->logConditionChanged(
+                    asset: $asset,
+                    actor: $user,
+                    fromConditionId: is_numeric($original['asset_condition_id'] ?? null) ? (int) $original['asset_condition_id'] : null,
+                    toConditionId: is_numeric($asset->asset_condition_id) ? (int) $asset->asset_condition_id : null,
+                );
+            }
+
+            $relocationKeys = ['branch_id', 'department_id', 'asset_location_id'];
+            if (array_intersect($importantChanged, $relocationKeys) !== []) {
+                $audit->logRelocated($asset, $user, Arr::only($original, $relocationKeys), Arr::only($asset->getAttributes(), $relocationKeys));
+            }
+
+            $assignedKeys = ['person_in_charge_id', 'asset_user_id'];
+            if (array_intersect($importantChanged, $assignedKeys) !== []) {
+                $audit->logAssigned($asset, $user, Arr::only($original, $assignedKeys), Arr::only($asset->getAttributes(), $assignedKeys));
+            }
+
+            $nonImportantKeys = array_values(array_diff($changedKeys, $importantBuckets));
+            if ($nonImportantKeys !== []) {
+                $audit->logUpdated(
+                    asset: $asset,
+                    actor: $user,
+                    before: Arr::only($original, $nonImportantKeys),
+                    after: Arr::only($asset->getAttributes(), $nonImportantKeys),
+                );
             }
         });
 
