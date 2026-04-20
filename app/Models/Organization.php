@@ -37,6 +37,8 @@ class Organization extends Model
         'maintenance_warning_percent',
         'fiscal_year_start_month',
         'fiscal_year_start_day',
+        'depreciation_frequency',
+        'depreciation_auto_run_enabled',
     ];
 
     /**
@@ -53,6 +55,7 @@ class Organization extends Model
             'maintenance_warning_percent' => 'integer',
             'fiscal_year_start_month' => 'integer',
             'fiscal_year_start_day' => 'integer',
+            'depreciation_auto_run_enabled' => 'boolean',
         ];
     }
 
