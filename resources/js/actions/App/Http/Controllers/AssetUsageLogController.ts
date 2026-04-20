@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
-* @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
-* @route '/asset-lifecycle/{asset}/status'
+* @see \App\Http\Controllers\AssetUsageLogController::store
+* @see app/Http/Controllers/AssetUsageLogController.php:13
+* @route '/depreciation/assets/{asset}/usage-logs'
 */
 export const store = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
@@ -11,13 +11,13 @@ export const store = (args: { asset: number | { id: number } } | [asset: number 
 
 store.definition = {
     methods: ["post"],
-    url: '/asset-lifecycle/{asset}/status',
+    url: '/depreciation/assets/{asset}/usage-logs',
 } satisfies RouteDefinition<["post"]>
 
 /**
-* @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
-* @route '/asset-lifecycle/{asset}/status'
+* @see \App\Http\Controllers\AssetUsageLogController::store
+* @see app/Http/Controllers/AssetUsageLogController.php:13
+* @route '/depreciation/assets/{asset}/usage-logs'
 */
 store.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -48,9 +48,9 @@ store.url = (args: { asset: number | { id: number } } | [asset: number | { id: n
 }
 
 /**
-* @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
-* @route '/asset-lifecycle/{asset}/status'
+* @see \App\Http\Controllers\AssetUsageLogController::store
+* @see app/Http/Controllers/AssetUsageLogController.php:13
+* @route '/depreciation/assets/{asset}/usage-logs'
 */
 store.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
@@ -58,9 +58,9 @@ store.post = (args: { asset: number | { id: number } } | [asset: number | { id: 
 })
 
 /**
-* @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
-* @route '/asset-lifecycle/{asset}/status'
+* @see \App\Http\Controllers\AssetUsageLogController::store
+* @see app/Http/Controllers/AssetUsageLogController.php:13
+* @route '/depreciation/assets/{asset}/usage-logs'
 */
 const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
@@ -68,9 +68,9 @@ const storeForm = (args: { asset: number | { id: number } } | [asset: number | {
 })
 
 /**
-* @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
-* @route '/asset-lifecycle/{asset}/status'
+* @see \App\Http\Controllers\AssetUsageLogController::store
+* @see app/Http/Controllers/AssetUsageLogController.php:13
+* @route '/depreciation/assets/{asset}/usage-logs'
 */
 storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
@@ -79,6 +79,6 @@ storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { 
 
 store.form = storeForm
 
-const AssetLifecycleStatusController = { store }
+const AssetUsageLogController = { store }
 
-export default AssetLifecycleStatusController
+export default AssetUsageLogController

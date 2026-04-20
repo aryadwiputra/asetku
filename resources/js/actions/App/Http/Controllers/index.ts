@@ -23,6 +23,11 @@ import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
+import DepreciationController from './DepreciationController'
+import DepreciationRunController from './DepreciationRunController'
+import DepreciationAssetController from './DepreciationAssetController'
+import DepreciationExportController from './DepreciationExportController'
+import AssetUsageLogController from './AssetUsageLogController'
 import AssetLifecycleController from './AssetLifecycleController'
 import AssetLifecycleStatusController from './AssetLifecycleStatusController'
 import AssetLifecycleConditionController from './AssetLifecycleConditionController'
@@ -60,6 +65,11 @@ const Controllers = {
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
+    DepreciationController: Object.assign(DepreciationController, DepreciationController),
+    DepreciationRunController: Object.assign(DepreciationRunController, DepreciationRunController),
+    DepreciationAssetController: Object.assign(DepreciationAssetController, DepreciationAssetController),
+    DepreciationExportController: Object.assign(DepreciationExportController, DepreciationExportController),
+    AssetUsageLogController: Object.assign(AssetUsageLogController, AssetUsageLogController),
     AssetLifecycleController: Object.assign(AssetLifecycleController, AssetLifecycleController),
     AssetLifecycleStatusController: Object.assign(AssetLifecycleStatusController, AssetLifecycleStatusController),
     AssetLifecycleConditionController: Object.assign(AssetLifecycleConditionController, AssetLifecycleConditionController),

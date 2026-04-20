@@ -11,6 +11,11 @@ use App\Http\Controllers\AssetLifecycleEventController;
 use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
+use App\Http\Controllers\AssetUsageLogController;
+use App\Http\Controllers\DepreciationAssetController;
+use App\Http\Controllers\DepreciationController;
+use App\Http\Controllers\DepreciationExportController;
+use App\Http\Controllers\DepreciationRunController;
 use App\Http\Controllers\QrController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +25,14 @@ Route::inertia('scan', 'scan/index')->name('scan.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('assets', AssetController::class);
+
+    // Depreciation module
+    Route::get('depreciation', [DepreciationController::class, 'index'])->name('depreciation.index');
+    Route::post('depreciation/runs', [DepreciationRunController::class, 'store'])->name('depreciation.runs.store');
+    Route::get('depreciation/assets/{asset}', [DepreciationAssetController::class, 'show'])->name('depreciation.assets.show');
+    Route::get('assets/{asset}/depreciation/export', [DepreciationExportController::class, 'asset'])->name('depreciation.assets.export');
+    Route::get('depreciation/export', [DepreciationExportController::class, 'organization'])->name('depreciation.export');
+    Route::post('depreciation/assets/{asset}/usage-logs', [AssetUsageLogController::class, 'store'])->name('depreciation.assets.usage-logs.store');
 
     Route::get('asset-lifecycle', [AssetLifecycleController::class, 'index'])->name('assets.lifecycle.index');
     Route::get('asset-lifecycle/by-token/{token}', [AssetLifecycleController::class, 'byToken'])->name('assets.lifecycle.by-token');

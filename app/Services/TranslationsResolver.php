@@ -134,6 +134,12 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'depreciation.')) {
+            $modules[] = 'depreciation';
+            $modules[] = 'assets';
+            $modules[] = 'datatable';
+        }
+
         if (str_starts_with($routeName, 'qr.')
             || str_starts_with($routeName, 'scan.')) {
             $modules[] = 'qr';
