@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('organization_id')->constrained('organizations')->cascadeOnDelete();
             $table->foreignId('asset_id')->constrained('assets')->cascadeOnDelete();
-            $table->foreignId('run_id')->nullable()->constrained('asset_depreciation_runs')->nullOnDelete();
+            // Note: FK to `asset_depreciation_runs` is added in a later migration to ensure
+            // the referenced table exists regardless of migration filename ordering.
+            $table->foreignId('run_id')->nullable()->index();
             $table->date('period_start');
             $table->date('period_end');
 
