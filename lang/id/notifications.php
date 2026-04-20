@@ -51,6 +51,10 @@ return [
             'title' => 'Pembaruan umum',
             'description' => 'Pembaruan sistem rutin dan aktivitas akun.',
         ],
+        'assets_depreciation_residual_reached' => [
+            'title' => 'Aset mencapai nilai residu',
+            'description' => 'Memberi tahu saat nilai buku aset mencapai nilai residu.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Preferensi notifikasi diperbarui.',

@@ -51,6 +51,10 @@ return [
             'title' => 'General updates',
             'description' => 'Routine system updates and account activity.',
         ],
+        'assets_depreciation_residual_reached' => [
+            'title' => 'Asset reached residual value',
+            'description' => 'Notifies you when an asset book value has reached its residual value.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Notification preferences updated.',

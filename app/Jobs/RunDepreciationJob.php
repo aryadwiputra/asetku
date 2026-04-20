@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Models\Asset;
 use App\Models\AssetDepreciationEntry;
 use App\Models\AssetDepreciationRun;
+use App\Models\Organization;
+use App\Notifications\AssetResidualValueReachedNotification;
 use App\Services\AssetDepreciationCalculator;
 use App\Services\OrganizationContext;
 use Illuminate\Bus\Queueable;
@@ -14,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Throwable;
 
 class RunDepreciationJob implements ShouldQueue
@@ -135,6 +138,8 @@ class RunDepreciationJob implements ShouldQueue
                             });
 
                             $created++;
+
+                            $this->notifyResidualIfNeeded($asset, $entry);
                         } catch (Throwable $e) {
                             $errors[] = [
                                 'asset_id' => $asset->id,
@@ -172,6 +177,55 @@ class RunDepreciationJob implements ShouldQueue
             ])->saveQuietly();
 
             throw $e;
+        }
+    }
+
+    private function notifyResidualIfNeeded(Asset $asset, AssetDepreciationEntry $entry): void
+    {
+        $residual = (float) ($asset->residual_value ?? 0);
+
+        if ((float) $entry->book_value_start <= $residual) {
+            return;
+        }
+
+        if ((float) $entry->book_value_end > $residual) {
+            return;
+        }
+
+        $alreadyReached = AssetDepreciationEntry::query()
+            ->where('asset_id', $asset->id)
+            ->where('period_end', '<', $entry->period_end->toDateString())
+            ->where('book_value_end', '<=', $residual)
+            ->exists();
+
+        if ($alreadyReached) {
+            return;
+        }
+
+        $organization = Organization::query()->find($asset->organization_id);
+        if (! $organization) {
+            return;
+        }
+
+        $ownersAndAdmins = $organization->members()
+            ->wherePivotIn('role', ['Owner', 'Admin'])
+            ->wherePivot('is_active', true)
+            ->get();
+
+        Notification::send($ownersAndAdmins, new AssetResidualValueReachedNotification($asset, $entry));
+
+        $asset->loadMissing([
+            'personInCharge:id,email',
+            'user:id,email',
+        ]);
+
+        $emails = array_values(array_unique(array_filter([
+            $asset->personInCharge?->email,
+            $asset->user?->email,
+        ])));
+
+        if ($emails !== []) {
+            Notification::route('mail', $emails)->notify(new AssetResidualValueReachedNotification($asset, $entry));
         }
     }
 }
