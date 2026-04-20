@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class Asset extends Model
 {
@@ -56,6 +57,8 @@ class Asset extends Model
         'depreciation_method',
         'useful_life_months',
         'residual_value',
+        'production_units_total_estimate',
+        'production_units_unit',
         'book_value_cached',
         'capex_opex',
         'vendor_contract_id',
@@ -89,6 +92,7 @@ class Asset extends Model
             'warranty_reminder_sent_at' => 'datetime',
             'cost' => 'decimal:2',
             'residual_value' => 'decimal:2',
+            'production_units_total_estimate' => 'decimal:4',
             'book_value_cached' => 'decimal:2',
             'metadata' => 'array',
             'latitude' => 'decimal:7',
@@ -168,6 +172,11 @@ class Asset extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(AssetMovement::class);
+    }
+
+    public function usageLogs(): HasMany
+    {
+        return $this->hasMany(AssetUsageLog::class);
     }
 
     public function disposals(): HasMany
@@ -273,6 +282,13 @@ class Asset extends Model
             return max($value, $residual);
         }
 
+        if ($this->depreciation_method === 'double_declining') {
+            $ratio = max(0, 1 - (2 / max($lifeMonths, 1)));
+            $value = $cost * pow($ratio, $monthsUsed);
+
+            return max($value, $residual);
+        }
+
         if ($this->depreciation_method === 'syd') {
             // Sum-of-years-digits, implemented at month granularity:
             // weight(month k) = remaining_months / sum_{i=1..lifeMonths} i
@@ -282,6 +298,32 @@ class Asset extends Model
             $depreciable = max(0, $cost - $residual);
             $depreciationUsed = $sumDigits > 0 ? ($depreciable * ($sumUsedWeights / $sumDigits)) : 0;
             $value = $cost - $depreciationUsed;
+
+            return max($value, $residual);
+        }
+
+        if ($this->depreciation_method === 'units_of_production') {
+            if ($this->book_value_cached !== null) {
+                return max((float) $this->book_value_cached, $residual);
+            }
+
+            $totalEstimate = $this->production_units_total_estimate !== null ? (float) $this->production_units_total_estimate : null;
+            if (! is_float($totalEstimate) || $totalEstimate <= 0) {
+                return $cost;
+            }
+
+            $depreciable = max(0, $cost - $residual);
+            if ($depreciable <= 0) {
+                return $residual;
+            }
+
+            $unitsToDate = (float) DB::table('asset_usage_logs')
+                ->where('asset_id', $this->id)
+                ->whereDate('recorded_at', '<=', $asOf->toDateString())
+                ->sum('units');
+
+            $accumulated = min($depreciable, ($depreciable / $totalEstimate) * $unitsToDate);
+            $value = $cost - $accumulated;
 
             return max($value, $residual);
         }
