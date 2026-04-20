@@ -29,6 +29,7 @@ return [
     'assets' => 'Assets',
     'asset_lifecycle' => 'Asset lifecycle',
     'asset_import' => 'Asset import',
+    'depreciation' => 'Depreciation',
     'new_asset' => 'New asset',
     'profile' => 'Profile',
     'security' => 'Security',

@@ -27,8 +27,17 @@ return [
         'depreciation_method' => 'Depreciation method',
         'useful_life_months' => 'Useful life (months)',
         'residual_value' => 'Residual value',
+        'production_units_total_estimate' => 'Total production estimate',
+        'production_units_unit' => 'Production unit',
         'latitude' => 'Latitude',
         'longitude' => 'Longitude',
+    ],
+    'depreciation_methods' => [
+        'straight_line' => 'Straight-line',
+        'diminishing' => 'Declining balance',
+        'double_declining' => 'Double declining balance',
+        'syd' => 'Sum of years digits',
+        'units_of_production' => 'Units of production',
     ],
 
     'placeholders' => [

@@ -29,6 +29,7 @@ return [
     'assets' => 'Aset',
     'asset_lifecycle' => 'Siklus aset',
     'asset_import' => 'Import aset',
+    'depreciation' => 'Penyusutan',
     'new_asset' => 'Aset baru',
     'profile' => 'Profil',
     'security' => 'Keamanan',

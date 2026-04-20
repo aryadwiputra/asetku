@@ -27,8 +27,17 @@ return [
         'depreciation_method' => 'Metode depresiasi',
         'useful_life_months' => 'Umur ekonomis (bulan)',
         'residual_value' => 'Nilai residu',
+        'production_units_total_estimate' => 'Estimasi total produksi',
+        'production_units_unit' => 'Satuan produksi',
         'latitude' => 'Lintang',
         'longitude' => 'Bujur',
+    ],
+    'depreciation_methods' => [
+        'straight_line' => 'Garis lurus',
+        'diminishing' => 'Saldo menurun',
+        'double_declining' => 'Saldo menurun ganda',
+        'syd' => 'Jumlah angka tahun',
+        'units_of_production' => 'Satuan produksi',
     ],
 
     'placeholders' => [
