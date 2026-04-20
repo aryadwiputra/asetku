@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\AssetAttachmentController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetDisposalApprovalController;
+use App\Http\Controllers\AssetDisposalBaController;
+use App\Http\Controllers\AssetDisposalController;
 use App\Http\Controllers\AssetExportController;
 use App\Http\Controllers\AssetImportController;
 use App\Http\Controllers\AssetLabelController;
-use App\Http\Controllers\AssetLifecycleController;
 use App\Http\Controllers\AssetLifecycleConditionController;
+use App\Http\Controllers\AssetLifecycleController;
 use App\Http\Controllers\AssetLifecycleEventController;
 use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
@@ -25,6 +28,16 @@ Route::inertia('scan', 'scan/index')->name('scan.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('assets', AssetController::class);
+
+    // Disposal module
+    Route::get('disposals', [AssetDisposalController::class, 'index'])->name('disposals.index');
+    Route::get('disposals/create', [AssetDisposalController::class, 'create'])->name('disposals.create');
+    Route::get('disposals/by-token/{token}', [AssetDisposalController::class, 'byToken'])->name('disposals.by-token');
+    Route::post('disposals', [AssetDisposalController::class, 'store'])->name('disposals.store');
+    Route::get('disposals/{disposal}', [AssetDisposalController::class, 'show'])->name('disposals.show');
+    Route::post('disposals/{disposal}/approve', [AssetDisposalApprovalController::class, 'approve'])->name('disposals.approve');
+    Route::post('disposals/{disposal}/reject', [AssetDisposalApprovalController::class, 'reject'])->name('disposals.reject');
+    Route::get('disposals/{disposal}/ba', [AssetDisposalBaController::class, 'show'])->name('disposals.ba');
 
     // Depreciation module
     Route::get('depreciation', [DepreciationController::class, 'index'])->name('depreciation.index');

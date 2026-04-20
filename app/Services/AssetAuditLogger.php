@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Asset;
+use App\Models\AssetDisposal;
 use App\Models\AssetHistory;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -165,6 +166,61 @@ class AssetAuditLogger
                 'movement_type' => $type,
                 'before' => $before,
                 'after' => $after,
+            ],
+        );
+    }
+
+    public function logDisposalRequested(Asset $asset, User $actor, AssetDisposal $disposal): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposal_requested',
+            description: __('disposals.history.requested'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'type' => $disposal->type,
+                'currency_code' => $disposal->currency_code,
+                'net_proceeds_amount' => $disposal->net_proceeds_amount,
+                'book_value_at_disposal' => $disposal->book_value_at_disposal,
+                'gain_loss_amount' => $disposal->gain_loss_amount,
+                'notes' => $disposal->notes,
+            ],
+        );
+    }
+
+    public function logDisposalRejected(Asset $asset, User $actor, AssetDisposal $disposal, ?string $notes = null): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposal_rejected',
+            description: __('disposals.history.rejected'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'notes' => $notes,
+            ],
+        );
+    }
+
+    public function logDisposed(Asset $asset, User $actor, AssetDisposal $disposal): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposed',
+            description: __('disposals.history.executed'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'type' => $disposal->type,
+                'currency_code' => $disposal->currency_code,
+                'net_proceeds_amount' => $disposal->net_proceeds_amount,
+                'book_value_at_disposal' => $disposal->book_value_at_disposal,
+                'gain_loss_amount' => $disposal->gain_loss_amount,
+                'executed_at' => $disposal->executed_at,
             ],
         );
     }
