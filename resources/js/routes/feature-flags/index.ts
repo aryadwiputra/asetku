@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\FeatureFlagsController::index
 * @see app/Http/Controllers/Settings/FeatureFlagsController.php:24
@@ -42,43 +42,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::index
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:24
-* @route '/settings/features'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::index
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:24
-* @route '/settings/features'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::index
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:24
-* @route '/settings/features'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Settings\FeatureFlagsController::users
@@ -125,43 +88,6 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::users
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:171
-* @route '/settings/features/users'
-*/
-const usersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: users.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::users
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:171
-* @route '/settings/features/users'
-*/
-usersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: users.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::users
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:171
-* @route '/settings/features/users'
-*/
-usersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: users.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-users.form = usersForm
-
-/**
 * @see \App\Http\Controllers\Settings\FeatureFlagsController::store
 * @see app/Http/Controllers/Settings/FeatureFlagsController.php:56
 * @route '/settings/features'
@@ -194,28 +120,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::store
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:56
-* @route '/settings/features'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::store
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:56
-* @route '/settings/features'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\Settings\FeatureFlagsController::update
@@ -276,38 +180,6 @@ update.put = (args: { featureFlag: number | { id: number } } | [featureFlag: num
 })
 
 /**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::update
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:98
-* @route '/settings/features/{featureFlag}'
-*/
-const updateForm = (args: { featureFlag: number | { id: number } } | [featureFlag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::update
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:98
-* @route '/settings/features/{featureFlag}'
-*/
-updateForm.put = (args: { featureFlag: number | { id: number } } | [featureFlag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
-
-/**
 * @see \App\Http\Controllers\Settings\FeatureFlagsController::destroy
 * @see app/Http/Controllers/Settings/FeatureFlagsController.php:140
 * @route '/settings/features/{featureFlag}'
@@ -364,38 +236,6 @@ destroy.delete = (args: { featureFlag: number | { id: number } } | [featureFlag:
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::destroy
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:140
-* @route '/settings/features/{featureFlag}'
-*/
-const destroyForm = (args: { featureFlag: number | { id: number } } | [featureFlag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\Settings\FeatureFlagsController::destroy
-* @see app/Http/Controllers/Settings/FeatureFlagsController.php:140
-* @route '/settings/features/{featureFlag}'
-*/
-destroyForm.delete = (args: { featureFlag: number | { id: number } } | [featureFlag: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
 
 const featureFlags = {
     index: Object.assign(index, index),

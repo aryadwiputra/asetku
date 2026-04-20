@@ -23,6 +23,9 @@ import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
+import AssetDisposalController from './AssetDisposalController'
+import AssetDisposalApprovalController from './AssetDisposalApprovalController'
+import AssetDisposalBaController from './AssetDisposalBaController'
 import DepreciationController from './DepreciationController'
 import DepreciationRunController from './DepreciationRunController'
 import DepreciationAssetController from './DepreciationAssetController'
@@ -65,6 +68,9 @@ const Controllers = {
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
+    AssetDisposalController: Object.assign(AssetDisposalController, AssetDisposalController),
+    AssetDisposalApprovalController: Object.assign(AssetDisposalApprovalController, AssetDisposalApprovalController),
+    AssetDisposalBaController: Object.assign(AssetDisposalBaController, AssetDisposalBaController),
     DepreciationController: Object.assign(DepreciationController, DepreciationController),
     DepreciationRunController: Object.assign(DepreciationRunController, DepreciationRunController),
     DepreciationAssetController: Object.assign(DepreciationAssetController, DepreciationAssetController),

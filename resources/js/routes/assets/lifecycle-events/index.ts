@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetLifecycleEventController::store
 * @see app/Http/Controllers/AssetLifecycleEventController.php:14
@@ -56,28 +56,6 @@ store.post = (args: { asset: number | { id: number } } | [asset: number | { id: 
     url: store.url(args, options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\AssetLifecycleEventController::store
-* @see app/Http/Controllers/AssetLifecycleEventController.php:14
-* @route '/assets/{asset}/lifecycle-events'
-*/
-const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AssetLifecycleEventController::store
-* @see app/Http/Controllers/AssetLifecycleEventController.php:14
-* @route '/assets/{asset}/lifecycle-events'
-*/
-storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(args, options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 const lifecycleEvents = {
     store: Object.assign(store, store),

@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::edit
 * @see app/Http/Controllers/OrganizationManagementController.php:13
@@ -68,43 +68,6 @@ edit.head = (args: { organization: number | { id: number } } | [organization: nu
 })
 
 /**
-* @see \App\Http\Controllers\OrganizationManagementController::edit
-* @see app/Http/Controllers/OrganizationManagementController.php:13
-* @route '/organizations/{organization}/edit'
-*/
-const editForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\OrganizationManagementController::edit
-* @see app/Http/Controllers/OrganizationManagementController.php:13
-* @route '/organizations/{organization}/edit'
-*/
-editForm.get = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\OrganizationManagementController::edit
-* @see app/Http/Controllers/OrganizationManagementController.php:13
-* @route '/organizations/{organization}/edit'
-*/
-editForm.head = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\OrganizationManagementController::update
 * @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
@@ -163,38 +126,6 @@ update.patch = (args: { organization: number | { id: number } } | [organization:
 })
 
 /**
-* @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:40
-* @route '/organizations/{organization}'
-*/
-const updateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\OrganizationManagementController::update
-* @see app/Http/Controllers/OrganizationManagementController.php:40
-* @route '/organizations/{organization}'
-*/
-updateForm.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
-
-/**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
 * @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
@@ -251,38 +182,6 @@ deactivate.delete = (args: { organization: number | { id: number } } | [organiza
     url: deactivate.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:51
-* @route '/organizations/{organization}'
-*/
-const deactivateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: deactivate.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\OrganizationManagementController::deactivate
-* @see app/Http/Controllers/OrganizationManagementController.php:51
-* @route '/organizations/{organization}'
-*/
-deactivateForm.delete = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: deactivate.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-deactivate.form = deactivateForm
 
 const OrganizationManagementController = { edit, update, deactivate }
 
