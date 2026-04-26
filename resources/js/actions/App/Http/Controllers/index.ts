@@ -50,6 +50,7 @@ import WorkOrderAttachmentController from './WorkOrderAttachmentController'
 import MaintenanceScheduleController from './MaintenanceScheduleController'
 import MaintenanceChecklistController from './MaintenanceChecklistController'
 import TechnicianController from './TechnicianController'
+import Reports from './Reports'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
@@ -104,6 +105,7 @@ const Controllers = {
     MaintenanceScheduleController: Object.assign(MaintenanceScheduleController, MaintenanceScheduleController),
     MaintenanceChecklistController: Object.assign(MaintenanceChecklistController, MaintenanceChecklistController),
     TechnicianController: Object.assign(TechnicianController, TechnicianController),
+    Reports: Object.assign(Reports, Reports),
 }
 
 export default Controllers
