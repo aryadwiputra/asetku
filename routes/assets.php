@@ -20,8 +20,15 @@ use App\Http\Controllers\DepreciationAssetController;
 use App\Http\Controllers\DepreciationController;
 use App\Http\Controllers\DepreciationExportController;
 use App\Http\Controllers\DepreciationRunController;
+use App\Http\Controllers\MaintenanceChecklistController;
+use App\Http\Controllers\MaintenanceScheduleController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\VendorContractController;
+use App\Http\Controllers\WorkOrderAttachmentController;
+use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\WorkOrderCostLineController;
+use App\Http\Controllers\WorkOrderTaskController;
 use Illuminate\Support\Facades\Route;
 
 // Public QR & scan
@@ -77,4 +84,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('assets-import/validate', [AssetImportController::class, 'validateFile'])->name('assets.import.validate');
     Route::post('assets-import/{importRun}/apply', [AssetImportController::class, 'apply'])->name('assets.import.apply');
     Route::post('assets-import/photos-zip', [AssetImportController::class, 'importPhotosZip'])->name('assets.import.photos-zip');
+
+    // Work orders (asset maintenance)
+    Route::get('work-orders/my', [WorkOrderController::class, 'my'])->name('work-orders.my');
+    Route::get('work-orders/by-token/{token}', [WorkOrderController::class, 'byToken'])->name('work-orders.by-token');
+    Route::resource('work-orders', WorkOrderController::class)
+        ->parameters(['work-orders' => 'workOrder'])
+        ->except(['destroy']);
+    Route::post('work-orders/{workOrder}/tasks', [WorkOrderTaskController::class, 'store'])->name('work-orders.tasks.store');
+    Route::patch('work-orders/{workOrder}/tasks/{task}', [WorkOrderTaskController::class, 'update'])->name('work-orders.tasks.update');
+    Route::post('work-orders/{workOrder}/cost-lines', [WorkOrderCostLineController::class, 'store'])->name('work-orders.cost-lines.store');
+    Route::patch('work-orders/{workOrder}/cost-lines/{costLine}', [WorkOrderCostLineController::class, 'update'])->name('work-orders.cost-lines.update');
+    Route::delete('work-orders/{workOrder}/cost-lines/{costLine}', [WorkOrderCostLineController::class, 'destroy'])->name('work-orders.cost-lines.destroy');
+    Route::post('work-orders/{workOrder}/attachments', [WorkOrderAttachmentController::class, 'store'])->name('work-orders.attachments.store');
+    Route::delete('work-orders/{workOrder}/attachments/{attachment}', [WorkOrderAttachmentController::class, 'destroy'])->name('work-orders.attachments.destroy');
+
+    // Preventive maintenance schedules
+    Route::resource('maintenance-schedules', MaintenanceScheduleController::class)
+        ->parameters(['maintenance-schedules' => 'schedule'])
+        ->except(['show']);
+
+    // Checklist templates
+    Route::resource('maintenance-checklists', MaintenanceChecklistController::class)
+        ->parameters(['maintenance-checklists' => 'template'])
+        ->except(['show']);
+
+    // Technicians
+    Route::resource('technicians', TechnicianController::class)
+        ->parameters(['technicians' => 'technician'])
+        ->except(['show']);
 });
