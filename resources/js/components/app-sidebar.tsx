@@ -42,6 +42,7 @@ import { index as workOrdersIndex } from '@/routes/work-orders';
 import { index as maintenanceSchedulesIndex } from '@/routes/maintenance-schedules';
 import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checklists';
 import { index as techniciansIndex } from '@/routes/technicians';
+import { index as inventoryReportIndex } from '@/routes/reports/inventory';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -159,6 +160,7 @@ export function AppSidebar() {
     const canManageFlags = userPermissions.includes('settings.flags.manage');
     const canViewActivity = userPermissions.includes('activity.view');
     const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
+    const canViewInventoryReport = userPermissions.includes('report_inventory.view') || Boolean(orgRole);
 
     const settingsItems: NavItem[] = [
         ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),
@@ -166,6 +168,18 @@ export function AppSidebar() {
         ...(canManageMail ? [{ title: t('common.settings_mail'), href: editMailSettings(), icon: null }] : []),
         ...(canManageFlags ? [{ title: t('common.settings_feature_flags'), href: featureFlagsIndex(), icon: null }] : []),
         ...(canViewActivity ? [{ title: t('common.audit_log'), href: activityIndex(), icon: null }] : []),
+    ];
+
+    const reportsNavItems: NavItem[] = [
+        ...(canViewInventoryReport
+            ? [
+                  {
+                      title: t('common.inventory_report'),
+                      href: inventoryReportIndex(),
+                      icon: null,
+                  },
+              ]
+            : []),
     ];
 
     const settingsActive =
@@ -219,6 +233,7 @@ export function AppSidebar() {
                         }
                     />
                 ) : null}
+                {reportsNavItems.length > 0 ? <NavMain label={t('common.reports')} items={reportsNavItems} /> : null}
                 {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (
                     <SidebarGroup className="px-2 py-0">

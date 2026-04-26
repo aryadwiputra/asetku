@@ -173,6 +173,12 @@ class TranslationsResolver
             $modules[] = 'assets';
         }
 
+        if (str_starts_with($routeName, 'reports.')) {
+            $modules[] = 'reports';
+            $modules[] = 'assets';
+            $modules[] = 'datatable';
+        }
+
         return array_values(array_unique($modules));
     }
 }
