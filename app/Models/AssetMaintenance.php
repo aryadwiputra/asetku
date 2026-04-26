@@ -17,6 +17,8 @@ class AssetMaintenance extends Model
      */
     protected $fillable = [
         'asset_id',
+        'vendor_id',
+        'vendor_contract_id',
         'performed_at',
         'description',
         'vendor',
@@ -31,6 +33,9 @@ class AssetMaintenance extends Model
         'decision_notes',
         'sla_response_hours',
         'sla_resolution_hours',
+        'speed_rating',
+        'quality_rating',
+        'price_rating',
     ];
 
     /**
@@ -47,12 +52,25 @@ class AssetMaintenance extends Model
             'rejected_at' => 'datetime',
             'sla_response_hours' => 'integer',
             'sla_resolution_hours' => 'integer',
+            'speed_rating' => 'integer',
+            'quality_rating' => 'integer',
+            'price_rating' => 'integer',
         ];
     }
 
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
+    }
+
+    public function vendor(): BelongsTo
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function vendorContract(): BelongsTo
+    {
+        return $this->belongsTo(VendorContract::class);
     }
 
     public function approval(): MorphOne

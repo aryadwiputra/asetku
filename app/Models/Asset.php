@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Asset extends Model
 {
@@ -53,6 +54,7 @@ class Asset extends Model
         'purchase_date',
         'warranty_end',
         'warranty_reminder_sent_at',
+        'warranty_expiry_reminder_sent_at',
         'cost',
         'depreciation_method',
         'useful_life_months',
@@ -90,6 +92,7 @@ class Asset extends Model
             'purchase_date' => 'date',
             'warranty_end' => 'date',
             'warranty_reminder_sent_at' => 'datetime',
+            'warranty_expiry_reminder_sent_at' => 'datetime',
             'cost' => 'decimal:2',
             'residual_value' => 'decimal:2',
             'production_units_total_estimate' => 'decimal:4',
@@ -164,6 +167,13 @@ class Asset extends Model
         return $this->belongsTo(VendorContract::class);
     }
 
+    public function vendorContracts(): BelongsToMany
+    {
+        return $this->belongsToMany(VendorContract::class, 'asset_vendor_contract')
+            ->withPivot(['is_primary'])
+            ->withTimestamps();
+    }
+
     public function histories(): HasMany
     {
         return $this->hasMany(AssetHistory::class);
@@ -212,6 +222,11 @@ class Asset extends Model
     public function media(): HasMany
     {
         return $this->hasMany(AssetMedia::class);
+    }
+
+    public function warrantyClaims(): HasMany
+    {
+        return $this->hasMany(AssetWarrantyClaim::class);
     }
 
     public function scopeForUser(Builder $query, ?User $user): Builder

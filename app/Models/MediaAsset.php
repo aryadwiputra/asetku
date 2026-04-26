@@ -21,12 +21,18 @@ class MediaAsset extends Model implements HasMedia
      */
     protected $fillable = [
         'title',
+        'vendor_contract_id',
         'uploaded_by',
     ];
 
     public function uploadedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
+    }
+
+    public function vendorContract(): BelongsTo
+    {
+        return $this->belongsTo(VendorContract::class);
     }
 
     /**
@@ -36,7 +42,7 @@ class MediaAsset extends Model implements HasMedia
     {
         return LogOptions::defaults()
             ->useLogName('media')
-            ->logOnly(['title', 'uploaded_by'])
+            ->logOnly(['title', 'uploaded_by', 'vendor_contract_id'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
