@@ -1,7 +1,10 @@
 <?php
 
-use App\Notifications\ImportantSecurityNotification;
 use App\Notifications\AssetResidualValueReachedNotification;
+use App\Notifications\ImportantSecurityNotification;
+use App\Notifications\WorkOrderAssignedNotification;
+use App\Notifications\WorkOrderResolutionSlaBreachedNotification;
+use App\Notifications\WorkOrderResponseSlaBreachedNotification;
 
 return [
     [
@@ -43,6 +46,39 @@ return [
         'default_channels' => [
             'database' => true,
             'mail' => false,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'assets.work_orders.sla_response_breached',
+        'title_key' => 'notifications.types.assets_work_orders_sla_response_breached.title',
+        'description_key' => 'notifications.types.assets_work_orders_sla_response_breached.description',
+        'class' => WorkOrderResponseSlaBreachedNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'assets.work_orders.sla_resolution_breached',
+        'title_key' => 'notifications.types.assets_work_orders_sla_resolution_breached.title',
+        'description_key' => 'notifications.types.assets_work_orders_sla_resolution_breached.description',
+        'class' => WorkOrderResolutionSlaBreachedNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'assets.work_orders.assigned',
+        'title_key' => 'notifications.types.assets_work_orders_assigned.title',
+        'description_key' => 'notifications.types.assets_work_orders_assigned.description',
+        'class' => WorkOrderAssignedNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
             'slack' => false,
         ],
     ],
