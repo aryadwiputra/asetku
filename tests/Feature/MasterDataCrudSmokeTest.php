@@ -10,12 +10,17 @@ use App\Models\Department;
 use App\Models\Organization;
 use App\Models\PersonInCharge;
 use App\Models\Unit;
+use App\Models\User;
+use App\Models\Vendor;
 use App\Models\VendorContract;
 use App\Models\Warranty;
-use App\Models\User;
 use App\Services\OrganizationContext;
 
 use function Pest\Laravel\actingAs;
+
+beforeEach(function () {
+    $this->withoutVite();
+});
 
 test('master data pages render for an owner', function () {
     $organization = Organization::factory()->create();
@@ -31,9 +36,10 @@ test('master data pages render for an owner', function () {
     $pic = PersonInCharge::query()->create(['name' => 'PIC', 'email' => 'pic@example.com']);
     $assetUser = AssetUser::query()->create(['name' => 'User', 'email' => 'user@example.com', 'department_id' => $department->id]);
     $category = AssetCategory::query()->create(['name' => 'Laptop', 'code' => 'LAP', 'depreciation_method' => 'straight_line']);
-    $location = AssetLocation::query()->create(['name' => 'HQ', 'code' => 'HQ']);
+    $location = AssetLocation::query()->create(['name' => 'HQ', 'code' => 'HQ', 'branch_id' => $branch->id]);
+    $vendor = Vendor::query()->create(['name' => 'Vendor A']);
     $warranty = Warranty::query()->create(['name' => 'Standard', 'duration_months' => 12]);
-    $contract = VendorContract::query()->create(['vendor_name' => 'Vendor A', 'contract_number' => 'C-001']);
+    $contract = VendorContract::query()->create(['vendor_id' => $vendor->id, 'vendor_name' => 'Vendor A', 'title' => 'Support', 'type' => 'maintenance', 'status' => 'active', 'contract_number' => 'C-001']);
 
     actingAs($user)
         ->get(route('master-data.index'))
@@ -71,11 +77,16 @@ test('master data pages render for an owner', function () {
     actingAs($user)->get(route('master-data.asset-locations.create'))->assertOk();
     actingAs($user)->get(route('master-data.asset-locations.edit', $location))->assertOk();
 
+    actingAs($user)->get(route('master-data.vendors.index'))->assertOk();
+    actingAs($user)->get(route('master-data.vendors.create'))->assertOk();
+    actingAs($user)->get(route('master-data.vendors.edit', $vendor))->assertOk();
+
     actingAs($user)->get(route('master-data.warranties.index'))->assertOk();
     actingAs($user)->get(route('master-data.warranties.create'))->assertOk();
     actingAs($user)->get(route('master-data.warranties.edit', $warranty))->assertOk();
 
-    actingAs($user)->get(route('master-data.vendor-contracts.index'))->assertOk();
-    actingAs($user)->get(route('master-data.vendor-contracts.create'))->assertOk();
-    actingAs($user)->get(route('master-data.vendor-contracts.edit', $contract))->assertOk();
+    actingAs($user)->get(route('vendor-contracts.index'))->assertOk();
+    actingAs($user)->get(route('vendor-contracts.create'))->assertOk();
+    actingAs($user)->get(route('vendor-contracts.edit', $contract))->assertOk();
+    actingAs($user)->get(route('vendor-contracts.show', $contract))->assertOk();
 });
