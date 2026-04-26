@@ -103,6 +103,16 @@ class StoreAssetRequest extends FormRequest
                 'integer',
                 Rule::exists('asset_users', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
             ],
+            'warranty_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('warranties', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
+            ],
+            'vendor_contract_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('vendor_contracts', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
+            ],
 
             'purchase_date' => ['nullable', 'date'],
             'cost' => ['nullable', 'numeric', 'min:0'],

@@ -15,11 +15,13 @@ use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
 use App\Http\Controllers\AssetUsageLogController;
+use App\Http\Controllers\AssetWarrantyClaimController;
 use App\Http\Controllers\DepreciationAssetController;
 use App\Http\Controllers\DepreciationController;
 use App\Http\Controllers\DepreciationExportController;
 use App\Http\Controllers\DepreciationRunController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\VendorContractController;
 use Illuminate\Support\Facades\Route;
 
 // Public QR & scan
@@ -28,6 +30,9 @@ Route::inertia('scan', 'scan/index')->name('scan.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('assets', AssetController::class);
+    Route::resource('vendor-contracts', VendorContractController::class);
+    Route::post('vendor-contracts/{vendorContract}/renew', [VendorContractController::class, 'renew'])->name('vendor-contracts.renew');
+    Route::post('vendor-contracts/{vendorContract}/documents', [VendorContractController::class, 'storeDocument'])->name('vendor-contracts.documents.store');
 
     // Disposal module
     Route::get('disposals', [AssetDisposalController::class, 'index'])->name('disposals.index');
@@ -58,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('assets/{asset}/lifecycle-events', [AssetLifecycleEventController::class, 'store'])->name('assets.lifecycle-events.store');
     Route::post('assets/{asset}/movements', [AssetMovementController::class, 'store'])->name('assets.movements.store');
+    Route::post('assets/{asset}/warranty-claims', [AssetWarrantyClaimController::class, 'store'])->name('assets.warranty-claims.store');
+    Route::patch('assets/{asset}/warranty-claims/{claim}', [AssetWarrantyClaimController::class, 'update'])->name('assets.warranty-claims.update');
 
     Route::get('assets-labels/print', [AssetLabelController::class, 'print'])->name('assets.labels.print');
     Route::get('assets-export', [AssetExportController::class, 'export'])->name('assets.export');

@@ -10,7 +10,7 @@ use App\Http\Controllers\MasterData\DepartmentController;
 use App\Http\Controllers\MasterData\MasterDataHomeController;
 use App\Http\Controllers\MasterData\PersonInChargeController;
 use App\Http\Controllers\MasterData\UnitController;
-use App\Http\Controllers\MasterData\VendorContractController;
+use App\Http\Controllers\MasterData\VendorController;
 use App\Http\Controllers\MasterData\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +29,6 @@ Route::middleware(['auth', 'verified'])
         Route::resource('asset-users', AssetUserController::class)->except(['show']);
         Route::resource('asset-categories', AssetCategoryController::class)->except(['show']);
         Route::resource('asset-locations', AssetLocationController::class)->except(['show']);
+        Route::resource('vendors', VendorController::class)->except(['show']);
         Route::resource('warranties', WarrantyController::class)->except(['show']);
-        Route::resource('vendor-contracts', VendorContractController::class)->except(['show']);
     });

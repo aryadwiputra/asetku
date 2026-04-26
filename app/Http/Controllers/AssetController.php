@@ -13,6 +13,7 @@ use App\Models\AssetHistory;
 use App\Models\AssetLocation;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
+use App\Models\AssetWarrantyClaim;
 use App\Models\Branch;
 use App\Models\CustomField;
 use App\Models\Department;
@@ -25,6 +26,7 @@ use App\Models\Warranty;
 use App\Queries\AssetListQuery;
 use App\Services\AssetAuditLogger;
 use App\Services\AssetCodeGenerator;
+use App\Services\AssetWarrantyStatusService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
@@ -101,6 +103,7 @@ class AssetController extends Controller
         /** @var Asset $asset */
         $asset = DB::transaction(function () use ($data, $user): Asset {
             $asset = Asset::query()->create($data);
+            $this->syncVendorContractAssignment($asset, is_numeric($data['vendor_contract_id'] ?? null) ? (int) $data['vendor_contract_id'] : null);
 
             AssetHistory::query()->create([
                 'asset_id' => $asset->id,
@@ -121,7 +124,7 @@ class AssetController extends Controller
         return to_route('assets.show', $asset);
     }
 
-    public function show(Asset $asset): Response
+    public function show(Asset $asset, AssetWarrantyStatusService $warrantyStatusService): Response
     {
         $this->authorize('view', $asset);
 
@@ -137,7 +140,8 @@ class AssetController extends Controller
             'class:id,name,code',
             'unit:id,name,symbol',
             'warranty:id,name,duration_months',
-            'vendorContract:id,vendor_name,contract_number',
+            'vendorContract:id,vendor_id,vendor_name,contract_number,title,type,status,end_date',
+            'vendorContract.vendor:id,name,is_blacklisted',
         ]);
 
         $histories = $asset->histories()
@@ -186,12 +190,31 @@ class AssetController extends Controller
                 ];
             });
 
+        $warrantyClaims = $asset->warrantyClaims()
+            ->with(['vendor:id,name', 'vendorContract:id,title,contract_number'])
+            ->latest('submitted_at')
+            ->latest('id')
+            ->get()
+            ->map(fn (AssetWarrantyClaim $claim): array => [
+                'id' => $claim->id,
+                'claim_reference' => $claim->claim_reference,
+                'status' => $claim->status,
+                'result' => $claim->result,
+                'notes' => $claim->notes,
+                'submitted_at' => $claim->submitted_at?->toISOString(),
+                'resolved_at' => $claim->resolved_at?->toISOString(),
+                'vendor' => $claim->vendor ? ['id' => $claim->vendor->id, 'name' => $claim->vendor->name] : null,
+                'vendor_contract' => $claim->vendorContract ? ['id' => $claim->vendorContract->id, 'title' => $claim->vendorContract->title, 'contract_number' => $claim->vendorContract->contract_number] : null,
+            ]);
+
         return Inertia::render('assets/show', [
             'asset' => $asset,
             'histories' => $histories,
             'attachments' => $media,
             'formMeta' => $this->formMeta(),
             'computedBookValue' => $asset->bookValue(),
+            'warrantyStatus' => $warrantyStatusService->determine($asset),
+            'warrantyClaims' => $warrantyClaims,
         ]);
     }
 
@@ -241,6 +264,7 @@ class AssetController extends Controller
             $original = $asset->getOriginal();
 
             $asset->save();
+            $this->syncVendorContractAssignment($asset, is_numeric($data['vendor_contract_id'] ?? null) ? (int) $data['vendor_contract_id'] : null);
 
             if ($dirty === []) {
                 return;
@@ -430,7 +454,19 @@ class AssetController extends Controller
             'pics' => PersonInCharge::query()->orderBy('name')->get(['id', 'name']),
             'assetUsers' => AssetUser::query()->orderBy('name')->get(['id', 'name']),
             'warranties' => Warranty::query()->orderBy('name')->get(['id', 'name', 'duration_months']),
-            'vendorContracts' => VendorContract::query()->orderBy('vendor_name')->get(['id', 'vendor_name', 'contract_number']),
+            'vendorContracts' => VendorContract::query()
+                ->with('vendor:id,name,is_blacklisted')
+                ->orderBy('vendor_name')
+                ->get(['id', 'vendor_id', 'vendor_name', 'title', 'contract_number', 'status', 'end_date'])
+                ->map(fn (VendorContract $contract): array => [
+                    'id' => $contract->id,
+                    'vendor_name' => $contract->vendor_name,
+                    'title' => $contract->title,
+                    'contract_number' => $contract->contract_number,
+                    'status' => $contract->status,
+                    'end_date' => $contract->end_date?->toDateString(),
+                    'is_vendor_blacklisted' => (bool) ($contract->vendor?->is_blacklisted ?? false),
+                ]),
             'customFields' => $customFields->map(function ($field) {
                 return [
                     'id' => $field->id,
@@ -471,6 +507,19 @@ class AssetController extends Controller
         }
 
         return $data;
+    }
+
+    private function syncVendorContractAssignment(Asset $asset, ?int $contractId): void
+    {
+        if ($contractId === null || $contractId <= 0) {
+            $asset->vendorContracts()->detach();
+
+            return;
+        }
+
+        $asset->vendorContracts()->sync([
+            $contractId => ['is_primary' => true],
+        ]);
     }
 
     /**
