@@ -55,6 +55,14 @@ return [
             'title' => 'Asset reached residual value',
             'description' => 'Notifies you when an asset book value has reached its residual value.',
         ],
+        'assets_warranty_notifications_expiring_soon' => [
+            'title' => 'Asset warranty expiring soon',
+            'description' => 'Notifies you when an asset warranty is about to expire.',
+        ],
+        'vendor_contracts_notifications_expiring_soon' => [
+            'title' => 'Vendor contract expiring soon',
+            'description' => 'Notifies you when a vendor contract is about to expire.',
+        ],
         'assets_work_orders_sla_response_breached' => [
             'title' => 'Work order response SLA breached',
             'description' => 'Notifies you when a work order response time has exceeded SLA.',

@@ -24,6 +24,7 @@ return [
         'serial_number' => 'Serial number',
         'imei' => 'IMEI',
         'purchase_date' => 'Acquired date',
+        'warranty_end' => 'Warranty end',
         'cost' => 'Acquisition cost',
         'book_value' => 'Book value',
         'depreciation_method' => 'Depreciation method',

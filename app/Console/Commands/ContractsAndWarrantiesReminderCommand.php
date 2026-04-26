@@ -14,6 +14,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 
 #[Signature('contracts-and-warranties:remind')]
 #[Description('Send in-app reminders for contracts and asset warranties that expire within 30 days.')]
@@ -34,7 +35,7 @@ class ContractsAndWarrantiesReminderCommand extends Command
                     $query
                         ->whereKey($organization->id)
                         ->where('organization_user.is_active', true)
-                        ->whereIn('organization_user.role', ['Admin', 'Manager']);
+                        ->whereIn('organization_user.role', ['Owner', 'Admin']);
                 })
                 ->get();
 
@@ -53,11 +54,28 @@ class ContractsAndWarrantiesReminderCommand extends Command
                         $recipient->notify(new ContractExpiringSoonNotification($contract));
                     }
 
+                    $picEmails = Asset::query()
+                        ->where('vendor_contract_id', $contract->id)
+                        ->with(['personInCharge:id,email', 'user:id,email'])
+                        ->get(['id', 'person_in_charge_id', 'asset_user_id'])
+                        ->flatMap(function (Asset $asset) {
+                            return collect([
+                                $asset->personInCharge?->email,
+                                $asset->user?->email,
+                            ])->filter(fn ($v) => is_string($v) && trim($v) !== '')->values();
+                        })
+                        ->unique()
+                        ->values();
+
+                    foreach ($picEmails as $email) {
+                        Notification::route('mail', $email)->notify(new ContractExpiringSoonNotification($contract));
+                    }
+
                     $contract->forceFill(['expiry_reminder_sent_at' => now()])->save();
                 });
 
             Asset::query()
-                ->with(['warranty:id,name,duration_months', 'vendorContract.vendor:id,name'])
+                ->with(['warranty:id,name,duration_months', 'vendorContract.vendor:id,name', 'personInCharge:id,email', 'user:id,email'])
                 ->get()
                 ->each(function (Asset $asset) use ($recipients, $warrantyStatusService): void {
                     $status = $warrantyStatusService->determine($asset);
@@ -68,6 +86,15 @@ class ContractsAndWarrantiesReminderCommand extends Command
 
                     foreach ($recipients as $recipient) {
                         $recipient->notify(new AssetWarrantyExpiringSoonNotification($asset, $status));
+                    }
+
+                    $emails = collect([
+                        $asset->personInCharge?->email,
+                        $asset->user?->email,
+                    ])->filter(fn ($v) => is_string($v) && trim($v) !== '')->unique()->values();
+
+                    foreach ($emails as $email) {
+                        Notification::route('mail', $email)->notify(new AssetWarrantyExpiringSoonNotification($asset, $status));
                     }
 
                     $asset->forceFill(['warranty_expiry_reminder_sent_at' => now()])->save();

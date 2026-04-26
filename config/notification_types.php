@@ -1,6 +1,8 @@
 <?php
 
 use App\Notifications\AssetResidualValueReachedNotification;
+use App\Notifications\AssetWarrantyExpiringSoonNotification;
+use App\Notifications\ContractExpiringSoonNotification;
 use App\Notifications\ImportantSecurityNotification;
 use App\Notifications\WorkOrderAssignedNotification;
 use App\Notifications\WorkOrderResolutionSlaBreachedNotification;
@@ -45,7 +47,29 @@ return [
         'class' => AssetResidualValueReachedNotification::class,
         'default_channels' => [
             'database' => true,
-            'mail' => false,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'assets.warranty.notifications.expiring_soon',
+        'title_key' => 'notifications.types.assets_warranty_notifications_expiring_soon.title',
+        'description_key' => 'notifications.types.assets_warranty_notifications_expiring_soon.description',
+        'class' => AssetWarrantyExpiringSoonNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'vendor_contracts.notifications.expiring_soon',
+        'title_key' => 'notifications.types.vendor_contracts_notifications_expiring_soon.title',
+        'description_key' => 'notifications.types.vendor_contracts_notifications_expiring_soon.description',
+        'class' => ContractExpiringSoonNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
             'slack' => false,
         ],
     ],

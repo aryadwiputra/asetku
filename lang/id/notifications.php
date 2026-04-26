@@ -55,6 +55,14 @@ return [
             'title' => 'Aset mencapai nilai residu',
             'description' => 'Memberi tahu saat nilai buku aset mencapai nilai residu.',
         ],
+        'assets_warranty_notifications_expiring_soon' => [
+            'title' => 'Garansi aset segera berakhir',
+            'description' => 'Memberi tahu saat garansi aset akan segera berakhir.',
+        ],
+        'vendor_contracts_notifications_expiring_soon' => [
+            'title' => 'Kontrak vendor segera berakhir',
+            'description' => 'Memberi tahu saat kontrak vendor akan segera berakhir.',
+        ],
         'assets_work_orders_sla_response_breached' => [
             'title' => 'SLA respons work order terlewat',
             'description' => 'Memberi tahu saat SLA waktu respons work order terlewat.',

@@ -24,6 +24,7 @@ return [
         'serial_number' => 'Nomor seri',
         'imei' => 'IMEI',
         'purchase_date' => 'Tanggal perolehan',
+        'warranty_end' => 'Garansi sampai',
         'cost' => 'Harga perolehan',
         'book_value' => 'Nilai buku',
         'depreciation_method' => 'Metode depresiasi',
