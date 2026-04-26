@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import documents from './documents'
 /**
 * @see \App\Http\Controllers\VendorContractController::index
@@ -45,6 +45,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\VendorContractController::index
+* @see app/Http/Controllers/VendorContractController.php:23
+* @route '/vendor-contracts'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::index
+* @see app/Http/Controllers/VendorContractController.php:23
+* @route '/vendor-contracts'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::index
+* @see app/Http/Controllers/VendorContractController.php:23
+* @route '/vendor-contracts'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\VendorContractController::create
 * @see app/Http/Controllers/VendorContractController.php:85
 * @route '/vendor-contracts/create'
@@ -89,6 +126,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\VendorContractController::create
+* @see app/Http/Controllers/VendorContractController.php:85
+* @route '/vendor-contracts/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::create
+* @see app/Http/Controllers/VendorContractController.php:85
+* @route '/vendor-contracts/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::create
+* @see app/Http/Controllers/VendorContractController.php:85
+* @route '/vendor-contracts/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\VendorContractController::store
 * @see app/Http/Controllers/VendorContractController.php:92
 * @route '/vendor-contracts'
@@ -121,6 +195,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\VendorContractController::store
+* @see app/Http/Controllers/VendorContractController.php:92
+* @route '/vendor-contracts'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::store
+* @see app/Http/Controllers/VendorContractController.php:92
+* @route '/vendor-contracts'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\VendorContractController::show
@@ -191,6 +287,43 @@ show.head = (args: { vendor_contract: number | { id: number } } | [vendor_contra
 })
 
 /**
+* @see \App\Http\Controllers\VendorContractController::show
+* @see app/Http/Controllers/VendorContractController.php:115
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+const showForm = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::show
+* @see app/Http/Controllers/VendorContractController.php:115
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+showForm.get = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::show
+* @see app/Http/Controllers/VendorContractController.php:115
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+showForm.head = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\VendorContractController::edit
 * @see app/Http/Controllers/VendorContractController.php:174
 * @route '/vendor-contracts/{vendor_contract}/edit'
@@ -257,6 +390,43 @@ edit.head = (args: { vendor_contract: number | { id: number } } | [vendor_contra
     url: edit.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\VendorContractController::edit
+* @see app/Http/Controllers/VendorContractController.php:174
+* @route '/vendor-contracts/{vendor_contract}/edit'
+*/
+const editForm = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::edit
+* @see app/Http/Controllers/VendorContractController.php:174
+* @route '/vendor-contracts/{vendor_contract}/edit'
+*/
+editForm.get = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::edit
+* @see app/Http/Controllers/VendorContractController.php:174
+* @route '/vendor-contracts/{vendor_contract}/edit'
+*/
+editForm.head = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\VendorContractController::update
@@ -327,6 +497,53 @@ update.patch = (args: { vendor_contract: number | { id: number } } | [vendor_con
 })
 
 /**
+* @see \App\Http\Controllers\VendorContractController::update
+* @see app/Http/Controllers/VendorContractController.php:188
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+const updateForm = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::update
+* @see app/Http/Controllers/VendorContractController.php:188
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+updateForm.put = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::update
+* @see app/Http/Controllers/VendorContractController.php:188
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+updateForm.patch = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\VendorContractController::destroy
 * @see app/Http/Controllers/VendorContractController.php:209
 * @route '/vendor-contracts/{vendor_contract}'
@@ -385,6 +602,38 @@ destroy.delete = (args: { vendor_contract: number | { id: number } } | [vendor_c
 })
 
 /**
+* @see \App\Http\Controllers\VendorContractController::destroy
+* @see app/Http/Controllers/VendorContractController.php:209
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+const destroyForm = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::destroy
+* @see app/Http/Controllers/VendorContractController.php:209
+* @route '/vendor-contracts/{vendor_contract}'
+*/
+destroyForm.delete = (args: { vendor_contract: number | { id: number } } | [vendor_contract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+/**
 * @see \App\Http\Controllers\VendorContractController::renew
 * @see app/Http/Controllers/VendorContractController.php:227
 * @route '/vendor-contracts/{vendorContract}/renew'
@@ -441,6 +690,28 @@ renew.post = (args: { vendorContract: number | { id: number } } | [vendorContrac
     url: renew.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\VendorContractController::renew
+* @see app/Http/Controllers/VendorContractController.php:227
+* @route '/vendor-contracts/{vendorContract}/renew'
+*/
+const renewForm = (args: { vendorContract: number | { id: number } } | [vendorContract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: renew.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::renew
+* @see app/Http/Controllers/VendorContractController.php:227
+* @route '/vendor-contracts/{vendorContract}/renew'
+*/
+renewForm.post = (args: { vendorContract: number | { id: number } } | [vendorContract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: renew.url(args, options),
+    method: 'post',
+})
+
+renew.form = renewForm
 
 const vendorContracts = {
     index: Object.assign(index, index),

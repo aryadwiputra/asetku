@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\ProfileController::update
 * @see app/Http/Controllers/Settings/ProfileController.php:62
@@ -32,6 +32,38 @@ update.patch = (options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\Settings\ProfileController::update
+* @see app/Http/Controllers/Settings/ProfileController.php:62
+* @route '/profile/notification-preferences'
+*/
+const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\ProfileController::update
+* @see app/Http/Controllers/Settings/ProfileController.php:62
+* @route '/profile/notification-preferences'
+*/
+updateForm.patch = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
 
 const notificationPreferences = {
     update: Object.assign(update, update),

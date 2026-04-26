@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\ImpersonationController::start
 * @see app/Http/Controllers/ImpersonationController.php:16
@@ -58,6 +58,28 @@ start.post = (args: { user: number | { id: number } } | [user: number | { id: nu
 })
 
 /**
+* @see \App\Http\Controllers\ImpersonationController::start
+* @see app/Http/Controllers/ImpersonationController.php:16
+* @route '/impersonate/{user}'
+*/
+const startForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: start.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ImpersonationController::start
+* @see app/Http/Controllers/ImpersonationController.php:16
+* @route '/impersonate/{user}'
+*/
+startForm.post = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: start.url(args, options),
+    method: 'post',
+})
+
+start.form = startForm
+
+/**
 * @see \App\Http\Controllers\ImpersonationController::stop
 * @see app/Http/Controllers/ImpersonationController.php:52
 * @route '/impersonate-stop'
@@ -90,6 +112,28 @@ stop.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: stop.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\ImpersonationController::stop
+* @see app/Http/Controllers/ImpersonationController.php:52
+* @route '/impersonate-stop'
+*/
+const stopForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: stop.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ImpersonationController::stop
+* @see app/Http/Controllers/ImpersonationController.php:52
+* @route '/impersonate-stop'
+*/
+stopForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: stop.url(options),
+    method: 'post',
+})
+
+stop.form = stopForm
 
 const impersonate = {
     start: Object.assign(start, start),

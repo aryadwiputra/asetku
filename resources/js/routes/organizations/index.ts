@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 import onboarding from './onboarding'
 /**
 * @see \App\Http\Controllers\OrganizationController::index
@@ -43,6 +43,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationController::index
+* @see app/Http/Controllers/OrganizationController.php:12
+* @route '/organizations'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationController::index
+* @see app/Http/Controllers/OrganizationController.php:12
+* @route '/organizations'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationController::index
+* @see app/Http/Controllers/OrganizationController.php:12
+* @route '/organizations'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\OrganizationSwitchController::__invoke
@@ -101,6 +138,28 @@ switchMethod.post = (args: { organization: number | { id: number } } | [organiza
     url: switchMethod.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationSwitchController::__invoke
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
+* @route '/organizations/{organization}/switch'
+*/
+const switchMethodForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: switchMethod.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationSwitchController::__invoke
+* @see app/Http/Controllers/OrganizationSwitchController.php:13
+* @route '/organizations/{organization}/switch'
+*/
+switchMethodForm.post = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: switchMethod.url(args, options),
+    method: 'post',
+})
+
+switchMethod.form = switchMethodForm
 
 /**
 * @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
@@ -163,6 +222,43 @@ importTemplate.head = (args: { type: string | number } | [type: string | number 
     url: importTemplate.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+const importTemplateForm = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importTemplate.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+importTemplateForm.get = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importTemplate.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationImportTemplateController::__invoke
+* @see app/Http/Controllers/OrganizationImportTemplateController.php:16
+* @route '/organizations/import-template/{type}'
+*/
+importTemplateForm.head = (args: { type: string | number } | [type: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: importTemplate.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+importTemplate.form = importTemplateForm
 
 /**
 * @see \App\Http\Controllers\OrganizationManagementController::edit
@@ -233,6 +329,43 @@ edit.head = (args: { organization: number | { id: number } } | [organization: nu
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationManagementController::edit
+* @see app/Http/Controllers/OrganizationManagementController.php:13
+* @route '/organizations/{organization}/edit'
+*/
+const editForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationManagementController::edit
+* @see app/Http/Controllers/OrganizationManagementController.php:13
+* @route '/organizations/{organization}/edit'
+*/
+editForm.get = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationManagementController::edit
+* @see app/Http/Controllers/OrganizationManagementController.php:13
+* @route '/organizations/{organization}/edit'
+*/
+editForm.head = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\OrganizationManagementController::update
 * @see app/Http/Controllers/OrganizationManagementController.php:40
 * @route '/organizations/{organization}'
@@ -291,6 +424,38 @@ update.patch = (args: { organization: number | { id: number } } | [organization:
 })
 
 /**
+* @see \App\Http\Controllers\OrganizationManagementController::update
+* @see app/Http/Controllers/OrganizationManagementController.php:40
+* @route '/organizations/{organization}'
+*/
+const updateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationManagementController::update
+* @see app/Http/Controllers/OrganizationManagementController.php:40
+* @route '/organizations/{organization}'
+*/
+updateForm.patch = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\OrganizationManagementController::deactivate
 * @see app/Http/Controllers/OrganizationManagementController.php:51
 * @route '/organizations/{organization}'
@@ -347,6 +512,38 @@ deactivate.delete = (args: { organization: number | { id: number } } | [organiza
     url: deactivate.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationManagementController::deactivate
+* @see app/Http/Controllers/OrganizationManagementController.php:51
+* @route '/organizations/{organization}'
+*/
+const deactivateForm = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: deactivate.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationManagementController::deactivate
+* @see app/Http/Controllers/OrganizationManagementController.php:51
+* @route '/organizations/{organization}'
+*/
+deactivateForm.delete = (args: { organization: number | { id: number } } | [organization: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: deactivate.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+deactivate.form = deactivateForm
 
 const organizations = {
     index: Object.assign(index, index),

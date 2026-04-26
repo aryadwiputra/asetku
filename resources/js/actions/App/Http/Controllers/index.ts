@@ -43,6 +43,13 @@ import AssetLabelController from './AssetLabelController'
 import AssetExportController from './AssetExportController'
 import AssetSavedFilterController from './AssetSavedFilterController'
 import AssetImportController from './AssetImportController'
+import WorkOrderController from './WorkOrderController'
+import WorkOrderTaskController from './WorkOrderTaskController'
+import WorkOrderCostLineController from './WorkOrderCostLineController'
+import WorkOrderAttachmentController from './WorkOrderAttachmentController'
+import MaintenanceScheduleController from './MaintenanceScheduleController'
+import MaintenanceChecklistController from './MaintenanceChecklistController'
+import TechnicianController from './TechnicianController'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
@@ -90,6 +97,13 @@ const Controllers = {
     AssetExportController: Object.assign(AssetExportController, AssetExportController),
     AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),
     AssetImportController: Object.assign(AssetImportController, AssetImportController),
+    WorkOrderController: Object.assign(WorkOrderController, WorkOrderController),
+    WorkOrderTaskController: Object.assign(WorkOrderTaskController, WorkOrderTaskController),
+    WorkOrderCostLineController: Object.assign(WorkOrderCostLineController, WorkOrderCostLineController),
+    WorkOrderAttachmentController: Object.assign(WorkOrderAttachmentController, WorkOrderAttachmentController),
+    MaintenanceScheduleController: Object.assign(MaintenanceScheduleController, MaintenanceScheduleController),
+    MaintenanceChecklistController: Object.assign(MaintenanceChecklistController, MaintenanceChecklistController),
+    TechnicianController: Object.assign(TechnicianController, TechnicianController),
 }
 
 export default Controllers

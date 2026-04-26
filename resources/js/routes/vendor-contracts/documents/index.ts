@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\VendorContractController::store
 * @see app/Http/Controllers/VendorContractController.php:278
@@ -56,6 +56,28 @@ store.post = (args: { vendorContract: number | { id: number } } | [vendorContrac
     url: store.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\VendorContractController::store
+* @see app/Http/Controllers/VendorContractController.php:278
+* @route '/vendor-contracts/{vendorContract}/documents'
+*/
+const storeForm = (args: { vendorContract: number | { id: number } } | [vendorContract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\VendorContractController::store
+* @see app/Http/Controllers/VendorContractController.php:278
+* @route '/vendor-contracts/{vendorContract}/documents'
+*/
+storeForm.post = (args: { vendorContract: number | { id: number } } | [vendorContract: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 const documents = {
     store: Object.assign(store, store),

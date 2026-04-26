@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetDisposalController::index
 * @see app/Http/Controllers/AssetDisposalController.php:21
@@ -44,6 +44,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\AssetDisposalController::index
+* @see app/Http/Controllers/AssetDisposalController.php:21
+* @route '/disposals'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::index
+* @see app/Http/Controllers/AssetDisposalController.php:21
+* @route '/disposals'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::index
+* @see app/Http/Controllers/AssetDisposalController.php:21
+* @route '/disposals'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\AssetDisposalController::create
 * @see app/Http/Controllers/AssetDisposalController.php:68
 * @route '/disposals/create'
@@ -86,6 +123,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::create
+* @see app/Http/Controllers/AssetDisposalController.php:68
+* @route '/disposals/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::create
+* @see app/Http/Controllers/AssetDisposalController.php:68
+* @route '/disposals/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::create
+* @see app/Http/Controllers/AssetDisposalController.php:68
+* @route '/disposals/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
 
 /**
 * @see \App\Http\Controllers\AssetDisposalController::byToken
@@ -150,6 +224,43 @@ byToken.head = (args: { token: string | number } | [token: string | number ] | s
 })
 
 /**
+* @see \App\Http\Controllers\AssetDisposalController::byToken
+* @see app/Http/Controllers/AssetDisposalController.php:97
+* @route '/disposals/by-token/{token}'
+*/
+const byTokenForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: byToken.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::byToken
+* @see app/Http/Controllers/AssetDisposalController.php:97
+* @route '/disposals/by-token/{token}'
+*/
+byTokenForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: byToken.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::byToken
+* @see app/Http/Controllers/AssetDisposalController.php:97
+* @route '/disposals/by-token/{token}'
+*/
+byTokenForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: byToken.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+byToken.form = byTokenForm
+
+/**
 * @see \App\Http\Controllers\AssetDisposalController::store
 * @see app/Http/Controllers/AssetDisposalController.php:109
 * @route '/disposals'
@@ -182,6 +293,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::store
+* @see app/Http/Controllers/AssetDisposalController.php:109
+* @route '/disposals'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::store
+* @see app/Http/Controllers/AssetDisposalController.php:109
+* @route '/disposals'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\AssetDisposalController::show
@@ -252,6 +385,43 @@ show.head = (args: { disposal: number | { id: number } } | [disposal: number | {
 })
 
 /**
+* @see \App\Http\Controllers\AssetDisposalController::show
+* @see app/Http/Controllers/AssetDisposalController.php:131
+* @route '/disposals/{disposal}'
+*/
+const showForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::show
+* @see app/Http/Controllers/AssetDisposalController.php:131
+* @route '/disposals/{disposal}'
+*/
+showForm.get = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalController::show
+* @see app/Http/Controllers/AssetDisposalController.php:131
+* @route '/disposals/{disposal}'
+*/
+showForm.head = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\AssetDisposalApprovalController::approve
 * @see app/Http/Controllers/AssetDisposalApprovalController.php:13
 * @route '/disposals/{disposal}/approve'
@@ -310,6 +480,28 @@ approve.post = (args: { disposal: number | { id: number } } | [disposal: number 
 })
 
 /**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::approve
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:13
+* @route '/disposals/{disposal}/approve'
+*/
+const approveForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: approve.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::approve
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:13
+* @route '/disposals/{disposal}/approve'
+*/
+approveForm.post = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: approve.url(args, options),
+    method: 'post',
+})
+
+approve.form = approveForm
+
+/**
 * @see \App\Http\Controllers\AssetDisposalApprovalController::reject
 * @see app/Http/Controllers/AssetDisposalApprovalController.php:29
 * @route '/disposals/{disposal}/reject'
@@ -366,6 +558,28 @@ reject.post = (args: { disposal: number | { id: number } } | [disposal: number |
     url: reject.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::reject
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:29
+* @route '/disposals/{disposal}/reject'
+*/
+const rejectForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: reject.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::reject
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:29
+* @route '/disposals/{disposal}/reject'
+*/
+rejectForm.post = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: reject.url(args, options),
+    method: 'post',
+})
+
+reject.form = rejectForm
 
 /**
 * @see \App\Http\Controllers\AssetDisposalBaController::ba
@@ -434,6 +648,43 @@ ba.head = (args: { disposal: number | { id: number } } | [disposal: number | { i
     url: ba.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\AssetDisposalBaController::ba
+* @see app/Http/Controllers/AssetDisposalBaController.php:16
+* @route '/disposals/{disposal}/ba'
+*/
+const baForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: ba.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalBaController::ba
+* @see app/Http/Controllers/AssetDisposalBaController.php:16
+* @route '/disposals/{disposal}/ba'
+*/
+baForm.get = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: ba.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalBaController::ba
+* @see app/Http/Controllers/AssetDisposalBaController.php:16
+* @route '/disposals/{disposal}/ba'
+*/
+baForm.head = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: ba.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+ba.form = baForm
 
 const disposals = {
     index: Object.assign(index, index),
