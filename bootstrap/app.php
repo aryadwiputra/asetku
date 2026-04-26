@@ -3,17 +3,17 @@
 use App\Http\Middleware\ApplyAppSettings;
 use App\Http\Middleware\ApplyLocale;
 use App\Http\Middleware\CheckDatabaseMaintenance;
-use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnforceOrganizationAccessPolicy;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetCurrentOrganization;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
-use Illuminate\Console\Scheduling\Schedule;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('assets:depreciation:auto-run')->dailyAt('01:00');
+        $schedule->command('contracts-and-warranties:remind')->dailyAt('08:00');
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
