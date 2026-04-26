@@ -6,6 +6,7 @@ use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class AssetMaintenance extends Model
@@ -17,14 +18,28 @@ class AssetMaintenance extends Model
      */
     protected $fillable = [
         'asset_id',
+        'type',
+        'source',
+        'priority',
+        'branch_id',
+        'assigned_to',
+        'assigned_at',
+        'acknowledged_at',
+        'started_at',
+        'completed_at',
+        'cancelled_at',
+        'progress_percent',
         'vendor_id',
         'vendor_contract_id',
+        'schedule_id',
+        'checklist_template_id',
         'performed_at',
         'description',
         'vendor',
         'cost',
         'status',
         'notes',
+        'internal_notes',
         'requested_by',
         'approved_by',
         'approved_at',
@@ -33,6 +48,11 @@ class AssetMaintenance extends Model
         'decision_notes',
         'sla_response_hours',
         'sla_resolution_hours',
+        'response_due_at',
+        'resolution_due_at',
+        'escalation_level',
+        'last_escalated_at',
+        'escalated_at',
         'speed_rating',
         'quality_rating',
         'price_rating',
@@ -48,10 +68,21 @@ class AssetMaintenance extends Model
         return [
             'performed_at' => 'datetime',
             'cost' => 'decimal:2',
+            'assigned_at' => 'datetime',
+            'acknowledged_at' => 'datetime',
+            'started_at' => 'datetime',
+            'completed_at' => 'datetime',
+            'cancelled_at' => 'datetime',
+            'progress_percent' => 'integer',
             'approved_at' => 'datetime',
             'rejected_at' => 'datetime',
             'sla_response_hours' => 'integer',
             'sla_resolution_hours' => 'integer',
+            'response_due_at' => 'datetime',
+            'resolution_due_at' => 'datetime',
+            'escalation_level' => 'integer',
+            'last_escalated_at' => 'datetime',
+            'escalated_at' => 'datetime',
             'speed_rating' => 'integer',
             'quality_rating' => 'integer',
             'price_rating' => 'integer',
@@ -63,6 +94,16 @@ class AssetMaintenance extends Model
         return $this->belongsTo(Asset::class);
     }
 
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function technician(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
@@ -71,6 +112,31 @@ class AssetMaintenance extends Model
     public function vendorContract(): BelongsTo
     {
         return $this->belongsTo(VendorContract::class);
+    }
+
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceSchedule::class, 'schedule_id');
+    }
+
+    public function checklistTemplate(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceChecklistTemplate::class, 'checklist_template_id');
+    }
+
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(AssetMaintenanceTask::class, 'maintenance_id')->orderBy('sort_order');
+    }
+
+    public function costLines(): HasMany
+    {
+        return $this->hasMany(AssetMaintenanceCostLine::class, 'maintenance_id');
+    }
+
+    public function media(): HasMany
+    {
+        return $this->hasMany(AssetMaintenanceMedia::class, 'maintenance_id')->orderBy('sort_order');
     }
 
     public function approval(): MorphOne
