@@ -16,6 +16,8 @@ return [
         'condition' => 'Kondisi',
         'pic' => 'Penanggung jawab',
         'asset_user' => 'Pemegang',
+        'warranty' => 'Template garansi',
+        'vendor_contract' => 'Kontrak vendor utama',
         'brand' => 'Merek',
         'model' => 'Model',
         'series' => 'Seri',
@@ -99,6 +101,10 @@ return [
         'details_desc' => 'Informasi dasar dan kepemilikan.',
         'financial' => 'Keuangan',
         'financial_desc' => 'Ringkasan biaya dan depresiasi.',
+        'vendor_contract' => 'Kontrak vendor',
+        'vendor_contract_desc' => 'Keterkaitan vendor aktif, cakupan layanan, dan kesehatan kontrak.',
+        'warranty' => 'Garansi',
+        'warranty_desc' => 'Status garansi saat ini dan riwayat klaim.',
         'history' => 'Riwayat',
         'history_desc' => 'Perubahan dan aktivitas terbaru.',
         'attachments' => 'Lampiran',
@@ -146,6 +152,30 @@ return [
         'branch_required' => 'Cabang wajib diisi.',
         'department_branch_mismatch' => 'Departemen harus berada pada cabang yang dipilih.',
         'location_branch_mismatch' => 'Lokasi harus berada pada cabang yang dipilih.',
+    ],
+
+    'warranty' => [
+        'unknown' => 'Tidak diketahui',
+        'active' => 'Aktif',
+        'expiring_soon' => 'Segera berakhir',
+        'expired' => 'Sudah berakhir',
+        'days_remaining' => 'Sisa :count hari',
+        'claim_created' => 'Klaim garansi dibuat.',
+        'claim_updated' => 'Klaim garansi diperbarui.',
+        'fields' => [
+            'claim_reference' => 'Referensi klaim',
+            'status' => 'Status klaim',
+            'result' => 'Hasil',
+            'submitted_at' => 'Diajukan pada',
+            'resolved_at' => 'Selesai pada',
+        ],
+        'toast' => [
+            'claim_created' => 'Klaim garansi berhasil disimpan.',
+            'claim_updated' => 'Klaim garansi berhasil diperbarui.',
+        ],
+        'notifications' => [
+            'expiring_soon' => 'Garansi aset akan segera berakhir.',
+        ],
     ],
 
     'attachments' => [
