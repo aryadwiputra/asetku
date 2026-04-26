@@ -15,8 +15,9 @@ import { index as personInChargesIndex } from '@/routes/master-data/person-in-ch
 import { index as assetUsersIndex } from '@/routes/master-data/asset-users';
 import { index as assetCategoriesIndex } from '@/routes/master-data/asset-categories';
 import { index as assetLocationsIndex } from '@/routes/master-data/asset-locations';
+import { index as vendorsIndex } from '@/routes/master-data/vendors';
 import { index as warrantiesIndex } from '@/routes/master-data/warranties';
-import { index as vendorContractsIndex } from '@/routes/master-data/vendor-contracts';
+import { index as vendorContractsIndex } from '@/routes/vendor-contracts';
 import { index as settingsIndex } from '@/routes/settings';
 
 type MasterDataItem = {
@@ -86,16 +87,22 @@ export default function MasterDataHome() {
             href: assetLocationsIndex.url(),
         },
         {
-            key: 'warranties',
-            title: t('warranties.title'),
-            description: t('warranties.description'),
-            href: warrantiesIndex.url(),
+            key: 'vendors',
+            title: t('vendors.title'),
+            description: t('vendors.description'),
+            href: vendorsIndex.url(),
         },
         {
             key: 'vendor_contracts',
             title: t('vendor_contracts.title'),
             description: t('vendor_contracts.description'),
             href: vendorContractsIndex.url(),
+        },
+        {
+            key: 'warranties',
+            title: t('warranties.title'),
+            description: t('warranties.description'),
+            href: warrantiesIndex.url(),
         },
     ];
 

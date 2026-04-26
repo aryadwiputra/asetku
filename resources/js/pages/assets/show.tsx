@@ -1,4 +1,4 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { Copy, Download, Pencil, Printer, QrCode, Trash2, Upload } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -6,6 +6,8 @@ import AssetAttachmentController from '@/actions/App/Http/Controllers/AssetAttac
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
 import AssetLifecycleEventController from '@/actions/App/Http/Controllers/AssetLifecycleEventController';
 import AssetMovementController from '@/actions/App/Http/Controllers/AssetMovementController';
+import AssetWarrantyClaimController from '@/actions/App/Http/Controllers/AssetWarrantyClaimController';
+import VendorContractController from '@/actions/App/Http/Controllers/VendorContractController';
 import BranchLocationPicker from '@/components/branch-location-picker';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -62,6 +64,8 @@ type Asset = {
     depreciation_method: string | null;
     useful_life_months: number | null;
     residual_value: string | null;
+    warranty: { id: number; name: string; duration_months: number } | null;
+    vendor_contract: { id: number; vendor_name: string; contract_number: string | null; title: string | null; vendor: { id: number; name: string; is_blacklisted: boolean } | null } | null;
     latitude: number | null;
     longitude: number | null;
     branch: { id: number; name: string; code: string } | null;
@@ -88,9 +92,21 @@ type Props = {
         assetUsers: Array<{ id: number; name: string }>;
     };
     computedBookValue: number;
+    warrantyStatus: { status: string; warranty_end: string | null; days_remaining: number | null };
+    warrantyClaims: Array<{
+        id: number;
+        claim_reference: string | null;
+        status: string;
+        result: string | null;
+        notes: string | null;
+        submitted_at: string | null;
+        resolved_at: string | null;
+        vendor: { id: number; name: string } | null;
+        vendor_contract: { id: number; title: string | null; contract_number: string | null } | null;
+    }>;
 };
 
-export default function AssetShow({ asset, histories, attachments, formMeta, computedBookValue }: Props) {
+export default function AssetShow({ asset, histories, attachments, formMeta, computedBookValue, warrantyStatus, warrantyClaims }: Props) {
     const { permissions, orgRole, organization, locale } = usePage().props as {
         permissions: string[];
         orgRole: string | null;
@@ -291,6 +307,69 @@ export default function AssetShow({ asset, histories, attachments, formMeta, com
                     </div>
 
                     <div className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('assets.sections.vendor_contract')}</CardTitle>
+                                <CardDescription>{t('assets.sections.vendor_contract_desc')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <Detail label={t('assets.fields.vendor_contract')} value={asset.vendor_contract?.title ?? asset.vendor_contract?.contract_number ?? asset.vendor_contract?.vendor_name} />
+                                <Detail label={t('vendor_contracts.fields.vendor')} value={asset.vendor_contract?.vendor?.name ?? asset.vendor_contract?.vendor_name} />
+                                {asset.vendor_contract?.id ? (
+                                    <Link href={VendorContractController.show.url({ vendor_contract: asset.vendor_contract.id })}>
+                                        <Button variant="outline" className="w-full">{t('common.view')}</Button>
+                                    </Link>
+                                ) : null}
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('assets.sections.warranty')}</CardTitle>
+                                <CardDescription>{t('assets.sections.warranty_desc')}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex flex-wrap gap-2">
+                                    <Badge variant={warrantyStatus.status === 'expired' ? 'destructive' : 'secondary'}>
+                                        {t(`assets.warranty.${warrantyStatus.status}`)}
+                                    </Badge>
+                                    {warrantyStatus.days_remaining !== null ? (
+                                        <Badge variant="outline">{t('assets.warranty.days_remaining', { count: warrantyStatus.days_remaining })}</Badge>
+                                    ) : null}
+                                </div>
+                                <Detail label={t('assets.fields.warranty')} value={asset.warranty?.name} />
+                                <Detail label={t('vendor_contracts.fields.end_date')} value={warrantyStatus.warranty_end} />
+
+                                {canUpdate ? (
+                                    <Form action={AssetWarrantyClaimController.store.url({ asset: asset.id })} method="post" className="space-y-3">
+                                        {({ errors, processing }) => (
+                                            <>
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="claim_reference">{t('assets.warranty.fields.claim_reference')}</Label>
+                                                    <Input id="claim_reference" name="claim_reference" />
+                                                    <InputError message={errors.claim_reference} />
+                                                </div>
+                                                <input type="hidden" name="status" value="submitted" />
+                                                <Button disabled={processing}>{t('common.save')}</Button>
+                                            </>
+                                        )}
+                                    </Form>
+                                ) : null}
+
+                                <div className="space-y-3">
+                                    {warrantyClaims.length === 0 ? <div className="text-sm text-muted-foreground">—</div> : warrantyClaims.map((claim) => (
+                                        <div key={claim.id} className="rounded-lg border p-3">
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="font-medium">{claim.claim_reference ?? `#${claim.id}`}</div>
+                                                <Badge variant="outline">{claim.status}</Badge>
+                                            </div>
+                                            <div className="mt-2 text-xs text-muted-foreground">{claim.vendor?.name ?? claim.vendor_contract?.title ?? '—'}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         <Card>
                             <CardHeader>
                                 <CardTitle>{t('assets.sections.qr')}</CardTitle>

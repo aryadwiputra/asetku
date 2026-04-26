@@ -30,7 +30,15 @@ type Condition = { id: number; name: string; code: string };
 type Class = { id: number; name: string; code: string };
 type Unit = { id: number; name: string; symbol: string };
 type Warranty = { id: number; name: string; duration_months: number };
-type VendorContract = { id: number; vendor_name: string; contract_number: string | null };
+type VendorContract = {
+    id: number;
+    vendor_name: string;
+    title?: string | null;
+    contract_number: string | null;
+    status?: string | null;
+    end_date?: string | null;
+    is_vendor_blacklisted?: boolean;
+};
 
 type CustomField = {
     id: number;
@@ -403,6 +411,42 @@ export function AssetForm({
                                 </SelectContent>
                             </Select>
                             <InputError message={form.errors.asset_user_id} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.warranty')}</Label>
+                            <Select value={form.data.warranty_id || 'none'} onValueChange={(v) => form.setData('warranty_id', v === 'none' ? '' : v)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('common.select')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('common.none')}</SelectItem>
+                                    {meta.warranties.map((warranty) => (
+                                        <SelectItem key={warranty.id} value={String(warranty.id)}>
+                                            {warranty.name} ({warranty.duration_months} mo)
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.warranty_id} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.vendor_contract')}</Label>
+                            <Select value={form.data.vendor_contract_id || 'none'} onValueChange={(v) => form.setData('vendor_contract_id', v === 'none' ? '' : v)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('common.select')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('common.none')}</SelectItem>
+                                    {meta.vendorContracts.map((contract) => (
+                                        <SelectItem key={contract.id} value={String(contract.id)} disabled={contract.is_vendor_blacklisted}>
+                                            {(contract.title || contract.vendor_name) + (contract.contract_number ? ` (${contract.contract_number})` : '')}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.vendor_contract_id} />
                         </div>
                     </div>
                 )}
