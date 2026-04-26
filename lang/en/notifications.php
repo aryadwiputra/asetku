@@ -55,6 +55,18 @@ return [
             'title' => 'Asset reached residual value',
             'description' => 'Notifies you when an asset book value has reached its residual value.',
         ],
+        'assets_work_orders_sla_response_breached' => [
+            'title' => 'Work order response SLA breached',
+            'description' => 'Notifies you when a work order response time has exceeded SLA.',
+        ],
+        'assets_work_orders_sla_resolution_breached' => [
+            'title' => 'Work order resolution SLA breached',
+            'description' => 'Notifies you when a work order resolution time has exceeded SLA.',
+        ],
+        'assets_work_orders_assigned' => [
+            'title' => 'Work order assigned',
+            'description' => 'Notifies you when a work order is assigned to you.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Notification preferences updated.',

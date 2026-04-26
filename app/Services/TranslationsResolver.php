@@ -146,6 +146,27 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'work-orders.')) {
+            $modules[] = 'work_orders';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'maintenance-schedules.')) {
+            $modules[] = 'maintenance_schedules';
+            $modules[] = 'work_orders';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'maintenance-checklists.')) {
+            $modules[] = 'maintenance_checklists';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'technicians.')) {
+            $modules[] = 'technicians';
+            $modules[] = 'datatable';
+        }
+
         if (str_starts_with($routeName, 'qr.')
             || str_starts_with($routeName, 'scan.')) {
             $modules[] = 'qr';

@@ -55,6 +55,18 @@ return [
             'title' => 'Aset mencapai nilai residu',
             'description' => 'Memberi tahu saat nilai buku aset mencapai nilai residu.',
         ],
+        'assets_work_orders_sla_response_breached' => [
+            'title' => 'SLA respons work order terlewat',
+            'description' => 'Memberi tahu saat SLA waktu respons work order terlewat.',
+        ],
+        'assets_work_orders_sla_resolution_breached' => [
+            'title' => 'SLA penyelesaian work order terlewat',
+            'description' => 'Memberi tahu saat SLA waktu penyelesaian work order terlewat.',
+        ],
+        'assets_work_orders_assigned' => [
+            'title' => 'Work order ditugaskan',
+            'description' => 'Memberi tahu saat work order ditugaskan kepada Anda.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Preferensi notifikasi diperbarui.',

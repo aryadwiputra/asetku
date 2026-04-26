@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, ChevronDown, ClipboardList, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -38,6 +38,10 @@ import { index as assetsImportIndex } from '@/routes/assets/import';
 import { index as assetLifecycleIndex } from '@/routes/assets/lifecycle';
 import { index as depreciationIndex } from '@/routes/depreciation';
 import { index as disposalsIndex } from '@/routes/disposals';
+import { index as workOrdersIndex } from '@/routes/work-orders';
+import { index as maintenanceSchedulesIndex } from '@/routes/maintenance-schedules';
+import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checklists';
+import { index as techniciansIndex } from '@/routes/technicians';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -85,6 +89,26 @@ export function AppSidebar() {
                   title: t('common.assets'),
                   href: assetsIndex(),
                   icon: Package,
+              },
+              {
+                  title: t('common.work_orders'),
+                  href: workOrdersIndex(),
+                  icon: Wrench,
+              },
+              {
+                  title: t('common.maintenance_schedules'),
+                  href: maintenanceSchedulesIndex(),
+                  icon: ClipboardList,
+              },
+              {
+                  title: t('common.maintenance_checklists'),
+                  href: maintenanceChecklistsIndex(),
+                  icon: ClipboardList,
+              },
+              {
+                  title: t('common.technicians'),
+                  href: techniciansIndex(),
+                  icon: Users,
               },
               {
                   title: t('common.disposals'),
