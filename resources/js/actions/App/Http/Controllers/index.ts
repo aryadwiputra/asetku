@@ -23,6 +23,7 @@ import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
 import AssetController from './AssetController'
+import VendorContractController from './VendorContractController'
 import AssetDisposalController from './AssetDisposalController'
 import AssetDisposalApprovalController from './AssetDisposalApprovalController'
 import AssetDisposalBaController from './AssetDisposalBaController'
@@ -37,6 +38,7 @@ import AssetLifecycleConditionController from './AssetLifecycleConditionControll
 import AssetAttachmentController from './AssetAttachmentController'
 import AssetLifecycleEventController from './AssetLifecycleEventController'
 import AssetMovementController from './AssetMovementController'
+import AssetWarrantyClaimController from './AssetWarrantyClaimController'
 import AssetLabelController from './AssetLabelController'
 import AssetExportController from './AssetExportController'
 import AssetSavedFilterController from './AssetSavedFilterController'
@@ -68,6 +70,7 @@ const Controllers = {
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
     AssetController: Object.assign(AssetController, AssetController),
+    VendorContractController: Object.assign(VendorContractController, VendorContractController),
     AssetDisposalController: Object.assign(AssetDisposalController, AssetDisposalController),
     AssetDisposalApprovalController: Object.assign(AssetDisposalApprovalController, AssetDisposalApprovalController),
     AssetDisposalBaController: Object.assign(AssetDisposalBaController, AssetDisposalBaController),
@@ -82,6 +85,7 @@ const Controllers = {
     AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
     AssetLifecycleEventController: Object.assign(AssetLifecycleEventController, AssetLifecycleEventController),
     AssetMovementController: Object.assign(AssetMovementController, AssetMovementController),
+    AssetWarrantyClaimController: Object.assign(AssetWarrantyClaimController, AssetWarrantyClaimController),
     AssetLabelController: Object.assign(AssetLabelController, AssetLabelController),
     AssetExportController: Object.assign(AssetExportController, AssetExportController),
     AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),

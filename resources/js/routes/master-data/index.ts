@@ -8,8 +8,8 @@ import personInCharges from './person-in-charges'
 import assetUsers from './asset-users'
 import assetCategories from './asset-categories'
 import assetLocations from './asset-locations'
+import vendors from './vendors'
 import warranties from './warranties'
-import vendorContracts from './vendor-contracts'
 /**
 * @see \App\Http\Controllers\MasterData\MasterDataHomeController::index
 * @see app/Http/Controllers/MasterData/MasterDataHomeController.php:13
@@ -65,8 +65,8 @@ const masterData = {
     assetUsers: Object.assign(assetUsers, assetUsers),
     assetCategories: Object.assign(assetCategories, assetCategories),
     assetLocations: Object.assign(assetLocations, assetLocations),
+    vendors: Object.assign(vendors, vendors),
     warranties: Object.assign(warranties, warranties),
-    vendorContracts: Object.assign(vendorContracts, vendorContracts),
 }
 
 export default masterData
