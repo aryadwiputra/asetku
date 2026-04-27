@@ -75,6 +75,18 @@ return [
             'title' => 'Work order assigned',
             'description' => 'Notifies you when a work order is assigned to you.',
         ],
+        'maintenance_schedules_due_in_7_days' => [
+            'title' => 'Maintenance due in 7 days',
+            'description' => 'Notifies you 7 days before a maintenance schedule is due.',
+        ],
+        'maintenance_schedules_due_in_3_days' => [
+            'title' => 'Maintenance due in 3 days',
+            'description' => 'Notifies you 3 days before a maintenance schedule is due.',
+        ],
+        'maintenance_schedules_due_in_1_day' => [
+            'title' => 'Maintenance due in 1 day',
+            'description' => 'Notifies you 1 day before a maintenance schedule is due.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Notification preferences updated.',

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, ClipboardList, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
+import { BookOpen, Building2, CalendarDays, ChevronDown, ClipboardList, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -43,6 +43,7 @@ import { my as workOrdersMy } from '@/routes/work-orders';
 import { index as maintenanceSchedulesIndex } from '@/routes/maintenance-schedules';
 import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checklists';
 import { index as techniciansIndex } from '@/routes/technicians';
+import { index as maintenanceCalendarIndex } from '@/routes/maintenance-calendar';
 import { index as inventoryReportIndex } from '@/routes/reports/inventory';
 import type { NavItem } from '@/types';
 
@@ -102,6 +103,11 @@ export function AppSidebar() {
 
     const maintenanceNavItems: NavItem[] = canViewAssets
         ? [
+              {
+                  title: t('common.maintenance_calendar'),
+                  href: maintenanceCalendarIndex(),
+                  icon: CalendarDays,
+              },
               {
                   title: t('common.work_orders'),
                   href: workOrdersIndex(),

@@ -75,6 +75,18 @@ return [
             'title' => 'Work order ditugaskan',
             'description' => 'Memberi tahu saat work order ditugaskan kepada Anda.',
         ],
+        'maintenance_schedules_due_in_7_days' => [
+            'title' => 'Pemeliharaan jatuh tempo H-7',
+            'description' => 'Memberi tahu 7 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
+        'maintenance_schedules_due_in_3_days' => [
+            'title' => 'Pemeliharaan jatuh tempo H-3',
+            'description' => 'Memberi tahu 3 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
+        'maintenance_schedules_due_in_1_day' => [
+            'title' => 'Pemeliharaan jatuh tempo H-1',
+            'description' => 'Memberi tahu 1 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Preferensi notifikasi diperbarui.',

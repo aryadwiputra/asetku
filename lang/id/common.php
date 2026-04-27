@@ -32,6 +32,7 @@ return [
     'asset_import' => 'Import aset',
     'depreciation' => 'Penyusutan',
     'work_orders' => 'Work order',
+    'maintenance_calendar' => 'Kalender pemeliharaan',
     'maintenance_schedules' => 'Jadwal pemeliharaan',
     'maintenance_checklists' => 'Checklist pemeliharaan',
     'technicians' => 'Teknisi',

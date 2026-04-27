@@ -32,6 +32,7 @@ return [
     'asset_import' => 'Asset import',
     'depreciation' => 'Depreciation',
     'work_orders' => 'Work orders',
+    'maintenance_calendar' => 'Maintenance calendar',
     'maintenance_schedules' => 'Maintenance schedules',
     'maintenance_checklists' => 'Maintenance checklists',
     'technicians' => 'Technicians',
