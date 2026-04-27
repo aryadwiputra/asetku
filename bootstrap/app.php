@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('assets:depreciation:auto-run')->dailyAt('01:00');
         $schedule->command('contracts-and-warranties:remind')->dailyAt('08:00');
+        $schedule->command('maintenance-schedules:send-reminders')->dailyAt('07:00');
         $schedule->command('maintenance:generate-work-orders')->dailyAt('02:00');
         $schedule->command('maintenance:escalate-overdue-work-orders')->everyFiveMinutes();
     })

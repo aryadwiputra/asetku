@@ -4,6 +4,9 @@ use App\Notifications\AssetResidualValueReachedNotification;
 use App\Notifications\AssetWarrantyExpiringSoonNotification;
 use App\Notifications\ContractExpiringSoonNotification;
 use App\Notifications\ImportantSecurityNotification;
+use App\Notifications\MaintenanceScheduleDueInOneDayNotification;
+use App\Notifications\MaintenanceScheduleDueInSevenDaysNotification;
+use App\Notifications\MaintenanceScheduleDueInThreeDaysNotification;
 use App\Notifications\WorkOrderAssignedNotification;
 use App\Notifications\WorkOrderResolutionSlaBreachedNotification;
 use App\Notifications\WorkOrderResponseSlaBreachedNotification;
@@ -100,6 +103,39 @@ return [
         'title_key' => 'notifications.types.assets_work_orders_assigned.title',
         'description_key' => 'notifications.types.assets_work_orders_assigned.description',
         'class' => WorkOrderAssignedNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'maintenance_schedules.notifications.due_in_7_days',
+        'title_key' => 'notifications.types.maintenance_schedules_due_in_7_days.title',
+        'description_key' => 'notifications.types.maintenance_schedules_due_in_7_days.description',
+        'class' => MaintenanceScheduleDueInSevenDaysNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'maintenance_schedules.notifications.due_in_3_days',
+        'title_key' => 'notifications.types.maintenance_schedules_due_in_3_days.title',
+        'description_key' => 'notifications.types.maintenance_schedules_due_in_3_days.description',
+        'class' => MaintenanceScheduleDueInThreeDaysNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
+    [
+        'key' => 'maintenance_schedules.notifications.due_in_1_day',
+        'title_key' => 'notifications.types.maintenance_schedules_due_in_1_day.title',
+        'description_key' => 'notifications.types.maintenance_schedules_due_in_1_day.description',
+        'class' => MaintenanceScheduleDueInOneDayNotification::class,
         'default_channels' => [
             'database' => true,
             'mail' => true,
