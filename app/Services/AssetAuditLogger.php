@@ -314,6 +314,23 @@ class AssetAuditLogger
         );
     }
 
+    public function logMaintenanceScheduleRescheduled(Asset $asset, User $actor, int $scheduleId, CarbonInterface $from, CarbonInterface $to, ?string $reason = null): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'maintenance_schedule_rescheduled',
+            description: __('maintenance_calendar.history.schedule_rescheduled'),
+            performedAt: null,
+            payload: [
+                'schedule_id' => $scheduleId,
+                'before' => ['next_due_at' => $from->toDateString()],
+                'after' => ['next_due_at' => $to->toDateString()],
+                'reason' => $reason,
+            ],
+        );
+    }
+
     /**
      * @param  array<string, mixed>  $payload
      */

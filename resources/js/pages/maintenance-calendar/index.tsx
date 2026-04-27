@@ -3,11 +3,12 @@ import '@fullcalendar/timegrid/index.css';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import FullCalendar, { type EventClickArg, type EventInput } from '@fullcalendar/react';
+import FullCalendar, { type EventClickArg, type EventDropArg, type EventInput } from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { Head, router } from '@inertiajs/react';
 import { CalendarDays, Filter, Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useTranslation } from '@/hooks/use-translation';
-import { create as scheduleCreate, edit as scheduleEdit } from '@/routes/maintenance-schedules';
+import { create as scheduleCreate, edit as scheduleEdit, reschedule as scheduleReschedule } from '@/routes/maintenance-schedules';
 import { events as calendarEvents } from '@/routes/maintenance-calendar';
 
 type Meta = {
@@ -191,6 +192,46 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
         });
     }
 
+    async function onEventDrop(arg: EventDropArg) {
+        if (!abilities.canUpdateSchedule) {
+            arg.revert();
+            return;
+        }
+
+        const scheduleId = arg.event.extendedProps?.scheduleId as number | undefined;
+        if (!scheduleId || !arg.event.start) {
+            arg.revert();
+            return;
+        }
+
+        const nextDueAt = arg.event.start.toISOString().slice(0, 10);
+        const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
+
+        try {
+            const res = await fetch(scheduleReschedule({ schedule: scheduleId }).url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    Accept: 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ next_due_at: nextDueAt }),
+            });
+
+            if (!res.ok) {
+                arg.revert();
+                toast.error(t('maintenance_calendar.toast.reschedule_failed'));
+                return;
+            }
+
+            toast.success(t('maintenance_calendar.toast.rescheduled'));
+        } catch {
+            arg.revert();
+            toast.error(t('maintenance_calendar.toast.reschedule_failed'));
+        }
+    }
+
     return (
         <>
             <Head title={t('maintenance_calendar.title')} />
@@ -242,6 +283,7 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
                         height="auto"
                         events={loadEvents}
                         eventClick={onEventClick}
+                        eventDrop={onEventDrop}
                         editable={abilities.canUpdateSchedule}
                         selectable={false}
                         dayMaxEvents

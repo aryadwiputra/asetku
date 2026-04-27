@@ -1,5 +1,63 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
+* @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::reschedule
+* @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
+* @route '/maintenance-schedules/{schedule}/reschedule'
+*/
+export const reschedule = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: reschedule.url(args, options),
+    method: 'patch',
+})
+
+reschedule.definition = {
+    methods: ["patch"],
+    url: '/maintenance-schedules/{schedule}/reschedule',
+} satisfies RouteDefinition<["patch"]>
+
+/**
+* @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::reschedule
+* @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
+* @route '/maintenance-schedules/{schedule}/reschedule'
+*/
+reschedule.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { schedule: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { schedule: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            schedule: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        schedule: typeof args.schedule === 'object'
+        ? args.schedule.id
+        : args.schedule,
+    }
+
+    return reschedule.definition.url
+            .replace('{schedule}', parsedArgs.schedule.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::reschedule
+* @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
+* @route '/maintenance-schedules/{schedule}/reschedule'
+*/
+reschedule.patch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+    url: reschedule.url(args, options),
+    method: 'patch',
+})
+
+/**
 * @see \App\Http\Controllers\MaintenanceScheduleController::index
 * @see app/Http/Controllers/MaintenanceScheduleController.php:21
 * @route '/maintenance-schedules'
@@ -316,6 +374,7 @@ destroy.delete = (args: { schedule: number | { id: number } } | [schedule: numbe
 })
 
 const maintenanceSchedules = {
+    reschedule: Object.assign(reschedule, reschedule),
     index: Object.assign(index, index),
     create: Object.assign(create, create),
     store: Object.assign(store, store),

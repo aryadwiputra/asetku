@@ -24,6 +24,7 @@ use App\Http\Controllers\MaintenanceChecklistController;
 use App\Http\Controllers\MaintenanceCalendarController;
 use App\Http\Controllers\MaintenanceCalendarEventsController;
 use App\Http\Controllers\MaintenanceScheduleController;
+use App\Http\Controllers\MaintenanceScheduleRescheduleController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\VendorContractController;
@@ -105,6 +106,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('work-orders/{workOrder}/attachments/{attachment}', [WorkOrderAttachmentController::class, 'destroy'])->name('work-orders.attachments.destroy');
 
     // Preventive maintenance schedules
+    Route::patch('maintenance-schedules/{schedule}/reschedule', [MaintenanceScheduleRescheduleController::class, 'update'])
+        ->name('maintenance-schedules.reschedule');
     Route::resource('maintenance-schedules', MaintenanceScheduleController::class)
         ->parameters(['maintenance-schedules' => 'schedule'])
         ->except(['show']);

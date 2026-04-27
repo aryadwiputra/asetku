@@ -49,6 +49,7 @@ import WorkOrderController from './WorkOrderController'
 import WorkOrderTaskController from './WorkOrderTaskController'
 import WorkOrderCostLineController from './WorkOrderCostLineController'
 import WorkOrderAttachmentController from './WorkOrderAttachmentController'
+import MaintenanceScheduleRescheduleController from './MaintenanceScheduleRescheduleController'
 import MaintenanceScheduleController from './MaintenanceScheduleController'
 import MaintenanceChecklistController from './MaintenanceChecklistController'
 import TechnicianController from './TechnicianController'
@@ -106,6 +107,7 @@ const Controllers = {
     WorkOrderTaskController: Object.assign(WorkOrderTaskController, WorkOrderTaskController),
     WorkOrderCostLineController: Object.assign(WorkOrderCostLineController, WorkOrderCostLineController),
     WorkOrderAttachmentController: Object.assign(WorkOrderAttachmentController, WorkOrderAttachmentController),
+    MaintenanceScheduleRescheduleController: Object.assign(MaintenanceScheduleRescheduleController, MaintenanceScheduleRescheduleController),
     MaintenanceScheduleController: Object.assign(MaintenanceScheduleController, MaintenanceScheduleController),
     MaintenanceChecklistController: Object.assign(MaintenanceChecklistController, MaintenanceChecklistController),
     TechnicianController: Object.assign(TechnicianController, TechnicianController),
