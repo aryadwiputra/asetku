@@ -21,6 +21,8 @@ use App\Http\Controllers\DepreciationController;
 use App\Http\Controllers\DepreciationExportController;
 use App\Http\Controllers\DepreciationRunController;
 use App\Http\Controllers\MaintenanceChecklistController;
+use App\Http\Controllers\MaintenanceCalendarController;
+use App\Http\Controllers\MaintenanceCalendarEventsController;
 use App\Http\Controllers\MaintenanceScheduleController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\TechnicianController;
@@ -36,6 +38,9 @@ Route::get('q/{token}', [QrController::class, 'show'])->name('qr.show');
 Route::inertia('scan', 'scan/index')->name('scan.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('maintenance-calendar', [MaintenanceCalendarController::class, 'index'])->name('maintenance-calendar.index');
+    Route::get('maintenance-calendar/events', [MaintenanceCalendarEventsController::class, 'index'])->name('maintenance-calendar.events');
+
     Route::resource('assets', AssetController::class);
     Route::resource('vendor-contracts', VendorContractController::class);
     Route::post('vendor-contracts/{vendorContract}/renew', [VendorContractController::class, 'renew'])->name('vendor-contracts.renew');

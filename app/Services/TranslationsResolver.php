@@ -157,6 +157,12 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'maintenance-calendar.')) {
+            $modules[] = 'maintenance_calendar';
+            $modules[] = 'maintenance_schedules';
+            $modules[] = 'datatable';
+        }
+
         if (str_starts_with($routeName, 'maintenance-checklists.')) {
             $modules[] = 'maintenance_checklists';
             $modules[] = 'datatable';

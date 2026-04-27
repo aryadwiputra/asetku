@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::show
-* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:17
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
 * @route '/reports/inventory/stocktake/print'
 */
 export const show = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::show
-* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:17
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
 * @route '/reports/inventory/stocktake/print'
 */
 show.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ show.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::show
-* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:17
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
 * @route '/reports/inventory/stocktake/print'
 */
 show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ show.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::show
-* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:17
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
 * @route '/reports/inventory/stocktake/print'
 */
 show.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::index
-* @see app/Http/Controllers/MaintenanceScheduleController.php:20
+* @see app/Http/Controllers/MaintenanceScheduleController.php:21
 * @route '/maintenance-schedules'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::index
-* @see app/Http/Controllers/MaintenanceScheduleController.php:20
+* @see app/Http/Controllers/MaintenanceScheduleController.php:21
 * @route '/maintenance-schedules'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::index
-* @see app/Http/Controllers/MaintenanceScheduleController.php:20
+* @see app/Http/Controllers/MaintenanceScheduleController.php:21
 * @route '/maintenance-schedules'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::index
-* @see app/Http/Controllers/MaintenanceScheduleController.php:20
+* @see app/Http/Controllers/MaintenanceScheduleController.php:21
 * @route '/maintenance-schedules'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:61
+* @see app/Http/Controllers/MaintenanceScheduleController.php:62
 * @route '/maintenance-schedules/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:61
+* @see app/Http/Controllers/MaintenanceScheduleController.php:62
 * @route '/maintenance-schedules/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:61
+* @see app/Http/Controllers/MaintenanceScheduleController.php:62
 * @route '/maintenance-schedules/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:61
+* @see app/Http/Controllers/MaintenanceScheduleController.php:62
 * @route '/maintenance-schedules/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:96
+* @see app/Http/Controllers/MaintenanceScheduleController.php:101
 * @route '/maintenance-schedules'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:96
+* @see app/Http/Controllers/MaintenanceScheduleController.php:101
 * @route '/maintenance-schedules'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:96
+* @see app/Http/Controllers/MaintenanceScheduleController.php:101
 * @route '/maintenance-schedules'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:121
+* @see app/Http/Controllers/MaintenanceScheduleController.php:128
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 export const edit = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:121
+* @see app/Http/Controllers/MaintenanceScheduleController.php:128
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { schedule: number | { id: number } } | [schedule: number | { 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:121
+* @see app/Http/Controllers/MaintenanceScheduleController.php:128
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { schedule: number | { id: number } } | [schedule: number | { 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:121
+* @see app/Http/Controllers/MaintenanceScheduleController.php:128
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { schedule: number | { id: number } } | [schedule: number | {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:139
+* @see app/Http/Controllers/MaintenanceScheduleController.php:150
 * @route '/maintenance-schedules/{schedule}'
 */
 export const update = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:139
+* @see app/Http/Controllers/MaintenanceScheduleController.php:150
 * @route '/maintenance-schedules/{schedule}'
 */
 update.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { schedule: number | { id: number } } | [schedule: number | 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:139
+* @see app/Http/Controllers/MaintenanceScheduleController.php:150
 * @route '/maintenance-schedules/{schedule}'
 */
 update.put = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { schedule: number | { id: number } } | [schedule: number | 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:139
+* @see app/Http/Controllers/MaintenanceScheduleController.php:150
 * @route '/maintenance-schedules/{schedule}'
 */
 update.patch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -259,7 +259,7 @@ update.patch = (args: { schedule: number | { id: number } } | [schedule: number 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:162
+* @see app/Http/Controllers/MaintenanceScheduleController.php:175
 * @route '/maintenance-schedules/{schedule}'
 */
 export const destroy = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -274,7 +274,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:162
+* @see app/Http/Controllers/MaintenanceScheduleController.php:175
 * @route '/maintenance-schedules/{schedule}'
 */
 destroy.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -307,7 +307,7 @@ destroy.url = (args: { schedule: number | { id: number } } | [schedule: number |
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:162
+* @see app/Http/Controllers/MaintenanceScheduleController.php:175
 * @route '/maintenance-schedules/{schedule}'
 */
 destroy.delete = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
