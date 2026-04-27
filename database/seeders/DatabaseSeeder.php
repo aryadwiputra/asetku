@@ -71,6 +71,7 @@ class DatabaseSeeder extends Seeder
         if (env('SEED_DEMO_ASSETS', false)) {
             $this->call(DemoMasterDataSeeder::class);
             $this->call(DemoAssetDataSeeder::class);
+            $this->call(DemoOperationsSeeder::class);
         }
     }
 }
