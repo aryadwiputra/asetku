@@ -46,7 +46,8 @@ class MaintenanceSchedulesSendRemindersCommand extends Command
             }
 
             foreach ([7, 3, 1] as $daysBefore) {
-                $targetDate = $today->addDays($daysBefore)->toDateString();
+                $targetDueDate = $today->addDays($daysBefore)->startOfDay();
+                $targetDate = $targetDueDate->toDateString();
 
                 MaintenanceSchedule::query()
                     ->where('is_active', true)
@@ -59,13 +60,13 @@ class MaintenanceSchedulesSendRemindersCommand extends Command
                         'technician:id,name,email',
                     ])
                     ->get()
-                    ->each(function (MaintenanceSchedule $schedule) use ($daysBefore, $recipients, $targetDate): void {
+                    ->each(function (MaintenanceSchedule $schedule) use ($daysBefore, $recipients, $targetDueDate): void {
                         $reminder = MaintenanceScheduleReminder::query()->firstOrCreate(
                             [
                                 'organization_id' => $schedule->organization_id,
                                 'schedule_id' => $schedule->id,
                                 'days_before' => $daysBefore,
-                                'target_due_date' => $targetDate,
+                                'target_due_date' => $targetDueDate,
                             ],
                             [
                                 'sent_at' => now(),
@@ -76,7 +77,7 @@ class MaintenanceSchedulesSendRemindersCommand extends Command
                             return;
                         }
 
-                        $dueDate = CarbonImmutable::parse($targetDate)->startOfDay();
+                        $dueDate = $targetDueDate;
 
                         $meta = [
                             'asset' => $schedule->asset ? [

@@ -1,12 +1,13 @@
 import '@fullcalendar/daygrid/index.css';
 import '@fullcalendar/timegrid/index.css';
 
+import type { EventClickArg, EventDropArg, EventInput, EventSourceFuncArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import FullCalendar, { type EventClickArg, type EventDropArg, type EventInput } from '@fullcalendar/react';
+import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { Head, router } from '@inertiajs/react';
-import { CalendarDays, Filter, Link2, Pencil } from 'lucide-react';
+import { Filter, Link2, Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -148,7 +149,7 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
         );
     }
 
-    async function loadEvents(info: { startStr: string; endStr: string }, success: (events: EventInput[]) => void, failure: () => void) {
+    async function loadEvents(info: EventSourceFuncArg, success: (events: EventInput[]) => void, failure: (error: Error) => void) {
         try {
             const url = calendarEvents({
                 query: {
@@ -164,14 +165,14 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
             });
 
             if (!response.ok) {
-                failure();
+                failure(new Error(await response.text()));
                 return;
             }
 
             const data = (await response.json()) as EventInput[];
             success(data);
         } catch {
-            failure();
+            failure(new Error('Failed to load events'));
         }
     }
 
@@ -280,7 +281,6 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
                         variant="small"
                         title={t('maintenance_calendar.title')}
                         description={t('maintenance_calendar.description')}
-                        icon={CalendarDays}
                     />
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
