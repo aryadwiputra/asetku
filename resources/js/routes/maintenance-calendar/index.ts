@@ -1,4 +1,66 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
+* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
+* @route '/calendars/maintenance/{token}.ics'
+*/
+export const feed = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: feed.url(args, options),
+    method: 'get',
+})
+
+feed.definition = {
+    methods: ["get","head"],
+    url: '/calendars/maintenance/{token}.ics',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
+* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
+* @route '/calendars/maintenance/{token}.ics'
+*/
+feed.url = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { token: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            token: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        token: args.token,
+    }
+
+    return feed.definition.url
+            .replace('{token}', parsedArgs.token.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
+* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
+* @route '/calendars/maintenance/{token}.ics'
+*/
+feed.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: feed.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
+* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
+* @route '/calendars/maintenance/{token}.ics'
+*/
+feed.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: feed.url(args, options),
+    method: 'head',
+})
+
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
 * @see app/Http/Controllers/MaintenanceCalendarController.php:18
@@ -87,9 +149,45 @@ events.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
+* @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
+* @route '/maintenance-calendar/feed-token'
+*/
+export const feedToken = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: feedToken.url(options),
+    method: 'post',
+})
+
+feedToken.definition = {
+    methods: ["post"],
+    url: '/maintenance-calendar/feed-token',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
+* @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
+* @route '/maintenance-calendar/feed-token'
+*/
+feedToken.url = (options?: RouteQueryOptions) => {
+    return feedToken.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
+* @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
+* @route '/maintenance-calendar/feed-token'
+*/
+feedToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: feedToken.url(options),
+    method: 'post',
+})
+
 const maintenanceCalendar = {
+    feed: Object.assign(feed, feed),
     index: Object.assign(index, index),
     events: Object.assign(events, events),
+    feedToken: Object.assign(feedToken, feedToken),
 }
 
 export default maintenanceCalendar

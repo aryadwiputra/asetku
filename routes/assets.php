@@ -23,6 +23,8 @@ use App\Http\Controllers\DepreciationRunController;
 use App\Http\Controllers\MaintenanceChecklistController;
 use App\Http\Controllers\MaintenanceCalendarController;
 use App\Http\Controllers\MaintenanceCalendarEventsController;
+use App\Http\Controllers\MaintenanceCalendarFeedController;
+use App\Http\Controllers\MaintenanceCalendarFeedTokenController;
 use App\Http\Controllers\MaintenanceScheduleController;
 use App\Http\Controllers\MaintenanceScheduleRescheduleController;
 use App\Http\Controllers\QrController;
@@ -37,10 +39,12 @@ use Illuminate\Support\Facades\Route;
 // Public QR & scan
 Route::get('q/{token}', [QrController::class, 'show'])->name('qr.show');
 Route::inertia('scan', 'scan/index')->name('scan.index');
+Route::get('calendars/maintenance/{token}.ics', [MaintenanceCalendarFeedController::class, 'show'])->name('maintenance-calendar.feed');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('maintenance-calendar', [MaintenanceCalendarController::class, 'index'])->name('maintenance-calendar.index');
     Route::get('maintenance-calendar/events', [MaintenanceCalendarEventsController::class, 'index'])->name('maintenance-calendar.events');
+    Route::post('maintenance-calendar/feed-token', [MaintenanceCalendarFeedTokenController::class, 'store'])->name('maintenance-calendar.feed-token');
 
     Route::resource('assets', AssetController::class);
     Route::resource('vendor-contracts', VendorContractController::class);

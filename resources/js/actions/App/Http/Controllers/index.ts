@@ -22,8 +22,10 @@ import MediaAssetController from './MediaAssetController'
 import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
+import MaintenanceCalendarFeedController from './MaintenanceCalendarFeedController'
 import MaintenanceCalendarController from './MaintenanceCalendarController'
 import MaintenanceCalendarEventsController from './MaintenanceCalendarEventsController'
+import MaintenanceCalendarFeedTokenController from './MaintenanceCalendarFeedTokenController'
 import AssetController from './AssetController'
 import VendorContractController from './VendorContractController'
 import AssetDisposalController from './AssetDisposalController'
@@ -80,8 +82,10 @@ const Controllers = {
     MediaUploadController: Object.assign(MediaUploadController, MediaUploadController),
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
+    MaintenanceCalendarFeedController: Object.assign(MaintenanceCalendarFeedController, MaintenanceCalendarFeedController),
     MaintenanceCalendarController: Object.assign(MaintenanceCalendarController, MaintenanceCalendarController),
     MaintenanceCalendarEventsController: Object.assign(MaintenanceCalendarEventsController, MaintenanceCalendarEventsController),
+    MaintenanceCalendarFeedTokenController: Object.assign(MaintenanceCalendarFeedTokenController, MaintenanceCalendarFeedTokenController),
     AssetController: Object.assign(AssetController, AssetController),
     VendorContractController: Object.assign(VendorContractController, VendorContractController),
     AssetDisposalController: Object.assign(AssetDisposalController, AssetDisposalController),

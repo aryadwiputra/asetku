@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar, { type EventClickArg, type EventDropArg, type EventInput } from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { Head, router } from '@inertiajs/react';
-import { CalendarDays, Filter, Pencil } from 'lucide-react';
+import { CalendarDays, Filter, Link2, Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useTranslation } from '@/hooks/use-translation';
 import { create as scheduleCreate, edit as scheduleEdit, reschedule as scheduleReschedule } from '@/routes/maintenance-schedules';
-import { events as calendarEvents } from '@/routes/maintenance-calendar';
+import { events as calendarEvents, feedToken } from '@/routes/maintenance-calendar';
 
 type Meta = {
     branches: { id: number; name: string; code: string }[];
@@ -55,6 +55,7 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
     const { t } = useTranslation();
     const [filtersOpen, setFiltersOpen] = useState(false);
     const [selected, setSelected] = useState<SelectedEvent | null>(null);
+    const [creatingFeedLink, setCreatingFeedLink] = useState(false);
 
     const [filters, setFilters] = useState({
         branch_id: '',
@@ -232,6 +233,43 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
         }
     }
 
+    async function copyFeedLink() {
+        if (creatingFeedLink) {
+            return;
+        }
+
+        setCreatingFeedLink(true);
+
+        const csrf = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
+
+        try {
+            const res = await fetch(feedToken().url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({}),
+            });
+
+            if (!res.ok) {
+                throw new Error(await res.text());
+            }
+
+            const data = (await res.json()) as { url?: string };
+            const url = (data.url || '').trim();
+
+            if (!url) {
+                throw new Error('Missing url');
+            }
+
+            await navigator.clipboard.writeText(url);
+            toast.success(t('maintenance_calendar.toast.feed_link_copied'));
+        } catch {
+            toast.error(t('maintenance_calendar.toast.feed_link_failed'));
+        } finally {
+            setCreatingFeedLink(false);
+        }
+    }
+
     return (
         <>
             <Head title={t('maintenance_calendar.title')} />
@@ -246,6 +284,11 @@ export default function MaintenanceCalendarIndex({ meta, abilities }: Props) {
                     />
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <Button variant="outline" className="w-full sm:w-auto" onClick={copyFeedLink} disabled={creatingFeedLink}>
+                            <Link2 className="mr-2 h-4 w-4" />
+                            {t('maintenance_calendar.actions.copy_feed_link')}
+                        </Button>
+
                         <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
                             <SheetTrigger asChild>
                                 <Button variant="outline" className="w-full sm:hidden">
