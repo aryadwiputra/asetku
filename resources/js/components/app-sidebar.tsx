@@ -39,6 +39,7 @@ import { index as assetLifecycleIndex } from '@/routes/assets/lifecycle';
 import { index as depreciationIndex } from '@/routes/depreciation';
 import { index as disposalsIndex } from '@/routes/disposals';
 import { index as workOrdersIndex } from '@/routes/work-orders';
+import { my as workOrdersMy } from '@/routes/work-orders';
 import { index as maintenanceSchedulesIndex } from '@/routes/maintenance-schedules';
 import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checklists';
 import { index as techniciansIndex } from '@/routes/technicians';
@@ -84,7 +85,7 @@ export function AppSidebar() {
             : []),
     ];
 
-    const assetsNavItems: NavItem[] = canViewAssets
+    const assetCoreNavItems: NavItem[] = canViewAssets
         ? [
               {
                   title: t('common.assets'),
@@ -92,9 +93,24 @@ export function AppSidebar() {
                   icon: Package,
               },
               {
+                  title: t('common.asset_import'),
+                  href: assetsImportIndex(),
+                  icon: UploadCloud,
+              },
+          ]
+        : [];
+
+    const maintenanceNavItems: NavItem[] = canViewAssets
+        ? [
+              {
                   title: t('common.work_orders'),
                   href: workOrdersIndex(),
                   icon: Wrench,
+              },
+              {
+                  title: t('common.my_work_orders'),
+                  href: workOrdersMy(),
+                  icon: ClipboardList,
               },
               {
                   title: t('common.maintenance_schedules'),
@@ -111,25 +127,30 @@ export function AppSidebar() {
                   href: techniciansIndex(),
                   icon: Users,
               },
-              {
-                  title: t('common.disposals'),
-                  href: disposalsIndex(),
-                  icon: Trash2,
-              },
-              {
-                  title: t('common.depreciation'),
-                  href: depreciationIndex(),
-                  icon: TrendingDown,
-              },
+          ]
+        : [];
+
+    const operationsNavItems: NavItem[] = canViewAssets
+        ? [
               {
                   title: t('common.asset_lifecycle'),
                   href: assetLifecycleIndex(),
                   icon: History,
               },
               {
-                  title: t('common.asset_import'),
-                  href: assetsImportIndex(),
-                  icon: null,
+                  title: t('common.disposals'),
+                  href: disposalsIndex(),
+                  icon: Trash2,
+              },
+          ]
+        : [];
+
+    const financeNavItems: NavItem[] = canViewAssets
+        ? [
+              {
+                  title: t('common.depreciation'),
+                  href: depreciationIndex(),
+                  icon: TrendingDown,
               },
           ]
         : [];
@@ -220,10 +241,10 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain label={t('common.workspace')} items={workspaceNavItems} />
-                {assetsNavItems.length > 0 ? (
+                {assetCoreNavItems.length > 0 ? (
                     <NavMain
                         label={t('common.assets')}
-                        items={assetsNavItems}
+                        items={assetCoreNavItems}
                         action={
                             canCreateAsset ? (
                                 <Link href={assetsCreate()} prefetch aria-label={t('common.new_asset')} title={t('common.new_asset')}>
@@ -233,6 +254,9 @@ export function AppSidebar() {
                         }
                     />
                 ) : null}
+                {maintenanceNavItems.length > 0 ? <NavMain label={t('common.maintenance')} items={maintenanceNavItems} /> : null}
+                {operationsNavItems.length > 0 ? <NavMain label={t('common.operations')} items={operationsNavItems} /> : null}
+                {financeNavItems.length > 0 ? <NavMain label={t('common.finance')} items={financeNavItems} /> : null}
                 {reportsNavItems.length > 0 ? <NavMain label={t('common.reports')} items={reportsNavItems} /> : null}
                 {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (
