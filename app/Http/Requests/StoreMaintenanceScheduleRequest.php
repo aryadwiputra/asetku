@@ -44,6 +44,14 @@ class StoreMaintenanceScheduleRequest extends FormRequest
                 Rule::exists('maintenance_checklist_templates', 'id')->where('organization_id', $organizationId),
             ],
             'required_skill' => ['nullable', 'string', 'max:100'],
+            'assigned_to' => [
+                'nullable',
+                'integer',
+                Rule::exists('technician_profiles', 'user_id')
+                    ->where('organization_id', $organizationId)
+                    ->where('is_active', true),
+            ],
+            'notes' => ['nullable', 'string', 'max:2000'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

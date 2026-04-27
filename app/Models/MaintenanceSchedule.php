@@ -23,6 +23,8 @@ class MaintenanceSchedule extends Model
         'default_sla_resolution_hours',
         'checklist_template_id',
         'required_skill',
+        'assigned_to',
+        'notes',
         'is_active',
     ];
 
@@ -48,5 +50,10 @@ class MaintenanceSchedule extends Model
     public function checklistTemplate(): BelongsTo
     {
         return $this->belongsTo(MaintenanceChecklistTemplate::class, 'checklist_template_id');
+    }
+
+    public function technician(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 }

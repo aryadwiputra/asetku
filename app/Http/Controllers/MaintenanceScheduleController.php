@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateMaintenanceScheduleRequest;
 use App\Models\Asset;
 use App\Models\MaintenanceChecklistTemplate;
 use App\Models\MaintenanceSchedule;
+use App\Models\User;
 use App\Queries\AssetListQuery;
 use App\Services\OrganizationContext;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,6 +86,10 @@ class MaintenanceScheduleController extends Controller
                 : null,
             'meta' => [
                 'priorities' => ['low', 'normal', 'high', 'critical'],
+                'technicians' => User::query()
+                    ->whereHas('technicianProfile', fn (Builder $q) => $q->where('organization_id', app(OrganizationContext::class)->requireOrganizationId())->where('is_active', true))
+                    ->orderBy('name')
+                    ->get(['id', 'name']),
                 'checklistTemplates' => MaintenanceChecklistTemplate::query()
                     ->where('is_active', true)
                     ->orderBy('name')
@@ -110,6 +115,8 @@ class MaintenanceScheduleController extends Controller
             'default_sla_resolution_hours' => $data['default_sla_resolution_hours'] ?? null,
             'checklist_template_id' => $data['checklist_template_id'] ?? null,
             'required_skill' => $data['required_skill'] ?? null,
+            'assigned_to' => $data['assigned_to'] ?? null,
+            'notes' => $data['notes'] ?? null,
             'is_active' => (bool) ($data['is_active'] ?? true),
         ]);
 
@@ -128,6 +135,10 @@ class MaintenanceScheduleController extends Controller
             'schedule' => $schedule,
             'meta' => [
                 'priorities' => ['low', 'normal', 'high', 'critical'],
+                'technicians' => User::query()
+                    ->whereHas('technicianProfile', fn (Builder $q) => $q->where('organization_id', app(OrganizationContext::class)->requireOrganizationId())->where('is_active', true))
+                    ->orderBy('name')
+                    ->get(['id', 'name']),
                 'checklistTemplates' => MaintenanceChecklistTemplate::query()
                     ->where('is_active', true)
                     ->orderBy('name')
@@ -151,6 +162,8 @@ class MaintenanceScheduleController extends Controller
             'default_sla_resolution_hours' => $data['default_sla_resolution_hours'] ?? null,
             'checklist_template_id' => $data['checklist_template_id'] ?? null,
             'required_skill' => $data['required_skill'] ?? null,
+            'assigned_to' => $data['assigned_to'] ?? null,
+            'notes' => $data['notes'] ?? null,
             'is_active' => (bool) ($data['is_active'] ?? true),
         ])->save();
 

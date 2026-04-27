@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
 import { create as schedulesCreate, index as schedulesIndex } from '@/routes/maintenance-schedules';
 
@@ -26,6 +27,7 @@ type Props = {
     selectedAsset: AssetResult | null;
     meta: {
         priorities: string[];
+        technicians: { id: number; name: string }[];
         checklistTemplates: { id: number; name: string; asset_category_id: number | null; required_skill: string | null }[];
     };
 };
@@ -44,6 +46,8 @@ export default function MaintenanceSchedulesCreate({ search, results, selectedAs
         default_sla_response_hours: '',
         default_sla_resolution_hours: '',
         required_skill: '',
+        assigned_to: '',
+        notes: '',
         is_active: true,
     });
 
@@ -195,6 +199,30 @@ export default function MaintenanceSchedulesCreate({ search, results, selectedAs
                             <Input id="required_skill" value={form.data.required_skill} onChange={(e) => form.setData('required_skill', e.target.value)} />
                             <InputError message={form.errors.required_skill} />
                         </div>
+
+                        <div className="md:col-span-2">
+                            <Label>{t('maintenance_schedules.fields.assigned_to')}</Label>
+                            <Select value={form.data.assigned_to || 'none'} onValueChange={(v) => form.setData('assigned_to', v === 'none' ? '' : v)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('common.optional')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('common.none')}</SelectItem>
+                                    {meta.technicians.map((tech) => (
+                                        <SelectItem key={tech.id} value={String(tech.id)}>
+                                            {tech.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.assigned_to} />
+                        </div>
+
+                        <div className="md:col-span-2">
+                            <Label htmlFor="notes">{t('maintenance_schedules.fields.notes')}</Label>
+                            <Textarea id="notes" value={form.data.notes} onChange={(e) => form.setData('notes', e.target.value)} />
+                            <InputError message={form.errors.notes} />
+                        </div>
                     </div>
 
                     <Button onClick={submit} disabled={form.processing || !form.data.asset_id} className="w-full sm:w-auto">
@@ -205,4 +233,3 @@ export default function MaintenanceSchedulesCreate({ search, results, selectedAs
         </>
     );
 }
-
