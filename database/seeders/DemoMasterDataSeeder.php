@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\ApprovalWorkflow;
+use App\Models\ApprovalWorkflowStep;
 use App\Models\AssetCategory;
 use App\Models\AssetClass;
 use App\Models\AssetCondition;
@@ -9,6 +11,7 @@ use App\Models\AssetLocation;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
 use App\Models\Branch;
+use App\Models\CustomField;
 use App\Models\Department;
 use App\Models\Organization;
 use App\Models\OrganizationGroup;
@@ -16,7 +19,9 @@ use App\Models\PersonInCharge;
 use App\Models\Unit;
 use App\Models\User;
 use App\Services\OrganizationContext;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -56,21 +61,44 @@ class DemoMasterDataSeeder extends Seeder
      * @var array<string, array{name:string,description:?string}>
      */
     private const ASSET_STATUSES = [
-        'ACTIVE' => ['name' => 'Active', 'description' => 'Asset aktif digunakan.'],
-        'BORROWED' => ['name' => 'Borrowed', 'description' => 'Sedang dipinjam.'],
-        'REPAIR' => ['name' => 'Repair', 'description' => 'Dalam perbaikan.'],
-        'DISPOSED' => ['name' => 'Disposed', 'description' => 'Sudah tidak digunakan.'],
+        'active' => ['name' => 'Active', 'description' => 'Asset aktif digunakan.'],
+        'borrowed' => ['name' => 'Borrowed', 'description' => 'Sedang dipinjam.'],
+        'repair' => ['name' => 'Repair', 'description' => 'Dalam perbaikan.'],
+        'disposed' => ['name' => 'Disposed', 'description' => 'Sudah tidak digunakan.'],
     ];
 
     /**
      * @var array<string, array{name:string,description:?string}>
      */
     private const ASSET_CONDITIONS = [
-        'GOOD' => ['name' => 'Good', 'description' => 'Kondisi baik.'],
-        'ATTN' => ['name' => 'Needs attention', 'description' => 'Perlu perhatian.'],
-        'BROKEN' => ['name' => 'Broken', 'description' => 'Rusak.'],
-        'INACTIVE' => ['name' => 'Inactive', 'description' => 'Tidak aktif.'],
-        'DISPOSAL' => ['name' => 'Disposal', 'description' => 'Untuk disposal.'],
+        'good' => ['name' => 'Good', 'description' => 'Kondisi baik.'],
+        'needs_attention' => ['name' => 'Needs attention', 'description' => 'Perlu perhatian.'],
+        'broken' => ['name' => 'Broken', 'description' => 'Rusak.'],
+        'inactive' => ['name' => 'Inactive', 'description' => 'Tidak aktif.'],
+        'disposal' => ['name' => 'Disposal', 'description' => 'Untuk disposal.'],
+    ];
+
+    /**
+     * Legacy codes used by older demo seeders. These will be normalized into the lowercase codes above.
+     *
+     * @var array<string, string>
+     */
+    private const LEGACY_ASSET_STATUS_CODE_MAP = [
+        'ACTIVE' => 'active',
+        'BORROWED' => 'borrowed',
+        'REPAIR' => 'repair',
+        'DISPOSED' => 'disposed',
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    private const LEGACY_ASSET_CONDITION_CODE_MAP = [
+        'GOOD' => 'good',
+        'ATTN' => 'needs_attention',
+        'BROKEN' => 'broken',
+        'INACTIVE' => 'inactive',
+        'DISPOSAL' => 'disposal',
     ];
 
     /**
@@ -164,6 +192,8 @@ class DemoMasterDataSeeder extends Seeder
             $this->seedLocations($organization, $branches);
             $this->seedPeopleInCharge($organization);
             $this->seedAssetUsers($organization, $departments);
+            $this->seedCustomFields($organization);
+            $this->seedDisposalApprovalWorkflow($organization);
 
             // Keep a realistic "demo owner" in the current org by default.
             if ($owner->current_organization_id !== $organization->id) {
@@ -266,14 +296,32 @@ class DemoMasterDataSeeder extends Seeder
     private function seedMasterData(Organization $organization): void
     {
         foreach (self::ASSET_STATUSES as $code => $data) {
-            AssetStatus::query()->firstOrCreate(
+            $this->normalizeCode(
+                model: AssetStatus::class,
+                organizationId: $organization->id,
+                legacyToCurrentMap: self::LEGACY_ASSET_STATUS_CODE_MAP,
+                targetCode: $code,
+                referenceTable: 'assets',
+                referenceColumn: 'asset_status_id',
+            );
+
+            AssetStatus::query()->updateOrCreate(
                 ['organization_id' => $organization->id, 'code' => $code],
                 ['name' => $data['name'], 'description' => $data['description']],
             );
         }
 
         foreach (self::ASSET_CONDITIONS as $code => $data) {
-            AssetCondition::query()->firstOrCreate(
+            $this->normalizeCode(
+                model: AssetCondition::class,
+                organizationId: $organization->id,
+                legacyToCurrentMap: self::LEGACY_ASSET_CONDITION_CODE_MAP,
+                targetCode: $code,
+                referenceTable: 'assets',
+                referenceColumn: 'asset_condition_id',
+            );
+
+            AssetCondition::query()->updateOrCreate(
                 ['organization_id' => $organization->id, 'code' => $code],
                 ['name' => $data['name'], 'description' => $data['description']],
             );
@@ -328,6 +376,117 @@ class DemoMasterDataSeeder extends Seeder
             ['organization_id' => $organization->id, 'code' => 'FURN-CHR'],
             ['name' => 'Office chair', 'description' => null, 'parent_id' => $furniture->id, 'depreciation_method' => 'straight_line', 'useful_life_months' => 48, 'residual_value' => 0],
         );
+    }
+
+    private function seedCustomFields(Organization $organization): void
+    {
+        $cpu = CustomField::query()->updateOrCreate(
+            ['organization_id' => $organization->id, 'entity' => 'asset', 'key' => 'cpu'],
+            ['label' => 'CPU', 'type' => 'text', 'options' => null, 'is_required' => false, 'is_active' => true, 'sort_order' => 10],
+        );
+        $ram = CustomField::query()->updateOrCreate(
+            ['organization_id' => $organization->id, 'entity' => 'asset', 'key' => 'ram_gb'],
+            ['label' => 'RAM (GB)', 'type' => 'number', 'options' => null, 'is_required' => false, 'is_active' => true, 'sort_order' => 20],
+        );
+        $storage = CustomField::query()->updateOrCreate(
+            ['organization_id' => $organization->id, 'entity' => 'asset', 'key' => 'storage_gb'],
+            ['label' => 'Storage (GB)', 'type' => 'number', 'options' => null, 'is_required' => false, 'is_active' => true, 'sort_order' => 30],
+        );
+
+        $laptopCategory = AssetCategory::query()
+            ->where('organization_id', $organization->id)
+            ->where('code', 'IT-LAP')
+            ->first();
+
+        if ($laptopCategory) {
+            $laptopCategory->customFields()->syncWithoutDetaching([
+                $cpu->id => ['organization_id' => $organization->id],
+                $ram->id => ['organization_id' => $organization->id],
+                $storage->id => ['organization_id' => $organization->id],
+            ]);
+        }
+    }
+
+    private function seedDisposalApprovalWorkflow(Organization $organization): void
+    {
+        $workflow = ApprovalWorkflow::query()->updateOrCreate(
+            ['organization_id' => $organization->id, 'type' => 'disposal'],
+            ['name' => 'Default Disposal Approval', 'is_active' => true],
+        );
+
+        $steps = [
+            ['step_number' => 1, 'approver_kind' => 'role', 'approver_reference' => 'Admin', 'is_required' => true],
+            ['step_number' => 2, 'approver_kind' => 'role', 'approver_reference' => 'Owner', 'is_required' => true],
+        ];
+
+        foreach ($steps as $step) {
+            ApprovalWorkflowStep::query()->updateOrCreate(
+                ['workflow_id' => $workflow->id, 'step_number' => $step['step_number']],
+                [
+                    'approver_kind' => $step['approver_kind'],
+                    'approver_reference' => $step['approver_reference'],
+                    'is_required' => $step['is_required'],
+                ],
+            );
+        }
+
+        ApprovalWorkflowStep::query()
+            ->where('workflow_id', $workflow->id)
+            ->where('step_number', '>', count($steps))
+            ->delete();
+    }
+
+    /**
+     * Normalize legacy codes into the new demo codes.
+     *
+     * @param  class-string<Model>  $model
+     * @param  array<string,string>  $legacyToCurrentMap
+     */
+    private function normalizeCode(
+        string $model,
+        int $organizationId,
+        array $legacyToCurrentMap,
+        string $targetCode,
+        string $referenceTable,
+        string $referenceColumn,
+    ): void {
+        $legacyCode = array_search($targetCode, $legacyToCurrentMap, true);
+        if (! is_string($legacyCode) || $legacyCode === '') {
+            return;
+        }
+
+        $legacy = $model::query()->where('organization_id', $organizationId)->where('code', $legacyCode)->first();
+        if (! $legacy) {
+            return;
+        }
+
+        $current = $model::query()->where('organization_id', $organizationId)->where('code', $targetCode)->first();
+        if (! $current) {
+            $legacy->forceFill(['code' => $targetCode])->saveQuietly();
+
+            return;
+        }
+
+        if ($current->getKey() === $legacy->getKey()) {
+            return;
+        }
+
+        DB::table($referenceTable)
+            ->where('organization_id', $organizationId)
+            ->where($referenceColumn, $legacy->getKey())
+            ->update([$referenceColumn => $current->getKey()]);
+
+        try {
+            $legacy->delete();
+        } catch (\Throwable $e) {
+            Log::warning('DemoMasterDataSeeder failed to delete legacy master data row', [
+                'model' => $model,
+                'organization_id' => $organizationId,
+                'legacy_id' => $legacy->getKey(),
+                'current_id' => $current->getKey(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
