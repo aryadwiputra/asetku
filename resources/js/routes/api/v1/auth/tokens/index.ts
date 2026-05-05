@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Api\V1\AuthTokenController::store
 * @see app/Http/Controllers/Api/V1/AuthTokenController.php:18
@@ -34,6 +34,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\Api\V1\AuthTokenController::store
+* @see app/Http/Controllers/Api/V1/AuthTokenController.php:18
+* @route '/api/v1/auth/tokens'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\AuthTokenController::store
+* @see app/Http/Controllers/Api/V1/AuthTokenController.php:18
+* @route '/api/v1/auth/tokens'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\Api\V1\AuthTokenController::destroyCurrent
 * @see app/Http/Controllers/Api/V1/AuthTokenController.php:41
 * @route '/api/v1/auth/tokens/current'
@@ -66,6 +88,38 @@ destroyCurrent.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'>
     url: destroyCurrent.url(options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\Api\V1\AuthTokenController::destroyCurrent
+* @see app/Http/Controllers/Api/V1/AuthTokenController.php:41
+* @route '/api/v1/auth/tokens/current'
+*/
+const destroyCurrentForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroyCurrent.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Api\V1\AuthTokenController::destroyCurrent
+* @see app/Http/Controllers/Api/V1/AuthTokenController.php:41
+* @route '/api/v1/auth/tokens/current'
+*/
+destroyCurrentForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroyCurrent.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroyCurrent.form = destroyCurrentForm
 
 const tokens = {
     store: Object.assign(store, store),

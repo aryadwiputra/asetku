@@ -229,7 +229,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="border-b border-sidebar-border pb-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
@@ -245,7 +245,7 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="py-2">
                 <NavMain label={t('common.workspace')} items={workspaceNavItems} />
                 {assetCoreNavItems.length > 0 ? (
                     <NavMain
@@ -267,7 +267,9 @@ export function AppSidebar() {
                 {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (
                     <SidebarGroup className="px-2 py-0">
-                        <SidebarGroupLabel>{t('common.settings')}</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                            {t('common.settings')}
+                        </SidebarGroupLabel>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <Collapsible defaultOpen={settingsActive}>
@@ -275,11 +277,13 @@ export function AppSidebar() {
                                         <SidebarMenuButton
                                             isActive={settingsActive}
                                             tooltip={{ children: t('common.settings') }}
-                                            className="group"
+                                            className="group transition-all duration-150"
                                         >
-                                            <Settings />
+                                            <span className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground">
+                                                <Settings className="size-4" />
+                                            </span>
                                             <span>{t('common.settings')}</span>
-                                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
+                                            <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
@@ -305,7 +309,7 @@ export function AppSidebar() {
                 )}
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-sidebar-border pt-2">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

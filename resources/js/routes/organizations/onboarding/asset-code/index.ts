@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\OrganizationOnboardingController::update
 * @see app/Http/Controllers/OrganizationOnboardingController.php:172
@@ -32,6 +32,28 @@ update.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:172
+* @route '/organizations/onboarding/asset-code'
+*/
+const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\OrganizationOnboardingController::update
+* @see app/Http/Controllers/OrganizationOnboardingController.php:172
+* @route '/organizations/onboarding/asset-code'
+*/
+updateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(options),
+    method: 'post',
+})
+
+update.form = updateForm
 
 const assetCode = {
     update: Object.assign(update, update),

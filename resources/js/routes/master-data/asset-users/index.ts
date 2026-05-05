@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MasterData\AssetUserController::index
 * @see app/Http/Controllers/MasterData/AssetUserController.php:17
@@ -42,6 +42,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::index
+* @see app/Http/Controllers/MasterData/AssetUserController.php:17
+* @route '/settings/master-data/asset-users'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::index
+* @see app/Http/Controllers/MasterData/AssetUserController.php:17
+* @route '/settings/master-data/asset-users'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::index
+* @see app/Http/Controllers/MasterData/AssetUserController.php:17
+* @route '/settings/master-data/asset-users'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\MasterData\AssetUserController::create
@@ -88,6 +125,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetUserController::create
+* @see app/Http/Controllers/MasterData/AssetUserController.php:50
+* @route '/settings/master-data/asset-users/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::create
+* @see app/Http/Controllers/MasterData/AssetUserController.php:50
+* @route '/settings/master-data/asset-users/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::create
+* @see app/Http/Controllers/MasterData/AssetUserController.php:50
+* @route '/settings/master-data/asset-users/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetUserController::store
 * @see app/Http/Controllers/MasterData/AssetUserController.php:63
 * @route '/settings/master-data/asset-users'
@@ -120,6 +194,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::store
+* @see app/Http/Controllers/MasterData/AssetUserController.php:63
+* @route '/settings/master-data/asset-users'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::store
+* @see app/Http/Controllers/MasterData/AssetUserController.php:63
+* @route '/settings/master-data/asset-users'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\MasterData\AssetUserController::edit
@@ -190,6 +286,43 @@ edit.head = (args: { asset_user: number | { id: number } } | [asset_user: number
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetUserController::edit
+* @see app/Http/Controllers/MasterData/AssetUserController.php:74
+* @route '/settings/master-data/asset-users/{asset_user}/edit'
+*/
+const editForm = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::edit
+* @see app/Http/Controllers/MasterData/AssetUserController.php:74
+* @route '/settings/master-data/asset-users/{asset_user}/edit'
+*/
+editForm.get = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::edit
+* @see app/Http/Controllers/MasterData/AssetUserController.php:74
+* @route '/settings/master-data/asset-users/{asset_user}/edit'
+*/
+editForm.head = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetUserController::update
 * @see app/Http/Controllers/MasterData/AssetUserController.php:88
 * @route '/settings/master-data/asset-users/{asset_user}'
@@ -258,6 +391,53 @@ update.patch = (args: { asset_user: number | { id: number } } | [asset_user: num
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetUserController::update
+* @see app/Http/Controllers/MasterData/AssetUserController.php:88
+* @route '/settings/master-data/asset-users/{asset_user}'
+*/
+const updateForm = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::update
+* @see app/Http/Controllers/MasterData/AssetUserController.php:88
+* @route '/settings/master-data/asset-users/{asset_user}'
+*/
+updateForm.put = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::update
+* @see app/Http/Controllers/MasterData/AssetUserController.php:88
+* @route '/settings/master-data/asset-users/{asset_user}'
+*/
+updateForm.patch = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetUserController::destroy
 * @see app/Http/Controllers/MasterData/AssetUserController.php:99
 * @route '/settings/master-data/asset-users/{asset_user}'
@@ -314,6 +494,38 @@ destroy.delete = (args: { asset_user: number | { id: number } } | [asset_user: n
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::destroy
+* @see app/Http/Controllers/MasterData/AssetUserController.php:99
+* @route '/settings/master-data/asset-users/{asset_user}'
+*/
+const destroyForm = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetUserController::destroy
+* @see app/Http/Controllers/MasterData/AssetUserController.php:99
+* @route '/settings/master-data/asset-users/{asset_user}'
+*/
+destroyForm.delete = (args: { asset_user: number | { id: number } } | [asset_user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const assetUsers = {
     index: Object.assign(index, index),

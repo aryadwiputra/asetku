@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetDisposalApprovalController::approve
 * @see app/Http/Controllers/AssetDisposalApprovalController.php:13
@@ -58,6 +58,28 @@ approve.post = (args: { disposal: number | { id: number } } | [disposal: number 
 })
 
 /**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::approve
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:13
+* @route '/disposals/{disposal}/approve'
+*/
+const approveForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: approve.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::approve
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:13
+* @route '/disposals/{disposal}/approve'
+*/
+approveForm.post = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: approve.url(args, options),
+    method: 'post',
+})
+
+approve.form = approveForm
+
+/**
 * @see \App\Http\Controllers\AssetDisposalApprovalController::reject
 * @see app/Http/Controllers/AssetDisposalApprovalController.php:29
 * @route '/disposals/{disposal}/reject'
@@ -114,6 +136,28 @@ reject.post = (args: { disposal: number | { id: number } } | [disposal: number |
     url: reject.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::reject
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:29
+* @route '/disposals/{disposal}/reject'
+*/
+const rejectForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: reject.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetDisposalApprovalController::reject
+* @see app/Http/Controllers/AssetDisposalApprovalController.php:29
+* @route '/disposals/{disposal}/reject'
+*/
+rejectForm.post = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: reject.url(args, options),
+    method: 'post',
+})
+
+reject.form = rejectForm
 
 const AssetDisposalApprovalController = { approve, reject }
 

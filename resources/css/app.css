@@ -15,8 +15,12 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
     
+    /* Signature shadows */
     --shadow-inset-button: rgba(255, 255, 255, 0.2) 0px 0.5px 0px 0px inset, rgba(0, 0, 0, 0.2) 0px 0px 0px 0.5px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
     --shadow-focus-soft: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+    --shadow-section: 0 1px 2px rgba(0, 0, 0, 0.03);
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -46,6 +50,17 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
 
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+
+    --color-surface: var(--surface);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
@@ -71,8 +86,11 @@
     --background: #f7f4ed;
     --foreground: #1c1c1c;
     
+    /* Surface — intermediate layer between bg and card */
+    --surface: #f3f0e8;
+
     /* Surfaces */
-    --card: #ffffff; /* Clean white layer above cream background */
+    --card: #ffffff;
     --card-foreground: #1c1c1c;
     --popover: #ffffff;
     --popover-foreground: #1c1c1c;
@@ -88,19 +106,19 @@
     --accent-foreground: #1c1c1c;
     
     /* Semantic Status */
-    --destructive: #be123c; /* crisp semantic earthy red */
+    --destructive: #be123c;
     --destructive-foreground: #fcfbf8;
-    --success: #15803d; /* deep forest green */
+    --success: #15803d;
     --success-foreground: #fcfbf8;
-    --warning: #b45309; /* amber/ochre */
+    --warning: #b45309;
     --warning-foreground: #fcfbf8;
-    --info: #0369a1; /* subdued royal blue */
+    --info: #0369a1;
     --info-foreground: #fcfbf8;
     
     /* Structural Elements */
-    --border: rgba(28, 28, 28, 0.08); /* soft but visible divider */
-    --input: rgba(28, 28, 28, 0.05); /* muted input background */
-    --ring: rgba(28, 28, 28, 0.15); /* focus glow */
+    --border: rgba(28, 28, 28, 0.08);
+    --input: rgba(28, 28, 28, 0.05);
+    --ring: rgba(28, 28, 28, 0.15);
     
     /* Charts */
     --chart-1: oklch(0.646 0.222 41.116);
@@ -109,26 +127,33 @@
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
     
-    --radius: 0.75rem; /* 12px pill/soft rounded look */
+    --radius: 0.75rem;
     
     /* Sidebar Layout Elements */
-    --sidebar: #f7f4ed; /* matches background */
+    --sidebar: #f7f4ed;
     --sidebar-foreground: #1c1c1c;
     --sidebar-primary: #1c1c1c;
     --sidebar-primary-foreground: #fcfbf8;
-    --sidebar-accent: rgba(28, 28, 28, 0.04);
+    --sidebar-accent: rgba(28, 28, 28, 0.06);
     --sidebar-accent-foreground: #1c1c1c;
-    --sidebar-border: rgba(28,28,28,0.05);
+    --sidebar-border: rgba(28,28,28,0.06);
     --sidebar-ring: rgba(28, 28, 28, 0.15);
+
+    /* Sidebar active state */
+    --sidebar-active-bg: rgba(28, 28, 28, 0.08);
+    --sidebar-active-border: #1c1c1c;
 }
 
 .dark {
     /* Foundation Colors */
     --background: #151515;
     --foreground: #f7f4ed;
+
+    /* Surface */
+    --surface: #1a1a1a;
     
     /* Surfaces */
-    --card: #1f1f1f; /* Clean raised dark tone layer */
+    --card: #1f1f1f;
     --card-foreground: #f7f4ed;
     --popover: #1f1f1f;
     --popover-foreground: #f7f4ed;
@@ -164,6 +189,11 @@
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
+
+    /* Shadows for dark mode */
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.12);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-section: 0 1px 2px rgba(0, 0, 0, 0.15);
     
     /* Sidebar Layout Elements */
     --sidebar: #151515;
@@ -174,6 +204,10 @@
     --sidebar-accent-foreground: #f7f4ed;
     --sidebar-border: rgba(247, 244, 237, 0.1);
     --sidebar-ring: rgba(247, 244, 237, 0.2);
+
+    /* Sidebar active state */
+    --sidebar-active-bg: rgba(247, 244, 237, 0.12);
+    --sidebar-active-border: #f7f4ed;
 }
 
 @layer base {
@@ -184,5 +218,55 @@
     body {
         @apply bg-background text-foreground;
         font-feature-settings: "rlig" 1, "calt" 1;
+    }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(28, 28, 28, 0.15);
+        border-radius: 9999px;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+        background: rgba(247, 244, 237, 0.15);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(28, 28, 28, 0.25);
+    }
+
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: rgba(247, 244, 237, 0.25);
+    }
+}
+
+@layer utilities {
+    /* Gradient accent top border for cards */
+    .card-gradient-border {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-gradient-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(28, 28, 28, 0.15), rgba(28, 28, 28, 0.03));
+        border-radius: 9999px;
+    }
+
+    .dark .card-gradient-border::before {
+        background: linear-gradient(90deg, rgba(247, 244, 237, 0.2), rgba(247, 244, 237, 0.03));
     }
 }

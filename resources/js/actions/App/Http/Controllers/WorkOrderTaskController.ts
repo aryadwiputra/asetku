@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkOrderTaskController::store
 * @see app/Http/Controllers/WorkOrderTaskController.php:13
@@ -58,6 +58,28 @@ store.post = (args: { workOrder: number | { id: number } } | [workOrder: number 
 })
 
 /**
+* @see \App\Http\Controllers\WorkOrderTaskController::store
+* @see app/Http/Controllers/WorkOrderTaskController.php:13
+* @route '/work-orders/{workOrder}/tasks'
+*/
+const storeForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderTaskController::store
+* @see app/Http/Controllers/WorkOrderTaskController.php:13
+* @route '/work-orders/{workOrder}/tasks'
+*/
+storeForm.post = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\WorkOrderTaskController::update
 * @see app/Http/Controllers/WorkOrderTaskController.php:36
 * @route '/work-orders/{workOrder}/tasks/{task}'
@@ -111,6 +133,38 @@ update.patch = (args: { workOrder: number | { id: number }, task: number | { id:
     url: update.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\WorkOrderTaskController::update
+* @see app/Http/Controllers/WorkOrderTaskController.php:36
+* @route '/work-orders/{workOrder}/tasks/{task}'
+*/
+const updateForm = (args: { workOrder: number | { id: number }, task: number | { id: number } } | [workOrder: number | { id: number }, task: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderTaskController::update
+* @see app/Http/Controllers/WorkOrderTaskController.php:36
+* @route '/work-orders/{workOrder}/tasks/{task}'
+*/
+updateForm.patch = (args: { workOrder: number | { id: number }, task: number | { id: number } } | [workOrder: number | { id: number }, task: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
 
 const WorkOrderTaskController = { store, update }
 

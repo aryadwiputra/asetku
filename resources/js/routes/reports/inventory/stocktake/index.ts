@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::print
 * @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
@@ -42,6 +42,43 @@ print.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: print.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::print
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
+* @route '/reports/inventory/stocktake/print'
+*/
+const printForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: print.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::print
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
+* @route '/reports/inventory/stocktake/print'
+*/
+printForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: print.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Reports\InventoryStocktakePrintController::print
+* @see app/Http/Controllers/Reports/InventoryStocktakePrintController.php:14
+* @route '/reports/inventory/stocktake/print'
+*/
+printForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: print.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+print.form = printForm
 
 const stocktake = {
     print: Object.assign(print, print),

@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MaintenanceChecklistController::index
 * @see app/Http/Controllers/MaintenanceChecklistController.php:19
@@ -42,6 +42,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::index
+* @see app/Http/Controllers/MaintenanceChecklistController.php:19
+* @route '/maintenance-checklists'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::index
+* @see app/Http/Controllers/MaintenanceChecklistController.php:19
+* @route '/maintenance-checklists'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::index
+* @see app/Http/Controllers/MaintenanceChecklistController.php:19
+* @route '/maintenance-checklists'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceChecklistController::create
@@ -88,6 +125,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\MaintenanceChecklistController::create
+* @see app/Http/Controllers/MaintenanceChecklistController.php:57
+* @route '/maintenance-checklists/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::create
+* @see app/Http/Controllers/MaintenanceChecklistController.php:57
+* @route '/maintenance-checklists/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::create
+* @see app/Http/Controllers/MaintenanceChecklistController.php:57
+* @route '/maintenance-checklists/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\MaintenanceChecklistController::store
 * @see app/Http/Controllers/MaintenanceChecklistController.php:68
 * @route '/maintenance-checklists'
@@ -120,6 +194,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::store
+* @see app/Http/Controllers/MaintenanceChecklistController.php:68
+* @route '/maintenance-checklists'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::store
+* @see app/Http/Controllers/MaintenanceChecklistController.php:68
+* @route '/maintenance-checklists'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceChecklistController::edit
@@ -190,6 +286,43 @@ edit.head = (args: { template: number | { id: number } } | [template: number | {
 })
 
 /**
+* @see \App\Http\Controllers\MaintenanceChecklistController::edit
+* @see app/Http/Controllers/MaintenanceChecklistController.php:89
+* @route '/maintenance-checklists/{template}/edit'
+*/
+const editForm = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::edit
+* @see app/Http/Controllers/MaintenanceChecklistController.php:89
+* @route '/maintenance-checklists/{template}/edit'
+*/
+editForm.get = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::edit
+* @see app/Http/Controllers/MaintenanceChecklistController.php:89
+* @route '/maintenance-checklists/{template}/edit'
+*/
+editForm.head = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\MaintenanceChecklistController::update
 * @see app/Http/Controllers/MaintenanceChecklistController.php:103
 * @route '/maintenance-checklists/{template}'
@@ -258,6 +391,53 @@ update.patch = (args: { template: number | { id: number } } | [template: number 
 })
 
 /**
+* @see \App\Http\Controllers\MaintenanceChecklistController::update
+* @see app/Http/Controllers/MaintenanceChecklistController.php:103
+* @route '/maintenance-checklists/{template}'
+*/
+const updateForm = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::update
+* @see app/Http/Controllers/MaintenanceChecklistController.php:103
+* @route '/maintenance-checklists/{template}'
+*/
+updateForm.put = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::update
+* @see app/Http/Controllers/MaintenanceChecklistController.php:103
+* @route '/maintenance-checklists/{template}'
+*/
+updateForm.patch = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\MaintenanceChecklistController::destroy
 * @see app/Http/Controllers/MaintenanceChecklistController.php:123
 * @route '/maintenance-checklists/{template}'
@@ -314,6 +494,38 @@ destroy.delete = (args: { template: number | { id: number } } | [template: numbe
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::destroy
+* @see app/Http/Controllers/MaintenanceChecklistController.php:123
+* @route '/maintenance-checklists/{template}'
+*/
+const destroyForm = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MaintenanceChecklistController::destroy
+* @see app/Http/Controllers/MaintenanceChecklistController.php:123
+* @route '/maintenance-checklists/{template}'
+*/
+destroyForm.delete = (args: { template: number | { id: number } } | [template: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const MaintenanceChecklistController = { index, create, store, edit, update, destroy }
 
