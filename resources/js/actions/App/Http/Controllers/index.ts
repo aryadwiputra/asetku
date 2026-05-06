@@ -22,17 +22,40 @@ import MediaAssetController from './MediaAssetController'
 import MediaUploadController from './MediaUploadController'
 import MasterData from './MasterData'
 import QrController from './QrController'
+import MaintenanceCalendarFeedController from './MaintenanceCalendarFeedController'
+import MaintenanceCalendarController from './MaintenanceCalendarController'
+import MaintenanceCalendarEventsController from './MaintenanceCalendarEventsController'
+import MaintenanceCalendarFeedTokenController from './MaintenanceCalendarFeedTokenController'
 import AssetController from './AssetController'
+import VendorContractController from './VendorContractController'
+import AssetDisposalController from './AssetDisposalController'
+import AssetDisposalApprovalController from './AssetDisposalApprovalController'
+import AssetDisposalBaController from './AssetDisposalBaController'
+import DepreciationController from './DepreciationController'
+import DepreciationRunController from './DepreciationRunController'
+import DepreciationAssetController from './DepreciationAssetController'
+import DepreciationExportController from './DepreciationExportController'
+import AssetUsageLogController from './AssetUsageLogController'
 import AssetLifecycleController from './AssetLifecycleController'
 import AssetLifecycleStatusController from './AssetLifecycleStatusController'
 import AssetLifecycleConditionController from './AssetLifecycleConditionController'
 import AssetAttachmentController from './AssetAttachmentController'
 import AssetLifecycleEventController from './AssetLifecycleEventController'
 import AssetMovementController from './AssetMovementController'
+import AssetWarrantyClaimController from './AssetWarrantyClaimController'
 import AssetLabelController from './AssetLabelController'
 import AssetExportController from './AssetExportController'
 import AssetSavedFilterController from './AssetSavedFilterController'
 import AssetImportController from './AssetImportController'
+import WorkOrderController from './WorkOrderController'
+import WorkOrderTaskController from './WorkOrderTaskController'
+import WorkOrderCostLineController from './WorkOrderCostLineController'
+import WorkOrderAttachmentController from './WorkOrderAttachmentController'
+import MaintenanceScheduleRescheduleController from './MaintenanceScheduleRescheduleController'
+import MaintenanceScheduleController from './MaintenanceScheduleController'
+import MaintenanceChecklistController from './MaintenanceChecklistController'
+import TechnicianController from './TechnicianController'
+import Reports from './Reports'
 
 const Controllers = {
     Api: Object.assign(Api, Api),
@@ -59,17 +82,40 @@ const Controllers = {
     MediaUploadController: Object.assign(MediaUploadController, MediaUploadController),
     MasterData: Object.assign(MasterData, MasterData),
     QrController: Object.assign(QrController, QrController),
+    MaintenanceCalendarFeedController: Object.assign(MaintenanceCalendarFeedController, MaintenanceCalendarFeedController),
+    MaintenanceCalendarController: Object.assign(MaintenanceCalendarController, MaintenanceCalendarController),
+    MaintenanceCalendarEventsController: Object.assign(MaintenanceCalendarEventsController, MaintenanceCalendarEventsController),
+    MaintenanceCalendarFeedTokenController: Object.assign(MaintenanceCalendarFeedTokenController, MaintenanceCalendarFeedTokenController),
     AssetController: Object.assign(AssetController, AssetController),
+    VendorContractController: Object.assign(VendorContractController, VendorContractController),
+    AssetDisposalController: Object.assign(AssetDisposalController, AssetDisposalController),
+    AssetDisposalApprovalController: Object.assign(AssetDisposalApprovalController, AssetDisposalApprovalController),
+    AssetDisposalBaController: Object.assign(AssetDisposalBaController, AssetDisposalBaController),
+    DepreciationController: Object.assign(DepreciationController, DepreciationController),
+    DepreciationRunController: Object.assign(DepreciationRunController, DepreciationRunController),
+    DepreciationAssetController: Object.assign(DepreciationAssetController, DepreciationAssetController),
+    DepreciationExportController: Object.assign(DepreciationExportController, DepreciationExportController),
+    AssetUsageLogController: Object.assign(AssetUsageLogController, AssetUsageLogController),
     AssetLifecycleController: Object.assign(AssetLifecycleController, AssetLifecycleController),
     AssetLifecycleStatusController: Object.assign(AssetLifecycleStatusController, AssetLifecycleStatusController),
     AssetLifecycleConditionController: Object.assign(AssetLifecycleConditionController, AssetLifecycleConditionController),
     AssetAttachmentController: Object.assign(AssetAttachmentController, AssetAttachmentController),
     AssetLifecycleEventController: Object.assign(AssetLifecycleEventController, AssetLifecycleEventController),
     AssetMovementController: Object.assign(AssetMovementController, AssetMovementController),
+    AssetWarrantyClaimController: Object.assign(AssetWarrantyClaimController, AssetWarrantyClaimController),
     AssetLabelController: Object.assign(AssetLabelController, AssetLabelController),
     AssetExportController: Object.assign(AssetExportController, AssetExportController),
     AssetSavedFilterController: Object.assign(AssetSavedFilterController, AssetSavedFilterController),
     AssetImportController: Object.assign(AssetImportController, AssetImportController),
+    WorkOrderController: Object.assign(WorkOrderController, WorkOrderController),
+    WorkOrderTaskController: Object.assign(WorkOrderTaskController, WorkOrderTaskController),
+    WorkOrderCostLineController: Object.assign(WorkOrderCostLineController, WorkOrderCostLineController),
+    WorkOrderAttachmentController: Object.assign(WorkOrderAttachmentController, WorkOrderAttachmentController),
+    MaintenanceScheduleRescheduleController: Object.assign(MaintenanceScheduleRescheduleController, MaintenanceScheduleRescheduleController),
+    MaintenanceScheduleController: Object.assign(MaintenanceScheduleController, MaintenanceScheduleController),
+    MaintenanceChecklistController: Object.assign(MaintenanceChecklistController, MaintenanceChecklistController),
+    TechnicianController: Object.assign(TechnicianController, TechnicianController),
+    Reports: Object.assign(Reports, Reports),
 }
 
 export default Controllers

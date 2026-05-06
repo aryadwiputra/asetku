@@ -134,10 +134,55 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'depreciation.')) {
+            $modules[] = 'depreciation';
+            $modules[] = 'assets';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'disposals.')) {
+            $modules[] = 'disposals';
+            $modules[] = 'assets';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'work-orders.')) {
+            $modules[] = 'work_orders';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'maintenance-schedules.')) {
+            $modules[] = 'maintenance_schedules';
+            $modules[] = 'work_orders';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'maintenance-calendar.')) {
+            $modules[] = 'maintenance_calendar';
+            $modules[] = 'maintenance_schedules';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'maintenance-checklists.')) {
+            $modules[] = 'maintenance_checklists';
+            $modules[] = 'datatable';
+        }
+
+        if (str_starts_with($routeName, 'technicians.')) {
+            $modules[] = 'technicians';
+            $modules[] = 'datatable';
+        }
+
         if (str_starts_with($routeName, 'qr.')
             || str_starts_with($routeName, 'scan.')) {
             $modules[] = 'qr';
             $modules[] = 'assets';
+        }
+
+        if (str_starts_with($routeName, 'reports.')) {
+            $modules[] = 'reports';
+            $modules[] = 'assets';
+            $modules[] = 'datatable';
         }
 
         return array_values(array_unique($modules));

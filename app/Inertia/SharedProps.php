@@ -13,6 +13,7 @@ use App\Models\Department;
 use App\Models\Organization;
 use App\Models\PersonInCharge;
 use App\Models\Unit;
+use App\Models\Vendor;
 use App\Models\VendorContract;
 use App\Models\Warranty;
 use App\Services\FeatureFlagService;
@@ -139,6 +140,12 @@ class SharedProps
                 'create' => Gate::forUser($user)->allows('create', AssetLocation::class),
                 'update' => Gate::forUser($user)->allows('update', new AssetLocation),
                 'delete' => Gate::forUser($user)->allows('delete', new AssetLocation),
+            ],
+            'vendors' => [
+                'view' => Gate::forUser($user)->allows('viewAny', Vendor::class),
+                'create' => Gate::forUser($user)->allows('create', Vendor::class),
+                'update' => Gate::forUser($user)->allows('update', new Vendor),
+                'delete' => Gate::forUser($user)->allows('delete', new Vendor),
             ],
             'warranties' => [
                 'view' => Gate::forUser($user)->allows('viewAny', Warranty::class),

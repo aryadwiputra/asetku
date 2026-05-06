@@ -1,4 +1,5 @@
-import type { Auth, Delegation, Impersonation } from '@/types/auth';
+import type { Auth, Impersonation } from '@/types/auth';
+import type { Delegation } from '@/types/auth';
 
 declare module '@inertiajs/core' {
     export interface InertiaConfig {

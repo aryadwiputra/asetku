@@ -6,15 +6,15 @@ export default function AppLogo() {
 
     return (
         <>
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+            <div className="flex aspect-square size-9 items-center justify-center rounded-lg bg-linear-to-br from-foreground to-foreground/80 text-background shadow-sm">
                 {appLogoUrl ? (
                     <img src={appLogoUrl} alt={name} className="size-7 rounded object-contain" />
                 ) : (
-                    <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
+                    <AppLogoIcon className="size-5 fill-current" />
                 )}
             </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">
+            <div className="ml-1.5 grid flex-1 text-left text-sm">
+                <span className="truncate leading-tight font-semibold tracking-tight">
                     {name}
                 </span>
             </div>

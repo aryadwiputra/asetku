@@ -51,6 +51,42 @@ return [
             'title' => 'Pembaruan umum',
             'description' => 'Pembaruan sistem rutin dan aktivitas akun.',
         ],
+        'assets_depreciation_residual_reached' => [
+            'title' => 'Aset mencapai nilai residu',
+            'description' => 'Memberi tahu saat nilai buku aset mencapai nilai residu.',
+        ],
+        'assets_warranty_notifications_expiring_soon' => [
+            'title' => 'Garansi aset segera berakhir',
+            'description' => 'Memberi tahu saat garansi aset akan segera berakhir.',
+        ],
+        'vendor_contracts_notifications_expiring_soon' => [
+            'title' => 'Kontrak vendor segera berakhir',
+            'description' => 'Memberi tahu saat kontrak vendor akan segera berakhir.',
+        ],
+        'assets_work_orders_sla_response_breached' => [
+            'title' => 'SLA respons work order terlewat',
+            'description' => 'Memberi tahu saat SLA waktu respons work order terlewat.',
+        ],
+        'assets_work_orders_sla_resolution_breached' => [
+            'title' => 'SLA penyelesaian work order terlewat',
+            'description' => 'Memberi tahu saat SLA waktu penyelesaian work order terlewat.',
+        ],
+        'assets_work_orders_assigned' => [
+            'title' => 'Work order ditugaskan',
+            'description' => 'Memberi tahu saat work order ditugaskan kepada Anda.',
+        ],
+        'maintenance_schedules_due_in_7_days' => [
+            'title' => 'Pemeliharaan jatuh tempo H-7',
+            'description' => 'Memberi tahu 7 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
+        'maintenance_schedules_due_in_3_days' => [
+            'title' => 'Pemeliharaan jatuh tempo H-3',
+            'description' => 'Memberi tahu 3 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
+        'maintenance_schedules_due_in_1_day' => [
+            'title' => 'Pemeliharaan jatuh tempo H-1',
+            'description' => 'Memberi tahu 1 hari sebelum jadwal pemeliharaan jatuh tempo.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Preferensi notifikasi diperbarui.',

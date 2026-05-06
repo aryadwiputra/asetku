@@ -3,11 +3,12 @@
 use App\Http\Middleware\ApplyAppSettings;
 use App\Http\Middleware\ApplyLocale;
 use App\Http\Middleware\CheckDatabaseMaintenance;
-use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\EnforceOrganizationAccessPolicy;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetCurrentOrganization;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,6 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('assets:depreciation:auto-run')->dailyAt('01:00');
+        $schedule->command('contracts-and-warranties:remind')->dailyAt('08:00');
+        $schedule->command('maintenance-schedules:send-reminders')->dailyAt('07:00');
+        $schedule->command('maintenance:generate-work-orders')->dailyAt('02:00');
+        $schedule->command('maintenance:escalate-overdue-work-orders')->everyFiveMinutes();
+    })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 

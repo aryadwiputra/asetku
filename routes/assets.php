@@ -2,24 +2,72 @@
 
 use App\Http\Controllers\AssetAttachmentController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetDisposalApprovalController;
+use App\Http\Controllers\AssetDisposalBaController;
+use App\Http\Controllers\AssetDisposalController;
 use App\Http\Controllers\AssetExportController;
 use App\Http\Controllers\AssetImportController;
 use App\Http\Controllers\AssetLabelController;
-use App\Http\Controllers\AssetLifecycleController;
 use App\Http\Controllers\AssetLifecycleConditionController;
+use App\Http\Controllers\AssetLifecycleController;
 use App\Http\Controllers\AssetLifecycleEventController;
 use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
+use App\Http\Controllers\AssetUsageLogController;
+use App\Http\Controllers\AssetWarrantyClaimController;
+use App\Http\Controllers\DepreciationAssetController;
+use App\Http\Controllers\DepreciationController;
+use App\Http\Controllers\DepreciationExportController;
+use App\Http\Controllers\DepreciationRunController;
+use App\Http\Controllers\MaintenanceChecklistController;
+use App\Http\Controllers\MaintenanceCalendarController;
+use App\Http\Controllers\MaintenanceCalendarEventsController;
+use App\Http\Controllers\MaintenanceCalendarFeedController;
+use App\Http\Controllers\MaintenanceCalendarFeedTokenController;
+use App\Http\Controllers\MaintenanceScheduleController;
+use App\Http\Controllers\MaintenanceScheduleRescheduleController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\VendorContractController;
+use App\Http\Controllers\WorkOrderAttachmentController;
+use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\WorkOrderCostLineController;
+use App\Http\Controllers\WorkOrderTaskController;
 use Illuminate\Support\Facades\Route;
 
 // Public QR & scan
 Route::get('q/{token}', [QrController::class, 'show'])->name('qr.show');
 Route::inertia('scan', 'scan/index')->name('scan.index');
+Route::get('calendars/maintenance/{token}.ics', [MaintenanceCalendarFeedController::class, 'show'])->name('maintenance-calendar.feed');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('maintenance-calendar', [MaintenanceCalendarController::class, 'index'])->name('maintenance-calendar.index');
+    Route::get('maintenance-calendar/events', [MaintenanceCalendarEventsController::class, 'index'])->name('maintenance-calendar.events');
+    Route::post('maintenance-calendar/feed-token', [MaintenanceCalendarFeedTokenController::class, 'store'])->name('maintenance-calendar.feed-token');
+
     Route::resource('assets', AssetController::class);
+    Route::resource('vendor-contracts', VendorContractController::class);
+    Route::post('vendor-contracts/{vendorContract}/renew', [VendorContractController::class, 'renew'])->name('vendor-contracts.renew');
+    Route::post('vendor-contracts/{vendorContract}/documents', [VendorContractController::class, 'storeDocument'])->name('vendor-contracts.documents.store');
+
+    // Disposal module
+    Route::get('disposals', [AssetDisposalController::class, 'index'])->name('disposals.index');
+    Route::get('disposals/create', [AssetDisposalController::class, 'create'])->name('disposals.create');
+    Route::get('disposals/by-token/{token}', [AssetDisposalController::class, 'byToken'])->name('disposals.by-token');
+    Route::post('disposals', [AssetDisposalController::class, 'store'])->name('disposals.store');
+    Route::get('disposals/{disposal}', [AssetDisposalController::class, 'show'])->name('disposals.show');
+    Route::post('disposals/{disposal}/approve', [AssetDisposalApprovalController::class, 'approve'])->name('disposals.approve');
+    Route::post('disposals/{disposal}/reject', [AssetDisposalApprovalController::class, 'reject'])->name('disposals.reject');
+    Route::get('disposals/{disposal}/ba', [AssetDisposalBaController::class, 'show'])->name('disposals.ba');
+
+    // Depreciation module
+    Route::get('depreciation', [DepreciationController::class, 'index'])->name('depreciation.index');
+    Route::post('depreciation/runs', [DepreciationRunController::class, 'store'])->name('depreciation.runs.store');
+    Route::get('depreciation/assets/{asset}', [DepreciationAssetController::class, 'show'])->name('depreciation.assets.show');
+    Route::get('assets/{asset}/depreciation/export', [DepreciationExportController::class, 'asset'])->name('depreciation.assets.export');
+    Route::get('depreciation/export', [DepreciationExportController::class, 'organization'])->name('depreciation.export');
+    Route::post('depreciation/assets/{asset}/usage-logs', [AssetUsageLogController::class, 'store'])->name('depreciation.assets.usage-logs.store');
 
     Route::get('asset-lifecycle', [AssetLifecycleController::class, 'index'])->name('assets.lifecycle.index');
     Route::get('asset-lifecycle/by-token/{token}', [AssetLifecycleController::class, 'byToken'])->name('assets.lifecycle.by-token');
@@ -32,6 +80,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('assets/{asset}/lifecycle-events', [AssetLifecycleEventController::class, 'store'])->name('assets.lifecycle-events.store');
     Route::post('assets/{asset}/movements', [AssetMovementController::class, 'store'])->name('assets.movements.store');
+    Route::post('assets/{asset}/warranty-claims', [AssetWarrantyClaimController::class, 'store'])->name('assets.warranty-claims.store');
+    Route::patch('assets/{asset}/warranty-claims/{claim}', [AssetWarrantyClaimController::class, 'update'])->name('assets.warranty-claims.update');
 
     Route::get('assets-labels/print', [AssetLabelController::class, 'print'])->name('assets.labels.print');
     Route::get('assets-export', [AssetExportController::class, 'export'])->name('assets.export');
@@ -44,4 +94,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('assets-import/validate', [AssetImportController::class, 'validateFile'])->name('assets.import.validate');
     Route::post('assets-import/{importRun}/apply', [AssetImportController::class, 'apply'])->name('assets.import.apply');
     Route::post('assets-import/photos-zip', [AssetImportController::class, 'importPhotosZip'])->name('assets.import.photos-zip');
+
+    // Work orders (asset maintenance)
+    Route::get('work-orders/my', [WorkOrderController::class, 'my'])->name('work-orders.my');
+    Route::get('work-orders/by-token/{token}', [WorkOrderController::class, 'byToken'])->name('work-orders.by-token');
+    Route::resource('work-orders', WorkOrderController::class)
+        ->parameters(['work-orders' => 'workOrder'])
+        ->except(['destroy']);
+    Route::post('work-orders/{workOrder}/tasks', [WorkOrderTaskController::class, 'store'])->name('work-orders.tasks.store');
+    Route::patch('work-orders/{workOrder}/tasks/{task}', [WorkOrderTaskController::class, 'update'])->name('work-orders.tasks.update');
+    Route::post('work-orders/{workOrder}/cost-lines', [WorkOrderCostLineController::class, 'store'])->name('work-orders.cost-lines.store');
+    Route::patch('work-orders/{workOrder}/cost-lines/{costLine}', [WorkOrderCostLineController::class, 'update'])->name('work-orders.cost-lines.update');
+    Route::delete('work-orders/{workOrder}/cost-lines/{costLine}', [WorkOrderCostLineController::class, 'destroy'])->name('work-orders.cost-lines.destroy');
+    Route::post('work-orders/{workOrder}/attachments', [WorkOrderAttachmentController::class, 'store'])->name('work-orders.attachments.store');
+    Route::delete('work-orders/{workOrder}/attachments/{attachment}', [WorkOrderAttachmentController::class, 'destroy'])->name('work-orders.attachments.destroy');
+
+    // Preventive maintenance schedules
+    Route::patch('maintenance-schedules/{schedule}/reschedule', [MaintenanceScheduleRescheduleController::class, 'update'])
+        ->name('maintenance-schedules.reschedule');
+    Route::resource('maintenance-schedules', MaintenanceScheduleController::class)
+        ->parameters(['maintenance-schedules' => 'schedule'])
+        ->except(['show']);
+
+    // Checklist templates
+    Route::resource('maintenance-checklists', MaintenanceChecklistController::class)
+        ->parameters(['maintenance-checklists' => 'template'])
+        ->except(['show']);
+
+    // Technicians
+    Route::resource('technicians', TechnicianController::class)
+        ->parameters(['technicians' => 'technician'])
+        ->except(['show']);
 });

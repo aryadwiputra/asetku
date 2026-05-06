@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, ChevronDown, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, UploadCloud, Users } from 'lucide-react';
+import { BookOpen, Building2, CalendarDays, ChevronDown, ClipboardList, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -36,6 +36,15 @@ import { index as masterDataIndex } from '@/routes/master-data';
 import { create as assetsCreate, index as assetsIndex } from '@/routes/assets';
 import { index as assetsImportIndex } from '@/routes/assets/import';
 import { index as assetLifecycleIndex } from '@/routes/assets/lifecycle';
+import { index as depreciationIndex } from '@/routes/depreciation';
+import { index as disposalsIndex } from '@/routes/disposals';
+import { index as workOrdersIndex } from '@/routes/work-orders';
+import { my as workOrdersMy } from '@/routes/work-orders';
+import { index as maintenanceSchedulesIndex } from '@/routes/maintenance-schedules';
+import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checklists';
+import { index as techniciansIndex } from '@/routes/technicians';
+import { index as maintenanceCalendarIndex } from '@/routes/maintenance-calendar';
+import { index as inventoryReportIndex } from '@/routes/reports/inventory';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -77,7 +86,7 @@ export function AppSidebar() {
             : []),
     ];
 
-    const assetsNavItems: NavItem[] = canViewAssets
+    const assetCoreNavItems: NavItem[] = canViewAssets
         ? [
               {
                   title: t('common.assets'),
@@ -85,14 +94,69 @@ export function AppSidebar() {
                   icon: Package,
               },
               {
+                  title: t('common.asset_import'),
+                  href: assetsImportIndex(),
+                  icon: UploadCloud,
+              },
+          ]
+        : [];
+
+    const maintenanceNavItems: NavItem[] = canViewAssets
+        ? [
+              {
+                  title: t('common.maintenance_calendar'),
+                  href: maintenanceCalendarIndex(),
+                  icon: CalendarDays,
+              },
+              {
+                  title: t('common.work_orders'),
+                  href: workOrdersIndex(),
+                  icon: Wrench,
+              },
+              {
+                  title: t('common.my_work_orders'),
+                  href: workOrdersMy(),
+                  icon: ClipboardList,
+              },
+              {
+                  title: t('common.maintenance_schedules'),
+                  href: maintenanceSchedulesIndex(),
+                  icon: ClipboardList,
+              },
+              {
+                  title: t('common.maintenance_checklists'),
+                  href: maintenanceChecklistsIndex(),
+                  icon: ClipboardList,
+              },
+              {
+                  title: t('common.technicians'),
+                  href: techniciansIndex(),
+                  icon: Users,
+              },
+          ]
+        : [];
+
+    const operationsNavItems: NavItem[] = canViewAssets
+        ? [
+              {
                   title: t('common.asset_lifecycle'),
                   href: assetLifecycleIndex(),
                   icon: History,
               },
               {
-                  title: t('common.asset_import'),
-                  href: assetsImportIndex(),
-                  icon: null,
+                  title: t('common.disposals'),
+                  href: disposalsIndex(),
+                  icon: Trash2,
+              },
+          ]
+        : [];
+
+    const financeNavItems: NavItem[] = canViewAssets
+        ? [
+              {
+                  title: t('common.depreciation'),
+                  href: depreciationIndex(),
+                  icon: TrendingDown,
               },
           ]
         : [];
@@ -123,6 +187,7 @@ export function AppSidebar() {
     const canManageFlags = userPermissions.includes('settings.flags.manage');
     const canViewActivity = userPermissions.includes('activity.view');
     const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
+    const canViewInventoryReport = userPermissions.includes('report_inventory.view') || Boolean(orgRole);
 
     const settingsItems: NavItem[] = [
         ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),
@@ -130,6 +195,18 @@ export function AppSidebar() {
         ...(canManageMail ? [{ title: t('common.settings_mail'), href: editMailSettings(), icon: null }] : []),
         ...(canManageFlags ? [{ title: t('common.settings_feature_flags'), href: featureFlagsIndex(), icon: null }] : []),
         ...(canViewActivity ? [{ title: t('common.audit_log'), href: activityIndex(), icon: null }] : []),
+    ];
+
+    const reportsNavItems: NavItem[] = [
+        ...(canViewInventoryReport
+            ? [
+                  {
+                      title: t('common.inventory_report'),
+                      href: inventoryReportIndex(),
+                      icon: null,
+                  },
+              ]
+            : []),
     ];
 
     const settingsActive =
@@ -152,7 +229,7 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="border-b border-sidebar-border pb-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
@@ -168,12 +245,12 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
+            <SidebarContent className="py-2">
                 <NavMain label={t('common.workspace')} items={workspaceNavItems} />
-                {assetsNavItems.length > 0 ? (
+                {assetCoreNavItems.length > 0 ? (
                     <NavMain
                         label={t('common.assets')}
-                        items={assetsNavItems}
+                        items={assetCoreNavItems}
                         action={
                             canCreateAsset ? (
                                 <Link href={assetsCreate()} prefetch aria-label={t('common.new_asset')} title={t('common.new_asset')}>
@@ -183,10 +260,16 @@ export function AppSidebar() {
                         }
                     />
                 ) : null}
+                {maintenanceNavItems.length > 0 ? <NavMain label={t('common.maintenance')} items={maintenanceNavItems} /> : null}
+                {operationsNavItems.length > 0 ? <NavMain label={t('common.operations')} items={operationsNavItems} /> : null}
+                {financeNavItems.length > 0 ? <NavMain label={t('common.finance')} items={financeNavItems} /> : null}
+                {reportsNavItems.length > 0 ? <NavMain label={t('common.reports')} items={reportsNavItems} /> : null}
                 {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (
                     <SidebarGroup className="px-2 py-0">
-                        <SidebarGroupLabel>{t('common.settings')}</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                            {t('common.settings')}
+                        </SidebarGroupLabel>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <Collapsible defaultOpen={settingsActive}>
@@ -194,11 +277,13 @@ export function AppSidebar() {
                                         <SidebarMenuButton
                                             isActive={settingsActive}
                                             tooltip={{ children: t('common.settings') }}
-                                            className="group"
+                                            className="group transition-all duration-150"
                                         >
-                                            <Settings />
+                                            <span className="flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground">
+                                                <Settings className="size-4" />
+                                            </span>
                                             <span>{t('common.settings')}</span>
-                                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]:rotate-180" />
+                                            <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
                                         </SidebarMenuButton>
                                     </CollapsibleTrigger>
                                     <CollapsibleContent>
@@ -224,7 +309,7 @@ export function AppSidebar() {
                 )}
             </SidebarContent>
 
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-sidebar-border pt-2">
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

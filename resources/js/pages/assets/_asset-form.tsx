@@ -30,7 +30,15 @@ type Condition = { id: number; name: string; code: string };
 type Class = { id: number; name: string; code: string };
 type Unit = { id: number; name: string; symbol: string };
 type Warranty = { id: number; name: string; duration_months: number };
-type VendorContract = { id: number; vendor_name: string; contract_number: string | null };
+type VendorContract = {
+    id: number;
+    vendor_name: string;
+    title?: string | null;
+    contract_number: string | null;
+    status?: string | null;
+    end_date?: string | null;
+    is_vendor_blacklisted?: boolean;
+};
 
 type CustomField = {
     id: number;
@@ -84,6 +92,8 @@ export type AssetFormData = {
     depreciation_method: string;
     useful_life_months: string;
     residual_value: string;
+    production_units_total_estimate: string;
+    production_units_unit: string;
     latitude: number | null;
     longitude: number | null;
     metadata: Record<string, string | number | boolean | null>;
@@ -133,6 +143,8 @@ export function AssetForm({
         depreciation_method: initial?.depreciation_method ?? '',
         useful_life_months: initial?.useful_life_months ?? '',
         residual_value: initial?.residual_value ?? '',
+        production_units_total_estimate: (initial as any)?.production_units_total_estimate ?? '',
+        production_units_unit: (initial as any)?.production_units_unit ?? '',
         latitude: initial?.latitude ?? null,
         longitude: initial?.longitude ?? null,
         metadata: initial?.metadata ?? {},
@@ -400,8 +412,145 @@ export function AssetForm({
                             </Select>
                             <InputError message={form.errors.asset_user_id} />
                         </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.warranty')}</Label>
+                            <Select value={form.data.warranty_id || 'none'} onValueChange={(v) => form.setData('warranty_id', v === 'none' ? '' : v)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('common.select')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('common.none')}</SelectItem>
+                                    {meta.warranties.map((warranty) => (
+                                        <SelectItem key={warranty.id} value={String(warranty.id)}>
+                                            {warranty.name} ({warranty.duration_months} mo)
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.warranty_id} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.vendor_contract')}</Label>
+                            <Select value={form.data.vendor_contract_id || 'none'} onValueChange={(v) => form.setData('vendor_contract_id', v === 'none' ? '' : v)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('common.select')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('common.none')}</SelectItem>
+                                    {meta.vendorContracts.map((contract) => (
+                                        <SelectItem key={contract.id} value={String(contract.id)} disabled={contract.is_vendor_blacklisted}>
+                                            {(contract.title || contract.vendor_name) + (contract.contract_number ? ` (${contract.contract_number})` : '')}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={form.errors.vendor_contract_id} />
+                        </div>
                     </div>
                 )}
+            </Card>
+
+            <Card className="space-y-4 p-6">
+                <div className="font-medium">{t('assets.sections.financial')}</div>
+                <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-2">
+                        <Label htmlFor="purchase_date">{t('assets.fields.purchase_date')}</Label>
+                        <Input
+                            id="purchase_date"
+                            type="date"
+                            value={form.data.purchase_date}
+                            onChange={(e) => form.setData('purchase_date', e.target.value)}
+                        />
+                        <InputError message={form.errors.purchase_date} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="cost">{t('assets.fields.cost')}</Label>
+                        <Input
+                            id="cost"
+                            type="number"
+                            inputMode="decimal"
+                            value={form.data.cost}
+                            onChange={(e) => form.setData('cost', e.target.value)}
+                            min={0}
+                        />
+                        <InputError message={form.errors.cost} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>{t('assets.fields.depreciation_method')}</Label>
+                        <Select value={form.data.depreciation_method || 'none'} onValueChange={(v) => form.setData('depreciation_method', v === 'none' ? '' : v)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('common.select')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">{t('common.none')}</SelectItem>
+                                {['straight_line', 'diminishing', 'double_declining', 'syd', 'units_of_production'].map((m) => (
+                                    <SelectItem key={m} value={m}>
+                                        {t(`assets.depreciation_methods.${m}`)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <InputError message={form.errors.depreciation_method} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="useful_life_months">{t('assets.fields.useful_life_months')}</Label>
+                        <Input
+                            id="useful_life_months"
+                            type="number"
+                            inputMode="numeric"
+                            value={form.data.useful_life_months}
+                            onChange={(e) => form.setData('useful_life_months', e.target.value)}
+                            min={0}
+                        />
+                        <InputError message={form.errors.useful_life_months} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="residual_value">{t('assets.fields.residual_value')}</Label>
+                        <Input
+                            id="residual_value"
+                            type="number"
+                            inputMode="decimal"
+                            value={form.data.residual_value}
+                            onChange={(e) => form.setData('residual_value', e.target.value)}
+                            min={0}
+                        />
+                        <InputError message={form.errors.residual_value} />
+                    </div>
+                </div>
+
+                {form.data.depreciation_method === 'units_of_production' ? (
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid gap-2">
+                            <Label htmlFor="production_units_total_estimate">{t('assets.fields.production_units_total_estimate')}</Label>
+                            <Input
+                                id="production_units_total_estimate"
+                                type="number"
+                                inputMode="decimal"
+                                value={form.data.production_units_total_estimate}
+                                onChange={(e) => form.setData('production_units_total_estimate', e.target.value)}
+                                min={0}
+                            />
+                            <InputError message={(form.errors as any).production_units_total_estimate} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="production_units_unit">{t('assets.fields.production_units_unit')}</Label>
+                            <Input
+                                id="production_units_unit"
+                                value={form.data.production_units_unit}
+                                onChange={(e) => form.setData('production_units_unit', e.target.value)}
+                                placeholder="hours"
+                            />
+                            <InputError message={(form.errors as any).production_units_unit} />
+                        </div>
+                    </div>
+                ) : null}
             </Card>
 
             {relevantCustomFields.length > 0 ? (

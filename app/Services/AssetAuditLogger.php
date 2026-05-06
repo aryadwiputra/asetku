@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Asset;
+use App\Models\AssetDisposal;
 use App\Models\AssetHistory;
+use App\Models\AssetMaintenance;
 use App\Models\User;
 use Carbon\CarbonInterface;
 
@@ -165,6 +167,166 @@ class AssetAuditLogger
                 'movement_type' => $type,
                 'before' => $before,
                 'after' => $after,
+            ],
+        );
+    }
+
+    public function logWorkOrderCreated(Asset $asset, User $actor, AssetMaintenance $workOrder): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'work_order_created',
+            description: __('work_orders.history.created'),
+            performedAt: $workOrder->performed_at,
+            payload: [
+                'work_order_id' => $workOrder->id,
+                'type' => $workOrder->type,
+                'source' => $workOrder->source,
+                'priority' => $workOrder->priority,
+                'status' => $workOrder->status,
+            ],
+        );
+    }
+
+    public function logWorkOrderAssigned(Asset $asset, User $actor, AssetMaintenance $workOrder): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'work_order_assigned',
+            description: __('work_orders.history.assigned'),
+            performedAt: $workOrder->assigned_at,
+            payload: [
+                'work_order_id' => $workOrder->id,
+                'assigned_to' => $workOrder->assigned_to,
+                'assigned_at' => $workOrder->assigned_at,
+            ],
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>  $before
+     * @param  array<string, mixed>  $after
+     */
+    public function logWorkOrderProgressed(Asset $asset, User $actor, AssetMaintenance $workOrder, array $before, array $after): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'work_order_progressed',
+            description: __('work_orders.history.progressed'),
+            performedAt: null,
+            payload: [
+                'work_order_id' => $workOrder->id,
+                'before' => $before,
+                'after' => $after,
+            ],
+        );
+    }
+
+    public function logWorkOrderCompleted(Asset $asset, User $actor, AssetMaintenance $workOrder): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'work_order_completed',
+            description: __('work_orders.history.completed'),
+            performedAt: $workOrder->completed_at,
+            payload: [
+                'work_order_id' => $workOrder->id,
+                'completed_at' => $workOrder->completed_at,
+                'cost' => $workOrder->cost,
+            ],
+        );
+    }
+
+    public function logWorkOrderSlaEscalated(Asset $asset, User $actor, AssetMaintenance $workOrder, string $kind): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'work_order_sla_escalated',
+            description: __('work_orders.history.sla_escalated'),
+            performedAt: null,
+            payload: [
+                'work_order_id' => $workOrder->id,
+                'kind' => $kind,
+                'escalation_level' => $workOrder->escalation_level,
+                'response_due_at' => $workOrder->response_due_at,
+                'resolution_due_at' => $workOrder->resolution_due_at,
+            ],
+        );
+    }
+
+    public function logDisposalRequested(Asset $asset, User $actor, AssetDisposal $disposal): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposal_requested',
+            description: __('disposals.history.requested'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'type' => $disposal->type,
+                'currency_code' => $disposal->currency_code,
+                'net_proceeds_amount' => $disposal->net_proceeds_amount,
+                'book_value_at_disposal' => $disposal->book_value_at_disposal,
+                'gain_loss_amount' => $disposal->gain_loss_amount,
+                'notes' => $disposal->notes,
+            ],
+        );
+    }
+
+    public function logDisposalRejected(Asset $asset, User $actor, AssetDisposal $disposal, ?string $notes = null): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposal_rejected',
+            description: __('disposals.history.rejected'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'notes' => $notes,
+            ],
+        );
+    }
+
+    public function logDisposed(Asset $asset, User $actor, AssetDisposal $disposal): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'disposed',
+            description: __('disposals.history.executed'),
+            performedAt: $disposal->disposed_at,
+            payload: [
+                'disposal_id' => $disposal->id,
+                'type' => $disposal->type,
+                'currency_code' => $disposal->currency_code,
+                'net_proceeds_amount' => $disposal->net_proceeds_amount,
+                'book_value_at_disposal' => $disposal->book_value_at_disposal,
+                'gain_loss_amount' => $disposal->gain_loss_amount,
+                'executed_at' => $disposal->executed_at,
+            ],
+        );
+    }
+
+    public function logMaintenanceScheduleRescheduled(Asset $asset, User $actor, int $scheduleId, CarbonInterface $from, CarbonInterface $to, ?string $reason = null): void
+    {
+        $this->createHistory(
+            asset: $asset,
+            actor: $actor,
+            action: 'maintenance_schedule_rescheduled',
+            description: __('maintenance_calendar.history.schedule_rescheduled'),
+            performedAt: null,
+            payload: [
+                'schedule_id' => $scheduleId,
+                'before' => ['next_due_at' => $from->toDateString()],
+                'after' => ['next_due_at' => $to->toDateString()],
+                'reason' => $reason,
             ],
         );
     }

@@ -1,14 +1,19 @@
 <?php
 
 use App\Models\Asset;
+use App\Models\AssetDepreciationEntry;
+use App\Models\AssetDisposal;
+use App\Models\AssetMaintenance;
 use App\Models\AssetMedia;
 use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\OrganizationGroup;
+use App\Models\TechnicianProfile;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\DemoAssetDataSeeder;
 use Database\Seeders\DemoMasterDataSeeder;
+use Database\Seeders\DemoOperationsSeeder;
 use Illuminate\Support\Facades\Http;
 
 test('demo asset seeder creates organizations, assets, and photos', function () {
@@ -26,6 +31,7 @@ test('demo asset seeder creates organizations, assets, and photos', function () 
     $this->seed(DatabaseSeeder::class);
     $this->seed(DemoMasterDataSeeder::class);
     $this->seed(DemoAssetDataSeeder::class);
+    $this->seed(DemoOperationsSeeder::class);
 
     $group = OrganizationGroup::query()->where('slug', 'pt-maju-bersama')->first();
     expect($group)->not->toBeNull();
@@ -33,10 +39,29 @@ test('demo asset seeder creates organizations, assets, and photos', function () 
     expect(Organization::query()->where('organization_group_id', $group->id)->count())->toBe(3);
     expect(Organization::query()->count())->toBeGreaterThanOrEqual(3);
 
-    expect(Asset::query()->count())->toBeGreaterThan(0);
+    expect(Asset::withoutGlobalScopes()->count())->toBeGreaterThan(0);
     expect(MediaAsset::query()->count())->toBeGreaterThan(0);
 
-    expect(AssetMedia::query()->where('kind', 'photo')->count())->toBeGreaterThan(0);
+    expect(AssetMedia::withoutGlobalScopes()->where('kind', 'photo')->count())->toBeGreaterThan(0);
+    expect(AssetMedia::withoutGlobalScopes()->where('kind', 'document')->count())->toBeGreaterThan(0);
+
+    expect(TechnicianProfile::withoutGlobalScopes()->count())->toBeGreaterThan(0);
+    expect(AssetMaintenance::withoutGlobalScopes()->count())->toBeGreaterThan(0);
+
+    $overdue = AssetMaintenance::withoutGlobalScopes()
+        ->whereNotNull('response_due_at')
+        ->whereNull('acknowledged_at')
+        ->where('status', 'open')
+        ->where('response_due_at', '<', now())
+        ->count();
+    expect($overdue)->toBeGreaterThanOrEqual(1);
+
+    expect(AssetDepreciationEntry::withoutGlobalScopes()->count())->toBeGreaterThan(0);
+
+    expect(AssetDisposal::withoutGlobalScopes()->count())->toBeGreaterThan(0);
+    expect(AssetDisposal::withoutGlobalScopes()->where('status', 'pending')->count())->toBeGreaterThanOrEqual(1);
+    expect(AssetDisposal::withoutGlobalScopes()->where('status', 'executed')->count())->toBeGreaterThanOrEqual(1);
+    expect(Asset::withoutGlobalScopes()->whereNotNull('archived_at')->count())->toBeGreaterThanOrEqual(1);
 
     $platformSuperAdmin = User::query()->where('email', 'superadmin@example.com')->first();
     $platformAdmin = User::query()->where('email', 'admin@example.com')->first();

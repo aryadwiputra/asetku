@@ -103,6 +103,16 @@ class StoreAssetRequest extends FormRequest
                 'integer',
                 Rule::exists('asset_users', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
             ],
+            'warranty_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('warranties', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
+            ],
+            'vendor_contract_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('vendor_contracts', 'id')->where(fn ($query) => $query->where('organization_id', $organizationId)),
+            ],
 
             'purchase_date' => ['nullable', 'date'],
             'cost' => ['nullable', 'numeric', 'min:0'],
@@ -110,6 +120,8 @@ class StoreAssetRequest extends FormRequest
             'depreciation_method' => ['nullable', 'string', 'max:50'],
             'useful_life_months' => ['nullable', 'integer', 'min:0'],
             'residual_value' => ['nullable', 'numeric', 'min:0'],
+            'production_units_total_estimate' => ['nullable', 'numeric', 'min:0'],
+            'production_units_unit' => ['nullable', 'string', 'max:30'],
 
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],

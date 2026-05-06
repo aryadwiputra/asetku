@@ -51,6 +51,42 @@ return [
             'title' => 'General updates',
             'description' => 'Routine system updates and account activity.',
         ],
+        'assets_depreciation_residual_reached' => [
+            'title' => 'Asset reached residual value',
+            'description' => 'Notifies you when an asset book value has reached its residual value.',
+        ],
+        'assets_warranty_notifications_expiring_soon' => [
+            'title' => 'Asset warranty expiring soon',
+            'description' => 'Notifies you when an asset warranty is about to expire.',
+        ],
+        'vendor_contracts_notifications_expiring_soon' => [
+            'title' => 'Vendor contract expiring soon',
+            'description' => 'Notifies you when a vendor contract is about to expire.',
+        ],
+        'assets_work_orders_sla_response_breached' => [
+            'title' => 'Work order response SLA breached',
+            'description' => 'Notifies you when a work order response time has exceeded SLA.',
+        ],
+        'assets_work_orders_sla_resolution_breached' => [
+            'title' => 'Work order resolution SLA breached',
+            'description' => 'Notifies you when a work order resolution time has exceeded SLA.',
+        ],
+        'assets_work_orders_assigned' => [
+            'title' => 'Work order assigned',
+            'description' => 'Notifies you when a work order is assigned to you.',
+        ],
+        'maintenance_schedules_due_in_7_days' => [
+            'title' => 'Maintenance due in 7 days',
+            'description' => 'Notifies you 7 days before a maintenance schedule is due.',
+        ],
+        'maintenance_schedules_due_in_3_days' => [
+            'title' => 'Maintenance due in 3 days',
+            'description' => 'Notifies you 3 days before a maintenance schedule is due.',
+        ],
+        'maintenance_schedules_due_in_1_day' => [
+            'title' => 'Maintenance due in 1 day',
+            'description' => 'Notifies you 1 day before a maintenance schedule is due.',
+        ],
     ],
     'toast' => [
         'preferences_saved' => 'Notification preferences updated.',

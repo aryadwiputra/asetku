@@ -1,11 +1,10 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
-
 /**
 * @see \App\Http\Controllers\AssetLifecycleStatusController::store
-* @see app/Http/Controllers/AssetLifecycleStatusController.php
+* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
 * @route '/asset-lifecycle/{asset}/status'
 */
-export const store = (args: { asset: number | { id: number } } | [asset: number | { id: number }] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const store = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
@@ -15,7 +14,12 @@ store.definition = {
     url: '/asset-lifecycle/{asset}/status',
 } satisfies RouteDefinition<["post"]>
 
-store.url = (args: { asset: number | { id: number } } | [asset: number | { id: number }] | number | { id: number }, options?: RouteQueryOptions) => {
+/**
+* @see \App\Http\Controllers\AssetLifecycleStatusController::store
+* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
+* @route '/asset-lifecycle/{asset}/status'
+*/
+store.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { asset: args }
     }
@@ -25,34 +29,56 @@ store.url = (args: { asset: number | { id: number } } | [asset: number | { id: n
     }
 
     if (Array.isArray(args)) {
-        args = { asset: args[0] }
+        args = {
+            asset: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
-    const assetId = typeof args.asset === 'object' ? args.asset.id : args.asset
+    const parsedArgs = {
+        asset: typeof args.asset === 'object'
+        ? args.asset.id
+        : args.asset,
+    }
 
     return store.definition.url
-        .replace('{asset}', assetId.toString())
-        .replace(/\/+$/, '') + queryParams(options)
+            .replace('{asset}', parsedArgs.asset.toString())
+            .replace(/\/+$/, '') + queryParams(options)
 }
 
-store.post = (args: { asset: number | { id: number } } | [asset: number | { id: number }] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+/**
+* @see \App\Http\Controllers\AssetLifecycleStatusController::store
+* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
+* @route '/asset-lifecycle/{asset}/status'
+*/
+store.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(args, options),
     method: 'post',
 })
 
-const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number }] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+/**
+* @see \App\Http\Controllers\AssetLifecycleStatusController::store
+* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
+* @route '/asset-lifecycle/{asset}/status'
+*/
+const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
-storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number }] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+
+/**
+* @see \App\Http\Controllers\AssetLifecycleStatusController::store
+* @see app/Http/Controllers/AssetLifecycleStatusController.php:15
+* @route '/asset-lifecycle/{asset}/status'
+*/
+storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
     action: store.url(args, options),
     method: 'post',
 })
+
 store.form = storeForm
 
 const AssetLifecycleStatusController = { store }
 
 export default AssetLifecycleStatusController
-

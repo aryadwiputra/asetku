@@ -28,6 +28,8 @@ use Illuminate\Support\Str;
 
 class DemoAssetDataSeeder extends Seeder
 {
+    private const MINIMAL_PDF_BASE64 = 'JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQovQ29udGVudHMgNCAwIFIKL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA3NQo+PgpzdHJlYW0KQlQKL0YxIDI0IFRmCjUwIDEyMCBUZAooRGVtbyBBc2V0a3UpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PAovVHlwZSAvRm9udAovU3VidHlwZSAvVHlwZTEKL0Jhc2VGb250IC9IZWx2ZXRpY2EKPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMDY2IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDI4NCAwMDAwMCBuIAowMDAwMDAwNDQ1IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNTE0CiUlRU9G';
+
     /**
      * Wikimedia Commons stable URLs (Special:FilePath).
      *
@@ -176,8 +178,14 @@ class DemoAssetDataSeeder extends Seeder
                 ],
             );
 
+            $this->ensureAcquisitionDocument($asset, $uploadedBy);
+
             $hasPhoto = $asset->media()->where('kind', 'photo')->exists();
             if ($hasPhoto) {
+                continue;
+            }
+
+            if (! (bool) env('SEED_DEMO_MEDIA', true)) {
                 continue;
             }
 
@@ -239,8 +247,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 1000000,
                 'branch' => 'JKT',
                 'department' => 'IT-JKT',
-                'status' => 'ACTIVE',
-                'condition' => 'GOOD',
+                'status' => 'active',
+                'condition' => 'good',
                 'class' => 'IT',
                 'category' => 'IT-LAP',
                 'pic_email' => 'budi.santoso@example.com',
@@ -265,8 +273,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 2000000,
                 'branch' => 'JKT',
                 'department' => 'GA-JKT',
-                'status' => 'ACTIVE',
-                'condition' => 'ATTN',
+                'status' => 'active',
+                'condition' => 'needs_attention',
                 'class' => 'IT',
                 'category' => 'IT-PRN',
                 'pic_email' => 'siti.aisyah@example.com',
@@ -291,8 +299,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 5000000,
                 'branch' => 'JKT',
                 'department' => 'IT-JKT',
-                'status' => 'ACTIVE',
-                'condition' => 'GOOD',
+                'status' => 'active',
+                'condition' => 'good',
                 'class' => 'IT',
                 'category' => 'IT-NET',
                 'pic_email' => 'andi.wijaya@example.com',
@@ -319,8 +327,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 20000000,
                 'branch' => 'SBY',
                 'department' => 'GA-SBY',
-                'status' => 'ACTIVE',
-                'condition' => 'GOOD',
+                'status' => 'active',
+                'condition' => 'good',
                 'class' => 'VEH',
                 'category' => 'VEH-FLT',
                 'pic_email' => 'budi.santoso@example.com',
@@ -345,8 +353,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 50000000,
                 'branch' => 'SBY',
                 'department' => 'FIN-SBY',
-                'status' => 'BORROWED',
-                'condition' => 'ATTN',
+                'status' => 'borrowed',
+                'condition' => 'needs_attention',
                 'class' => 'VEH',
                 'category' => 'VEH-VAN',
                 'pic_email' => 'siti.aisyah@example.com',
@@ -373,8 +381,8 @@ class DemoAssetDataSeeder extends Seeder
                 'residual_value' => 0,
                 'branch' => 'BDG',
                 'department' => 'GA-BDG',
-                'status' => 'ACTIVE',
-                'condition' => 'GOOD',
+                'status' => 'active',
+                'condition' => 'good',
                 'class' => 'FURN',
                 'category' => 'FURN-CHR',
                 'pic_email' => 'andi.wijaya@example.com',
@@ -480,5 +488,51 @@ class DemoAssetDataSeeder extends Seeder
         }
 
         return $mediaAsset;
+    }
+
+    private function ensureAcquisitionDocument(Asset $asset, int $uploadedBy): void
+    {
+        $hasDoc = $asset->media()
+            ->where('kind', 'document')
+            ->where('stage', 'acquisition')
+            ->where('document_type', 'invoice')
+            ->exists();
+
+        if ($hasDoc) {
+            return;
+        }
+
+        $bytes = base64_decode(self::MINIMAL_PDF_BASE64, true);
+        if (! is_string($bytes) || $bytes === '') {
+            return;
+        }
+
+        $title = "{$asset->code} Invoice";
+        $fileName = Str::slug($asset->code.'-invoice').'.pdf';
+
+        $mediaAsset = $this->createMediaAssetFromBytes(
+            title: $title,
+            uploadedBy: $uploadedBy,
+            bytes: $bytes,
+            fileName: $fileName,
+        );
+
+        if (! $mediaAsset) {
+            return;
+        }
+
+        AssetMedia::query()->firstOrCreate(
+            [
+                'asset_id' => $asset->id,
+                'media_asset_id' => $mediaAsset->id,
+                'kind' => 'document',
+                'stage' => 'acquisition',
+                'document_type' => 'invoice',
+            ],
+            [
+                'sort_order' => 0,
+                'is_primary' => true,
+            ],
+        );
     }
 }

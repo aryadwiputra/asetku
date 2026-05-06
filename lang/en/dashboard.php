@@ -6,6 +6,11 @@ return [
     'welcome_back' => 'Welcome back, :name',
     'welcome_description' => "Here's your current overview.",
     'org_subtitle' => 'Overview for :organization',
+    'greeting' => [
+        'morning' => 'Good morning',
+        'afternoon' => 'Good afternoon',
+        'evening' => 'Good evening',
+    ],
     'kpis' => [
         'total_assets' => 'Total assets',
         'total_value' => 'Total value',
@@ -29,6 +34,7 @@ return [
     'labels' => [
         'asset_count' => ':count assets',
         'no_branch' => 'No branch',
+        'statuses' => 'statuses',
     ],
     'activity' => [
         'system' => 'System',

@@ -6,6 +6,11 @@ return [
     'welcome_back' => 'Selamat datang kembali, :name',
     'welcome_description' => 'Berikut ringkasan terbaru Anda.',
     'org_subtitle' => 'Ringkasan untuk :organization',
+    'greeting' => [
+        'morning' => 'Selamat pagi',
+        'afternoon' => 'Selamat siang',
+        'evening' => 'Selamat malam',
+    ],
     'kpis' => [
         'total_assets' => 'Total aset',
         'total_value' => 'Total nilai',
@@ -25,6 +30,7 @@ return [
     'labels' => [
         'asset_count' => ':count aset',
         'no_branch' => 'Tanpa cabang',
+        'statuses' => 'status',
     ],
     'activity' => [
         'system' => 'Sistem',
