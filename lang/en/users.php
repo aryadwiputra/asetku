@@ -54,7 +54,7 @@ return [
             'Owner' => 'Owner',
             'Admin' => 'Admin',
             'Manager' => 'Manager',
-            'Member' => 'Member',
+            'Member' => 'Staff',
         ],
         'submit' => 'Send invite',
     ],

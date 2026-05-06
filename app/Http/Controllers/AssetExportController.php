@@ -14,17 +14,12 @@ class AssetExportController extends Controller
 {
     public function export(DataTableRequest $request): BinaryFileResponse
     {
-        $this->authorize('viewAny', Asset::class);
+        $this->authorize('export', Asset::class);
 
         $user = $request->user();
         if ($user === null) {
             abort(401);
         }
-
-        $organizationId = $user->current_organization_id;
-        $isManager = $organizationId !== null && $user->hasOrganizationRole((int) $organizationId, ['Owner', 'Admin', 'Manager']);
-
-        abort_unless($user->can('asset.export') || $isManager, 403);
 
         $format = (string) $request->query('format', 'csv');
         $format = in_array($format, ['csv', 'excel', 'pdf'], true) ? $format : 'csv';

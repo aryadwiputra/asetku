@@ -27,6 +27,8 @@ test('dashboard includes common sidebar translations', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->has('organization')
             ->has('organizations')
+            ->where('orgRoleLabel', 'Owner')
+            ->has('moduleAbilities.assets')
             ->has('translations.common.workspace')
             ->has('translations.common.organizations')
             ->has('translations.common.branches')

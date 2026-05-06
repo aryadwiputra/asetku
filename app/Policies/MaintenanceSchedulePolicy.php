@@ -30,7 +30,11 @@ class MaintenanceSchedulePolicy
 
     public function view(User $user, MaintenanceSchedule $schedule): bool
     {
-        return $this->viewAny($user);
+        if ($user->can('maintenance_schedule.view_all')) {
+            return true;
+        }
+
+        return $this->viewAny($user) && $schedule->isVisibleTo($user);
     }
 
     public function create(User $user): bool

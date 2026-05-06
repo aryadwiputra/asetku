@@ -35,6 +35,7 @@ class MaintenanceCalendarEventsController extends Controller
         ];
 
         $query = MaintenanceSchedule::query()
+            ->visibleTo($request->user())
             ->with([
                 'asset:id,code,name,branch_id,asset_category_id',
                 'asset.branch:id,name,code',

@@ -100,7 +100,7 @@ feed.form = feedForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -115,7 +115,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,7 +134,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -144,7 +144,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:18
+* @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

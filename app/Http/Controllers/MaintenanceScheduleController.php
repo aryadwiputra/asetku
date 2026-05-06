@@ -26,6 +26,7 @@ class MaintenanceScheduleController extends Controller
         $filters = $request->filters();
 
         $query = MaintenanceSchedule::query()
+            ->visibleTo($request->user())
             ->with(['asset:id,code,name,branch_id', 'asset.branch:id,name,code', 'checklistTemplate:id,name'])
             ->when($filters['active'] ?? null, function (Builder $q, string $active): void {
                 if (! in_array($active, ['0', '1'], true)) {

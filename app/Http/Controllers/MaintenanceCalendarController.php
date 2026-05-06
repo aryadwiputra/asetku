@@ -7,7 +7,6 @@ use App\Models\Branch;
 use App\Models\MaintenanceSchedule;
 use App\Models\User;
 use App\Services\OrganizationContext;
-use App\Enums\OrganizationMemberRole;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,16 +21,6 @@ class MaintenanceCalendarController extends Controller
         $organizationId = app(OrganizationContext::class)->requireOrganizationId();
 
         $user = $request->user();
-        $canUpdate = false;
-
-        if ($user) {
-            $canUpdate = $user->can('maintenance_schedule.update')
-                || $user->hasOrganizationRole($organizationId, [
-                    OrganizationMemberRole::Owner,
-                    OrganizationMemberRole::Admin,
-                    OrganizationMemberRole::Manager,
-                ]);
-        }
 
         return Inertia::render('maintenance-calendar/index', [
             'meta' => [
@@ -51,7 +40,7 @@ class MaintenanceCalendarController extends Controller
             ],
             'abilities' => [
                 'canCreateSchedule' => $user ? $user->can('create', MaintenanceSchedule::class) : false,
-                'canUpdateSchedule' => $canUpdate,
+                'canUpdateSchedule' => $user ? $user->can('update', new MaintenanceSchedule(['organization_id' => $organizationId])) : false,
             ],
         ]);
     }

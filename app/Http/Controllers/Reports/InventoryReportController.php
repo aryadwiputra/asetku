@@ -13,6 +13,7 @@ use App\Models\Department;
 use App\Queries\AssetListQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,15 +21,12 @@ class InventoryReportController extends Controller
 {
     public function index(DataTableRequest $request): Response
     {
+        Gate::authorize('viewInventoryReport');
+
         $user = $request->user();
         if ($user === null) {
             abort(401);
         }
-
-        $organizationId = $user->current_organization_id;
-        $isMember = $organizationId !== null && $user->hasOrganizationRole((int) $organizationId, ['Owner', 'Admin', 'Manager', 'Member']);
-
-        abort_unless($user->can('report_inventory.view') || $isMember, 403);
 
         $search = $request->searchQuery();
         $filters = $this->normalizeFilters($request->filters(), $request);
@@ -49,7 +47,7 @@ class InventoryReportController extends Controller
             ],
             'abilities' => [
                 'view' => true,
-                'export' => $user->can('report_inventory.export') || $user->can('asset.export') || ($organizationId !== null && $user->hasOrganizationRole((int) $organizationId, ['Owner', 'Admin', 'Manager'])),
+                'export' => Gate::forUser($user)->allows('exportInventoryReport'),
             ],
         ]);
     }

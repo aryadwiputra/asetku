@@ -4,6 +4,7 @@ use App\Models\Asset;
 use App\Models\AssetHistory;
 use App\Models\Branch;
 use App\Models\CalendarFeed;
+use App\Models\Department;
 use App\Models\MaintenanceSchedule;
 use App\Models\MaintenanceScheduleReminder;
 use App\Models\Organization;
@@ -96,6 +97,74 @@ test('events endpoint generates occurrences and supports filters', function () {
         ]))
         ->assertOk()
         ->assertJsonCount(0);
+});
+
+test('events endpoint only returns schedules for visible assets', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+    $visibleDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'IT',
+        'name' => 'IT',
+    ]);
+    $hiddenDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'OPS',
+        'name' => 'Operations',
+    ]);
+
+    $staff = User::factory()->inOrganization($organization, role: 'Member')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+        'department_id' => $visibleDepartment->id,
+    ]);
+
+    $visibleAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-CAL-005',
+        'name' => 'Visible Calendar Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $visibleDepartment->id,
+    ]);
+
+    $hiddenAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-CAL-006',
+        'name' => 'Hidden Calendar Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $hiddenDepartment->id,
+    ]);
+
+    MaintenanceSchedule::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $visibleAsset->id,
+        'name' => 'Visible Weekly PM',
+        'interval_days' => 7,
+        'next_due_at' => CarbonImmutable::parse('2026-04-01')->toDateString(),
+        'is_active' => true,
+    ]);
+
+    MaintenanceSchedule::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $hiddenAsset->id,
+        'name' => 'Hidden Weekly PM',
+        'interval_days' => 7,
+        'next_due_at' => CarbonImmutable::parse('2026-04-01')->toDateString(),
+        'is_active' => true,
+    ]);
+
+    actingAs($staff)
+        ->get(route('maintenance-calendar.events', [
+            'start' => '2026-04-01',
+            'end' => '2026-05-01',
+        ]))
+        ->assertOk()
+        ->assertJsonCount(5)
+        ->assertJsonMissing(['title' => 'AST-CAL-006 • Hidden Weekly PM']);
 });
 
 test('reschedule endpoint updates next_due_at and records audit history', function () {

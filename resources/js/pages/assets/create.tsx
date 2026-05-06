@@ -9,10 +9,12 @@ import { AssetForm, type AssetFormMeta } from '@/pages/assets/_asset-form';
 type Props = AssetFormMeta;
 
 export default function CreateAsset(props: Props) {
-    const { permissions, orgRole } = usePage().props as { permissions: string[]; orgRole: string | null };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities: { assets: { update: boolean } };
+    };
     const { t } = useTranslation();
 
-    const canOverrideCode = permissions.includes('asset.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canOverrideCode = moduleAbilities.assets.update;
 
     return (
         <>

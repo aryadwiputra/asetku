@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\OrganizationMemberRole;
 use App\Models\Concerns\BelongsToOrganization;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -142,5 +144,58 @@ class AssetMaintenance extends Model
     public function approval(): MorphOne
     {
         return $this->morphOne(AssetApprovalRequest::class, 'approvable');
+    }
+
+    public function scopeVisibleTo(Builder $query, ?User $user): Builder
+    {
+        if ($user === null) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($this->canViewAllForUser($user)) {
+            return $query;
+        }
+
+        return $query->where(function (Builder $visibleQuery) use ($user): void {
+            $visibleQuery
+                ->where('assigned_to', $user->id)
+                ->orWhereHas('asset', fn (Builder $assetQuery) => $assetQuery->forUser($user));
+        });
+    }
+
+    public function isVisibleTo(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        if ($this->canViewAllForUser($user)) {
+            return true;
+        }
+
+        if ($this->assigned_to !== null && (int) $this->assigned_to === (int) $user->id) {
+            return true;
+        }
+
+        return $this->asset?->isVisibleTo($user) ?? false;
+    }
+
+    private function canViewAllForUser(User $user): bool
+    {
+        if ($user->can('work_order.view_all')) {
+            return true;
+        }
+
+        $organizationId = $user->current_organization_id;
+
+        if ($organizationId === null) {
+            return false;
+        }
+
+        return $user->hasOrganizationRole((int) $organizationId, [
+            OrganizationMemberRole::Owner,
+            OrganizationMemberRole::Admin,
+            OrganizationMemberRole::Manager,
+        ]);
     }
 }

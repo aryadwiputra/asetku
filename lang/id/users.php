@@ -54,7 +54,7 @@ return [
             'Owner' => 'Pemilik',
             'Admin' => 'Admin',
             'Manager' => 'Manajer',
-            'Member' => 'Anggota',
+            'Member' => 'Staf',
         ],
         'submit' => 'Kirim undangan',
     ],

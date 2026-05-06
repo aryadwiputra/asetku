@@ -29,7 +29,7 @@ export function OrganizationSwitcherMenu({ variant, onAfterSelect }: Props) {
     const { t } = useTranslation();
     const { organization, organizations, orgAbilities } = usePage().props as {
         organization: { id: number; name: string } | null;
-        organizations: Array<{ id: number; name: string; slug: string; role: string | null; is_active: boolean }>;
+        organizations: Array<{ id: number; name: string; slug: string; role: string | null; role_label?: string | null; is_active: boolean }>;
         orgAbilities: { organizations: { create: boolean } };
     };
 
@@ -52,8 +52,8 @@ export function OrganizationSwitcherMenu({ variant, onAfterSelect }: Props) {
             return null;
         }
 
-        return t(`common.org_roles.${role}`);
-    }, [currentOrganization?.role, t]);
+        return currentOrganization?.role_label ?? t(`common.org_roles.${role}`);
+    }, [currentOrganization?.role_label, currentOrganization?.role, t]);
 
     const filteredOrganizations = useMemo(() => {
         const query = orgSearch.trim().toLowerCase();
@@ -102,7 +102,7 @@ export function OrganizationSwitcherMenu({ variant, onAfterSelect }: Props) {
                 ) : (
                     filteredOrganizations.map((org) => {
                         const isCurrent = organization?.id === org.id;
-                        const roleLabel = org.role === null ? null : t(`common.org_roles.${org.role}`);
+                        const roleLabel = org.role === null ? null : (org.role_label ?? t(`common.org_roles.${org.role}`));
 
                         return (
                             <DropdownMenuItem

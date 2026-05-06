@@ -2,14 +2,17 @@
 
 namespace App\Inertia;
 
+use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\AssetClass;
 use App\Models\AssetCondition;
 use App\Models\AssetLocation;
+use App\Models\AssetMaintenance;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
 use App\Models\Branch;
 use App\Models\Department;
+use App\Models\MaintenanceSchedule;
 use App\Models\Organization;
 use App\Models\PersonInCharge;
 use App\Models\Unit;
@@ -56,6 +59,7 @@ class SharedProps
                     'name' => $org->name,
                     'slug' => $org->slug,
                     'role' => $org->pivot?->role,
+                    'role_label' => $org->pivot?->role ? __('common.org_roles.'.$org->pivot->role) : null,
                     'is_active' => (bool) $org->is_active,
                 ])
                 ->all()
@@ -72,6 +76,8 @@ class SharedProps
             }
         }
 
+        $orgRoleLabel = $currentOrganizationRole ? __('common.org_roles.'.$currentOrganizationRole) : null;
+
         $orgAbilities = [
             'organizations' => [
                 'create' => $user ? $user->can('organization.create') : false,
@@ -83,6 +89,36 @@ class SharedProps
                 'create' => $user ? Gate::forUser($user)->allows('create', Branch::class) : false,
                 'update' => $user ? Gate::forUser($user)->allows('update', new Branch) : false,
                 'deactivate' => $user ? Gate::forUser($user)->allows('deactivate', new Branch) : false,
+            ],
+        ];
+
+        $moduleAbilities = [
+            'assets' => [
+                'view' => $user ? Gate::forUser($user)->allows('viewAny', Asset::class) : false,
+                'create' => $user ? Gate::forUser($user)->allows('create', Asset::class) : false,
+                'update' => $user && $organizationId !== null ? Gate::forUser($user)->allows('update', new Asset(['organization_id' => $organizationId])) : false,
+                'delete' => $user && $organizationId !== null ? Gate::forUser($user)->allows('delete', new Asset(['organization_id' => $organizationId])) : false,
+                'import' => $user ? Gate::forUser($user)->allows('import', Asset::class) : false,
+                'export' => $user ? Gate::forUser($user)->allows('export', Asset::class) : false,
+            ],
+            'workOrders' => [
+                'viewIndex' => $user ? Gate::forUser($user)->allows('viewAny', AssetMaintenance::class) : false,
+                'viewAssigned' => $user ? Gate::forUser($user)->allows('viewAny', AssetMaintenance::class) : false,
+                'create' => $user ? Gate::forUser($user)->allows('create', AssetMaintenance::class) : false,
+                'update' => $user && $organizationId !== null ? Gate::forUser($user)->allows('update', new AssetMaintenance(['organization_id' => $organizationId])) : false,
+                'updateProgress' => $user && $organizationId !== null ? Gate::forUser($user)->allows('updateProgress', new AssetMaintenance(['organization_id' => $organizationId])) : false,
+                'delete' => $user && $organizationId !== null ? Gate::forUser($user)->allows('delete', new AssetMaintenance(['organization_id' => $organizationId])) : false,
+            ],
+            'maintenanceSchedules' => [
+                'view' => $user ? Gate::forUser($user)->allows('viewAny', MaintenanceSchedule::class) : false,
+                'create' => $user ? Gate::forUser($user)->allows('create', MaintenanceSchedule::class) : false,
+                'update' => $user && $organizationId !== null ? Gate::forUser($user)->allows('update', new MaintenanceSchedule(['organization_id' => $organizationId])) : false,
+                'delete' => $user && $organizationId !== null ? Gate::forUser($user)->allows('delete', new MaintenanceSchedule(['organization_id' => $organizationId])) : false,
+                'reschedule' => $user && $organizationId !== null ? Gate::forUser($user)->allows('update', new MaintenanceSchedule(['organization_id' => $organizationId])) : false,
+            ],
+            'reports' => [
+                'inventoryView' => $user ? Gate::forUser($user)->allows('viewInventoryReport') : false,
+                'inventoryExport' => $user ? Gate::forUser($user)->allows('exportInventoryReport') : false,
             ],
         ];
 
@@ -170,7 +206,9 @@ class SharedProps
             'organization' => $currentOrganization,
             'organizations' => $organizations,
             'orgRole' => $currentOrganizationRole,
+            'orgRoleLabel' => $orgRoleLabel,
             'orgAbilities' => $orgAbilities,
+            'moduleAbilities' => $moduleAbilities,
             'masterDataAbilities' => $masterDataAbilities,
             'permissions' => $user ? $user->getAllPermissions()->pluck('name')->toArray() : [],
             'roles' => $user ? $user->getRoleNames()->toArray() : [],
@@ -220,12 +258,20 @@ declare module '@inertiajs/core' {
                 name: string;
                 slug: string;
                 role: string | null;
+                role_label?: string | null;
                 is_active: boolean;
             }>;
             orgRole: string | null;
+            orgRoleLabel: string | null;
             orgAbilities: {
                 organizations: { create: boolean; update: boolean; deactivate: boolean };
                 branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
+            };
+            moduleAbilities: {
+                assets: { view: boolean; create: boolean; update: boolean; delete: boolean; import: boolean; export: boolean };
+                workOrders: { viewIndex: boolean; viewAssigned: boolean; create: boolean; update: boolean; updateProgress: boolean; delete: boolean };
+                maintenanceSchedules: { view: boolean; create: boolean; update: boolean; delete: boolean; reschedule: boolean };
+                reports: { inventoryView: boolean; inventoryExport: boolean };
             };
             masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
             permissions: string[];

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\SmsSender;
+use App\Enums\OrganizationMemberRole;
 use App\Listeners\ApplyNotificationPreferences;
 use App\Listeners\RecordFailedLogin;
 use App\Listeners\RecordLogout;
@@ -176,6 +177,43 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('viewApiDocs', function ($user): bool {
             return $user->hasRole('admin');
+        });
+
+        Gate::define('viewInventoryReport', function (User $user): bool {
+            if ($user->can('report_inventory.view')) {
+                return true;
+            }
+
+            $organizationId = $user->current_organization_id;
+
+            if ($organizationId === null) {
+                return false;
+            }
+
+            return $user->hasOrganizationRole((int) $organizationId, [
+                OrganizationMemberRole::Owner,
+                OrganizationMemberRole::Admin,
+                OrganizationMemberRole::Manager,
+                OrganizationMemberRole::Member,
+            ]);
+        });
+
+        Gate::define('exportInventoryReport', function (User $user): bool {
+            if ($user->can('report_inventory.export') || $user->can('asset.export')) {
+                return true;
+            }
+
+            $organizationId = $user->current_organization_id;
+
+            if ($organizationId === null) {
+                return false;
+            }
+
+            return $user->hasOrganizationRole((int) $organizationId, [
+                OrganizationMemberRole::Owner,
+                OrganizationMemberRole::Admin,
+                OrganizationMemberRole::Manager,
+            ]);
         });
 
         Gate::before(function ($user, $ability) {

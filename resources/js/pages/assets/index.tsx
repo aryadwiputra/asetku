@@ -80,19 +80,20 @@ type Props = {
 };
 
 export default function AssetsIndex({ items, summary, savedFilters, filtersMeta }: Props) {
-    const { permissions, orgRole, organization, locale } = usePage().props as {
-        permissions: string[];
-        orgRole: string | null;
+    const { moduleAbilities, organization, locale } = usePage().props as {
+        moduleAbilities: {
+            assets: { create: boolean; update: boolean; delete: boolean; export: boolean };
+        };
         organization: { currency_code: string } | null;
         locale: string;
     };
     const pageUrl = usePage().url;
     const { t } = useTranslation();
 
-    const canCreate = permissions.includes('asset.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
-    const canUpdate = permissions.includes('asset.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
-    const canDelete = permissions.includes('asset.delete') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
-    const canExport = permissions.includes('asset.export') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canCreate = moduleAbilities.assets.create;
+    const canUpdate = moduleAbilities.assets.update;
+    const canDelete = moduleAbilities.assets.delete;
+    const canExport = moduleAbilities.assets.export;
 
     const [costMin, setCostMin] = useState<string>('');
     const [costMax, setCostMax] = useState<string>('');

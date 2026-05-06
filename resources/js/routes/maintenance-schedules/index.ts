@@ -172,7 +172,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -187,7 +187,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -196,7 +196,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -206,7 +206,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -216,7 +216,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -226,7 +226,7 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -236,7 +236,7 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::create
-* @see app/Http/Controllers/MaintenanceScheduleController.php:62
+* @see app/Http/Controllers/MaintenanceScheduleController.php:63
 * @route '/maintenance-schedules/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -253,7 +253,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:101
+* @see app/Http/Controllers/MaintenanceScheduleController.php:102
 * @route '/maintenance-schedules'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -268,7 +268,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:101
+* @see app/Http/Controllers/MaintenanceScheduleController.php:102
 * @route '/maintenance-schedules'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -277,7 +277,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:101
+* @see app/Http/Controllers/MaintenanceScheduleController.php:102
 * @route '/maintenance-schedules'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -287,7 +287,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:101
+* @see app/Http/Controllers/MaintenanceScheduleController.php:102
 * @route '/maintenance-schedules'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -297,7 +297,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::store
-* @see app/Http/Controllers/MaintenanceScheduleController.php:101
+* @see app/Http/Controllers/MaintenanceScheduleController.php:102
 * @route '/maintenance-schedules'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -309,7 +309,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 export const edit = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -324,7 +324,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -357,7 +357,7 @@ edit.url = (args: { schedule: number | { id: number } } | [schedule: number | { 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -367,7 +367,7 @@ edit.get = (args: { schedule: number | { id: number } } | [schedule: number | { 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 edit.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -377,7 +377,7 @@ edit.head = (args: { schedule: number | { id: number } } | [schedule: number | {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 const editForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -387,7 +387,7 @@ const editForm = (args: { schedule: number | { id: number } } | [schedule: numbe
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 editForm.get = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -397,7 +397,7 @@ editForm.get = (args: { schedule: number | { id: number } } | [schedule: number 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::edit
-* @see app/Http/Controllers/MaintenanceScheduleController.php:128
+* @see app/Http/Controllers/MaintenanceScheduleController.php:129
 * @route '/maintenance-schedules/{schedule}/edit'
 */
 editForm.head = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -414,7 +414,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 export const update = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -429,7 +429,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 update.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -462,7 +462,7 @@ update.url = (args: { schedule: number | { id: number } } | [schedule: number | 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 update.put = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -472,7 +472,7 @@ update.put = (args: { schedule: number | { id: number } } | [schedule: number | 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 update.patch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -482,7 +482,7 @@ update.patch = (args: { schedule: number | { id: number } } | [schedule: number 
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 const updateForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -497,7 +497,7 @@ const updateForm = (args: { schedule: number | { id: number } } | [schedule: num
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 updateForm.put = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -512,7 +512,7 @@ updateForm.put = (args: { schedule: number | { id: number } } | [schedule: numbe
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleController.php:150
+* @see app/Http/Controllers/MaintenanceScheduleController.php:151
 * @route '/maintenance-schedules/{schedule}'
 */
 updateForm.patch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -529,7 +529,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:175
+* @see app/Http/Controllers/MaintenanceScheduleController.php:176
 * @route '/maintenance-schedules/{schedule}'
 */
 export const destroy = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -544,7 +544,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:175
+* @see app/Http/Controllers/MaintenanceScheduleController.php:176
 * @route '/maintenance-schedules/{schedule}'
 */
 destroy.url = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -577,7 +577,7 @@ destroy.url = (args: { schedule: number | { id: number } } | [schedule: number |
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:175
+* @see app/Http/Controllers/MaintenanceScheduleController.php:176
 * @route '/maintenance-schedules/{schedule}'
 */
 destroy.delete = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -587,7 +587,7 @@ destroy.delete = (args: { schedule: number | { id: number } } | [schedule: numbe
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:175
+* @see app/Http/Controllers/MaintenanceScheduleController.php:176
 * @route '/maintenance-schedules/{schedule}'
 */
 const destroyForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -602,7 +602,7 @@ const destroyForm = (args: { schedule: number | { id: number } } | [schedule: nu
 
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleController::destroy
-* @see app/Http/Controllers/MaintenanceScheduleController.php:175
+* @see app/Http/Controllers/MaintenanceScheduleController.php:176
 * @route '/maintenance-schedules/{schedule}'
 */
 destroyForm.delete = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

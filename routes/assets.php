@@ -20,11 +20,11 @@ use App\Http\Controllers\DepreciationAssetController;
 use App\Http\Controllers\DepreciationController;
 use App\Http\Controllers\DepreciationExportController;
 use App\Http\Controllers\DepreciationRunController;
-use App\Http\Controllers\MaintenanceChecklistController;
 use App\Http\Controllers\MaintenanceCalendarController;
 use App\Http\Controllers\MaintenanceCalendarEventsController;
 use App\Http\Controllers\MaintenanceCalendarFeedController;
 use App\Http\Controllers\MaintenanceCalendarFeedTokenController;
+use App\Http\Controllers\MaintenanceChecklistController;
 use App\Http\Controllers\MaintenanceScheduleController;
 use App\Http\Controllers\MaintenanceScheduleRescheduleController;
 use App\Http\Controllers\QrController;
@@ -34,6 +34,8 @@ use App\Http\Controllers\WorkOrderAttachmentController;
 use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\WorkOrderCostLineController;
 use App\Http\Controllers\WorkOrderTaskController;
+use App\Models\Asset;
+use App\Models\MaintenanceSchedule;
 use Illuminate\Support\Facades\Route;
 
 // Public QR & scan
@@ -43,8 +45,12 @@ Route::get('calendars/maintenance/{token}.ics', [MaintenanceCalendarFeedControll
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('maintenance-calendar', [MaintenanceCalendarController::class, 'index'])->name('maintenance-calendar.index');
-    Route::get('maintenance-calendar/events', [MaintenanceCalendarEventsController::class, 'index'])->name('maintenance-calendar.events');
-    Route::post('maintenance-calendar/feed-token', [MaintenanceCalendarFeedTokenController::class, 'store'])->name('maintenance-calendar.feed-token');
+    Route::get('maintenance-calendar/events', [MaintenanceCalendarEventsController::class, 'index'])
+        ->can('viewAny', MaintenanceSchedule::class)
+        ->name('maintenance-calendar.events');
+    Route::post('maintenance-calendar/feed-token', [MaintenanceCalendarFeedTokenController::class, 'store'])
+        ->can('viewAny', MaintenanceSchedule::class)
+        ->name('maintenance-calendar.feed-token');
 
     Route::resource('assets', AssetController::class);
     Route::resource('vendor-contracts', VendorContractController::class);
@@ -84,16 +90,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('assets/{asset}/warranty-claims/{claim}', [AssetWarrantyClaimController::class, 'update'])->name('assets.warranty-claims.update');
 
     Route::get('assets-labels/print', [AssetLabelController::class, 'print'])->name('assets.labels.print');
-    Route::get('assets-export', [AssetExportController::class, 'export'])->name('assets.export');
+    Route::get('assets-export', [AssetExportController::class, 'export'])
+        ->can('export', Asset::class)
+        ->name('assets.export');
 
     Route::post('assets-saved-filters', [AssetSavedFilterController::class, 'store'])->name('assets.saved-filters.store');
     Route::patch('assets-saved-filters/{savedFilter}', [AssetSavedFilterController::class, 'update'])->name('assets.saved-filters.update');
     Route::delete('assets-saved-filters/{savedFilter}', [AssetSavedFilterController::class, 'destroy'])->name('assets.saved-filters.destroy');
 
-    Route::get('assets-import', [AssetImportController::class, 'index'])->name('assets.import.index');
-    Route::post('assets-import/validate', [AssetImportController::class, 'validateFile'])->name('assets.import.validate');
-    Route::post('assets-import/{importRun}/apply', [AssetImportController::class, 'apply'])->name('assets.import.apply');
-    Route::post('assets-import/photos-zip', [AssetImportController::class, 'importPhotosZip'])->name('assets.import.photos-zip');
+    Route::get('assets-import', [AssetImportController::class, 'index'])
+        ->can('import', Asset::class)
+        ->name('assets.import.index');
+    Route::post('assets-import/validate', [AssetImportController::class, 'validateFile'])
+        ->can('import', Asset::class)
+        ->name('assets.import.validate');
+    Route::post('assets-import/{importRun}/apply', [AssetImportController::class, 'apply'])
+        ->can('import', Asset::class)
+        ->name('assets.import.apply');
+    Route::post('assets-import/photos-zip', [AssetImportController::class, 'importPhotosZip'])
+        ->can('import', Asset::class)
+        ->name('assets.import.photos-zip');
 
     // Work orders (asset maintenance)
     Route::get('work-orders/my', [WorkOrderController::class, 'my'])->name('work-orders.my');

@@ -48,9 +48,11 @@ type Props = {
 
 export default function WorkOrdersIndex({ items, filtersMeta }: Props) {
     const { t } = useTranslation();
-    const { orgRole, permissions } = usePage().props as { orgRole: string | null; permissions: string[] };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities: { workOrders: { create: boolean } };
+    };
 
-    const canCreate = permissions.includes('work_order.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canCreate = moduleAbilities.workOrders.create;
 
     const columns: DataTableColumn<Row>[] = [
         {

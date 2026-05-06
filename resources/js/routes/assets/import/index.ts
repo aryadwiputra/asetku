@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AssetImportController::validate
-* @see app/Http/Controllers/AssetImportController.php:40
+* @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
 */
 export const validate = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ validate.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetImportController::validate
-* @see app/Http/Controllers/AssetImportController.php:40
+* @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
 */
 validate.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ validate.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AssetImportController::validate
-* @see app/Http/Controllers/AssetImportController.php:40
+* @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
 */
 validate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ validate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetImportController::validate
-* @see app/Http/Controllers/AssetImportController.php:40
+* @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
 */
 const validateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const validateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> 
 
 /**
 * @see \App\Http\Controllers\AssetImportController::validate
-* @see app/Http/Controllers/AssetImportController.php:40
+* @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
 */
 validateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -138,7 +138,7 @@ validate.form = validateForm
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
-* @see app/Http/Controllers/AssetImportController.php:78
+* @see app/Http/Controllers/AssetImportController.php:69
 * @route '/assets-import/{importRun}/apply'
 */
 export const apply = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -153,7 +153,7 @@ apply.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
-* @see app/Http/Controllers/AssetImportController.php:78
+* @see app/Http/Controllers/AssetImportController.php:69
 * @route '/assets-import/{importRun}/apply'
 */
 apply.url = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -186,7 +186,7 @@ apply.url = (args: { importRun: number | { id: number } } | [importRun: number |
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
-* @see app/Http/Controllers/AssetImportController.php:78
+* @see app/Http/Controllers/AssetImportController.php:69
 * @route '/assets-import/{importRun}/apply'
 */
 apply.post = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -196,7 +196,7 @@ apply.post = (args: { importRun: number | { id: number } } | [importRun: number 
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
-* @see app/Http/Controllers/AssetImportController.php:78
+* @see app/Http/Controllers/AssetImportController.php:69
 * @route '/assets-import/{importRun}/apply'
 */
 const applyForm = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -206,7 +206,7 @@ const applyForm = (args: { importRun: number | { id: number } } | [importRun: nu
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
-* @see app/Http/Controllers/AssetImportController.php:78
+* @see app/Http/Controllers/AssetImportController.php:69
 * @route '/assets-import/{importRun}/apply'
 */
 applyForm.post = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -218,7 +218,7 @@ apply.form = applyForm
 
 /**
 * @see \App\Http\Controllers\AssetImportController::photosZip
-* @see app/Http/Controllers/AssetImportController.php:103
+* @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
 */
 export const photosZip = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -233,7 +233,7 @@ photosZip.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetImportController::photosZip
-* @see app/Http/Controllers/AssetImportController.php:103
+* @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
 */
 photosZip.url = (options?: RouteQueryOptions) => {
@@ -242,7 +242,7 @@ photosZip.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AssetImportController::photosZip
-* @see app/Http/Controllers/AssetImportController.php:103
+* @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
 */
 photosZip.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -252,7 +252,7 @@ photosZip.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetImportController::photosZip
-* @see app/Http/Controllers/AssetImportController.php:103
+* @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
 */
 const photosZipForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -262,7 +262,7 @@ const photosZipForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'>
 
 /**
 * @see \App\Http\Controllers\AssetImportController::photosZip
-* @see app/Http/Controllers/AssetImportController.php:103
+* @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
 */
 photosZipForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

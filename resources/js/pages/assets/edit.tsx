@@ -13,10 +13,12 @@ type Props = AssetFormMeta & {
 };
 
 export default function EditAsset({ asset, ...meta }: Props) {
-    const { permissions, orgRole } = usePage().props as { permissions: string[]; orgRole: string | null };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities: { assets: { update: boolean } };
+    };
     const { t } = useTranslation();
 
-    const canOverrideCode = permissions.includes('asset.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canOverrideCode = moduleAbilities.assets.update;
 
     const initial: Partial<AssetFormData> = {
         code: asset.code ?? '',

@@ -4,6 +4,7 @@ use App\Models\Asset;
 use App\Models\AssetHistory;
 use App\Models\AssetMedia;
 use App\Models\Branch;
+use App\Models\Department;
 use App\Models\MediaAsset;
 use App\Models\Organization;
 use App\Models\User;
@@ -207,6 +208,72 @@ test('assets export returns a download response', function () {
         ->get(route('assets.export', ['format' => 'csv']))
         ->assertOk()
         ->assertDownload();
+});
+
+test('staff only sees scoped assets and cannot open unrelated assets', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+    $visibleDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'IT',
+        'name' => 'IT',
+    ]);
+    $hiddenDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'OPS',
+        'name' => 'Operations',
+    ]);
+
+    $staff = User::factory()->inOrganization($organization, role: 'Member')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+        'department_id' => $visibleDepartment->id,
+    ]);
+
+    $visibleAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-SCP-0001',
+        'name' => 'Visible Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $visibleDepartment->id,
+    ]);
+
+    $hiddenAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-SCP-0002',
+        'name' => 'Hidden Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $hiddenDepartment->id,
+    ]);
+
+    actingAs($staff)
+        ->get(route('assets.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('summary.total_count', 1)
+            ->has('items.data', 1)
+            ->where('items.data.0.id', $visibleAsset->id)
+        );
+
+    actingAs($staff)->get(route('assets.show', $visibleAsset))->assertOk();
+    actingAs($staff)->get(route('assets.show', $hiddenAsset))->assertForbidden();
+});
+
+test('staff cannot access asset import or export endpoints by default', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $staff = User::factory()->inOrganization($organization, role: 'Member')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    actingAs($staff)->get(route('assets.import.index'))->assertForbidden();
+    actingAs($staff)->get(route('assets.export', ['format' => 'csv']))->assertForbidden();
 });
 
 test('asset labels print page loads', function () {

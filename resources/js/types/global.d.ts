@@ -22,12 +22,20 @@ declare module '@inertiajs/core' {
                 name: string;
                 slug: string;
                 role: string | null;
+                role_label?: string | null;
                 is_active: boolean;
             }>;
             orgRole: string | null;
+            orgRoleLabel: string | null;
             orgAbilities: {
                 organizations: { create: boolean; update: boolean; deactivate: boolean };
                 branches: { view: boolean; create: boolean; update: boolean; deactivate: boolean };
+            };
+            moduleAbilities: {
+                assets: { view: boolean; create: boolean; update: boolean; delete: boolean; import: boolean; export: boolean };
+                workOrders: { viewIndex: boolean; viewAssigned: boolean; create: boolean; update: boolean; updateProgress: boolean; delete: boolean };
+                maintenanceSchedules: { view: boolean; create: boolean; update: boolean; delete: boolean; reschedule: boolean };
+                reports: { inventoryView: boolean; inventoryExport: boolean };
             };
             masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
             permissions: string[];

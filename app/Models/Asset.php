@@ -235,7 +235,7 @@ class Asset extends Model
             return $query;
         }
 
-        if ($user->can('assets.view_all')) {
+        if ($this->canViewAllForUser($user)) {
             return $query;
         }
 
@@ -262,7 +262,7 @@ class Asset extends Model
             return false;
         }
 
-        if ($user->can('assets.view_all')) {
+        if ($this->canViewAllForUser($user)) {
             return true;
         }
 
@@ -274,6 +274,11 @@ class Asset extends Model
         }
 
         return $departmentMatch || $locationMatch;
+    }
+
+    private function canViewAllForUser(User $user): bool
+    {
+        return $user->can('asset.view_all') || $user->can('assets.view_all');
     }
 
     public function bookValue(?Carbon $asOf = null): float

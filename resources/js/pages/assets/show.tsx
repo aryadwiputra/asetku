@@ -107,16 +107,17 @@ type Props = {
 };
 
 export default function AssetShow({ asset, histories, attachments, formMeta, computedBookValue, warrantyStatus, warrantyClaims }: Props) {
-    const { permissions, orgRole, organization, locale } = usePage().props as {
-        permissions: string[];
-        orgRole: string | null;
+    const { moduleAbilities, organization, locale } = usePage().props as {
+        moduleAbilities: {
+            assets: { update: boolean; delete: boolean };
+        };
         organization: { currency_code: string; timezone: string } | null;
         locale: string;
     };
     const { t } = useTranslation();
 
-    const canUpdate = permissions.includes('asset.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
-    const canDelete = permissions.includes('asset.delete') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canUpdate = moduleAbilities.assets.update;
+    const canDelete = moduleAbilities.assets.delete;
 
     const qrUrl = qrShow(asset.qr_token).url;
     const [deleteOpen, setDeleteOpen] = useState(false);

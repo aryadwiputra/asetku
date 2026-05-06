@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DataTableRequest;
 use App\Models\Branch;
 use App\Queries\AssetListQuery;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,15 +14,12 @@ class InventoryStocktakePrintController extends Controller
 {
     public function show(DataTableRequest $request): Response
     {
+        Gate::authorize('viewInventoryReport');
+
         $user = $request->user();
         if ($user === null) {
             abort(401);
         }
-
-        $organizationId = $user->current_organization_id;
-        $isMember = $organizationId !== null && $user->hasOrganizationRole((int) $organizationId, ['Owner', 'Admin', 'Manager', 'Member']);
-
-        abort_unless($user->can('report_inventory.view') || $isMember, 403);
 
         $branchId = $request->query('branch_id');
         abort_unless(is_string($branchId) && ctype_digit($branchId), 422);

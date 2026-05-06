@@ -17,14 +17,7 @@ class AssetImportController extends Controller
 {
     public function index(Request $request): Response
     {
-        $this->authorize('viewAny', Asset::class);
-
-        $user = $request->user();
-        if ($user === null) {
-            abort(401);
-        }
-
-        $this->ensureCanImport($user);
+        $this->authorize('import', Asset::class);
 
         $runs = ImportRun::query()
             ->whereIn('type', ['assets', 'assets_photos_zip'])
@@ -39,14 +32,12 @@ class AssetImportController extends Controller
 
     public function validateFile(Request $request): RedirectResponse
     {
-        $this->authorize('viewAny', Asset::class);
+        $this->authorize('import', Asset::class);
 
         $user = $request->user();
         if ($user === null) {
             abort(401);
         }
-
-        $this->ensureCanImport($user);
 
         $data = $request->validate([
             'file' => ['required', 'file', 'mimes:xlsx', 'max:10240'],
@@ -77,14 +68,7 @@ class AssetImportController extends Controller
 
     public function apply(Request $request, ImportRun $importRun): RedirectResponse
     {
-        $this->authorize('viewAny', Asset::class);
-
-        $user = $request->user();
-        if ($user === null) {
-            abort(401);
-        }
-
-        $this->ensureCanImport($user);
+        $this->authorize('import', Asset::class);
 
         abort_unless($importRun->type === 'assets', 404);
         abort_unless($importRun->status === 'completed', 422, __('imports.validation.not_ready'));
@@ -102,14 +86,12 @@ class AssetImportController extends Controller
 
     public function importPhotosZip(Request $request): RedirectResponse
     {
-        $this->authorize('viewAny', Asset::class);
+        $this->authorize('import', Asset::class);
 
         $user = $request->user();
         if ($user === null) {
             abort(401);
         }
-
-        $this->ensureCanImport($user);
 
         $data = $request->validate([
             'file' => ['required', 'file', 'mimes:zip', 'max:51200'],
@@ -136,13 +118,5 @@ class AssetImportController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('imports.toast.queued')]);
 
         return back();
-    }
-
-    private function ensureCanImport($user): void
-    {
-        $organizationId = $user->current_organization_id;
-        $isManager = $organizationId !== null && $user->hasOrganizationRole((int) $organizationId, ['Owner', 'Admin', 'Manager']);
-
-        abort_unless($user->can('asset_import.create') || $user->can('asset_import.update') || $isManager, 403);
     }
 }

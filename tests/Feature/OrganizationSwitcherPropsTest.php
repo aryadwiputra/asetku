@@ -19,7 +19,12 @@ test('organization switcher props are shared to inertia pages', function () {
         ->assertInertia(fn ($page) => $page
             ->has('organization')
             ->has('organizations')
+            ->has('organizations.0.role_label')
+            ->has('orgRoleLabel')
             ->has('orgAbilities.organizations.create')
+            ->has('moduleAbilities.assets.view')
+            ->has('moduleAbilities.workOrders.viewIndex')
+            ->has('moduleAbilities.maintenanceSchedules.view')
+            ->has('moduleAbilities.reports.inventoryView')
         );
 });
-

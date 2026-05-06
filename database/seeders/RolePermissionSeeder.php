@@ -53,6 +53,18 @@ class RolePermissionSeeder extends Seeder
     ];
 
     /**
+     * Additional permissions that do not follow the standard CRUD matrix.
+     *
+     * @var list<string>
+     */
+    private const EXTRA_PERMISSIONS = [
+        'asset.import',
+        'asset.view_all',
+        'work_order.view_all',
+        'maintenance_schedule.view_all',
+    ];
+
+    /**
      * The role-permission mapping.
      *
      * @var array<string, list<string>>
@@ -102,6 +114,10 @@ class RolePermissionSeeder extends Seeder
             'settings.flags.manage',
             'media.manage',
             'activity.view',
+            'asset.import',
+            'asset.view_all',
+            'work_order.view_all',
+            'maintenance_schedule.view_all',
         ],
         'user' => [],
     ];
@@ -132,6 +148,10 @@ class RolePermissionSeeder extends Seeder
             foreach ($actions as $action) {
                 Permission::findOrCreate("{$group}.{$action}");
             }
+        }
+
+        foreach (self::EXTRA_PERMISSIONS as $permission) {
+            Permission::findOrCreate($permission);
         }
 
         // Legacy permissions (v1) that still exist in the app codebase.

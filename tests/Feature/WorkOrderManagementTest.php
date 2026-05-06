@@ -5,6 +5,7 @@ use App\Jobs\GenerateWorkOrdersFromSchedulesJob;
 use App\Models\Asset;
 use App\Models\AssetMaintenance;
 use App\Models\Branch;
+use App\Models\Department;
 use App\Models\MaintenanceChecklistTemplate;
 use App\Models\MaintenanceChecklistTemplateItem;
 use App\Models\MaintenanceSchedule;
@@ -159,6 +160,82 @@ test('assigned technician can view and update progress, other users cannot', fun
     actingAs($other)
         ->patch(route('work-orders.update', $workOrder), ['status' => 'completed'])
         ->assertForbidden();
+});
+
+test('staff only sees work orders for assigned or visible assets', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+    $visibleDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'IT',
+        'name' => 'IT',
+    ]);
+    $hiddenDepartment = Department::query()->create([
+        'organization_id' => $organization->id,
+        'branch_id' => $branch->id,
+        'code' => 'OPS',
+        'name' => 'Operations',
+    ]);
+
+    $staff = User::factory()->inOrganization($organization, role: 'Member')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+        'department_id' => $visibleDepartment->id,
+    ]);
+
+    $visibleAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-WO-0001',
+        'name' => 'Visible Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $visibleDepartment->id,
+        'qr_token' => Str::random(40),
+    ]);
+
+    $hiddenAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-WO-0002',
+        'name' => 'Hidden Asset',
+        'branch_id' => $branch->id,
+        'department_id' => $hiddenDepartment->id,
+        'qr_token' => Str::random(40),
+    ]);
+
+    $visibleWorkOrder = AssetMaintenance::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $visibleAsset->id,
+        'type' => 'corrective',
+        'source' => 'manual',
+        'priority' => 'normal',
+        'branch_id' => $branch->id,
+        'description' => 'Visible work order',
+        'status' => 'open',
+    ]);
+
+    $hiddenWorkOrder = AssetMaintenance::query()->create([
+        'organization_id' => $organization->id,
+        'asset_id' => $hiddenAsset->id,
+        'type' => 'corrective',
+        'source' => 'manual',
+        'priority' => 'normal',
+        'branch_id' => $branch->id,
+        'description' => 'Hidden work order',
+        'status' => 'open',
+    ]);
+
+    actingAs($staff)
+        ->get(route('work-orders.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('items.data', 1)
+            ->where('items.data.0.id', $visibleWorkOrder->id)
+        );
+
+    actingAs($staff)->get(route('work-orders.show', $visibleWorkOrder))->assertOk();
+    actingAs($staff)->get(route('work-orders.show', $hiddenWorkOrder))->assertForbidden();
 });
 
 test('creating a work order with checklist template clones tasks', function () {

@@ -42,14 +42,14 @@ type Props = {
         locations: Option[];
         departments: Option[];
     };
-    abilities: {
-        export: boolean;
-    };
 };
 
-export default function InventoryReportIndex({ search, filters, summary, filtersMeta, abilities }: Props) {
+export default function InventoryReportIndex({ search, filters, summary, filtersMeta }: Props) {
     const { t } = useTranslation();
-    const { organization } = usePage().props as { organization?: { currency_code?: string; timezone?: string; name?: string } | null };
+    const { moduleAbilities, organization } = usePage().props as {
+        moduleAbilities: { reports: { inventoryExport: boolean } };
+        organization?: { currency_code?: string; timezone?: string; name?: string } | null;
+    };
 
     const applied = useMemo(() => {
         return {
@@ -153,7 +153,7 @@ export default function InventoryReportIndex({ search, filters, summary, filters
                     <Heading variant="small" title={t('reports.inventory.title')} description={t('reports.inventory.description')} />
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        {abilities.export ? (
+                        {moduleAbilities.reports.inventoryExport ? (
                             <Link
                                 href={assetsExport({
                                     query: {

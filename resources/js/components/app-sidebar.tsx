@@ -49,9 +49,16 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { permissions } = usePage().props;
-    const { orgRole } = usePage().props as { orgRole?: string | null };
     const { orgAbilities } = usePage().props as {
         orgAbilities?: { branches?: { view?: boolean } };
+    };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities?: {
+            assets?: { view?: boolean; create?: boolean; import?: boolean };
+            workOrders?: { viewIndex?: boolean; viewAssigned?: boolean };
+            maintenanceSchedules?: { view?: boolean };
+            reports?: { inventoryView?: boolean };
+        };
     };
     const { masterDataAbilities } = usePage().props as {
         masterDataAbilities?: Record<string, { view: boolean }>;
@@ -61,8 +68,12 @@ export function AppSidebar() {
     const { t } = useTranslation();
 
     const canViewBranches = orgAbilities?.branches?.view === true;
-    const canViewAssets = userPermissions.includes('asset.view') || Boolean(orgRole);
-    const canCreateAsset = userPermissions.includes('asset.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canViewAssets = moduleAbilities?.assets?.view === true;
+    const canCreateAsset = moduleAbilities?.assets?.create === true;
+    const canImportAssets = moduleAbilities?.assets?.import === true;
+    const canViewWorkOrders = moduleAbilities?.workOrders?.viewIndex === true;
+    const canViewAssignedWorkOrders = moduleAbilities?.workOrders?.viewAssigned === true;
+    const canViewMaintenanceSchedules = moduleAbilities?.maintenanceSchedules?.view === true;
 
     const workspaceNavItems: NavItem[] = [
         {
@@ -93,11 +104,15 @@ export function AppSidebar() {
                   href: assetsIndex(),
                   icon: Package,
               },
-              {
-                  title: t('common.asset_import'),
-                  href: assetsImportIndex(),
-                  icon: UploadCloud,
-              },
+              ...(canImportAssets
+                  ? [
+                        {
+                            title: t('common.asset_import'),
+                            href: assetsImportIndex(),
+                            icon: UploadCloud,
+                        },
+                    ]
+                  : []),
           ]
         : [];
 
@@ -108,21 +123,33 @@ export function AppSidebar() {
                   href: maintenanceCalendarIndex(),
                   icon: CalendarDays,
               },
-              {
-                  title: t('common.work_orders'),
-                  href: workOrdersIndex(),
-                  icon: Wrench,
-              },
-              {
-                  title: t('common.my_work_orders'),
-                  href: workOrdersMy(),
-                  icon: ClipboardList,
-              },
-              {
-                  title: t('common.maintenance_schedules'),
-                  href: maintenanceSchedulesIndex(),
-                  icon: ClipboardList,
-              },
+              ...(canViewWorkOrders
+                  ? [
+                        {
+                            title: t('common.work_orders'),
+                            href: workOrdersIndex(),
+                            icon: Wrench,
+                        },
+                    ]
+                  : []),
+              ...(canViewAssignedWorkOrders
+                  ? [
+                        {
+                            title: t('common.my_work_orders'),
+                            href: workOrdersMy(),
+                            icon: ClipboardList,
+                        },
+                    ]
+                  : []),
+              ...(canViewMaintenanceSchedules
+                  ? [
+                        {
+                            title: t('common.maintenance_schedules'),
+                            href: maintenanceSchedulesIndex(),
+                            icon: ClipboardList,
+                        },
+                    ]
+                  : []),
               {
                   title: t('common.maintenance_checklists'),
                   href: maintenanceChecklistsIndex(),
@@ -187,7 +214,7 @@ export function AppSidebar() {
     const canManageFlags = userPermissions.includes('settings.flags.manage');
     const canViewActivity = userPermissions.includes('activity.view');
     const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
-    const canViewInventoryReport = userPermissions.includes('report_inventory.view') || Boolean(orgRole);
+    const canViewInventoryReport = moduleAbilities?.reports?.inventoryView === true;
 
     const settingsItems: NavItem[] = [
         ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),

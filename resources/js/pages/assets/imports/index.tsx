@@ -28,13 +28,12 @@ type Props = {
 };
 
 export default function AssetsImportIndex({ importRuns }: Props) {
-    const { permissions, orgRole } = usePage().props as { permissions: string[]; orgRole: string | null };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities: { assets: { import: boolean } };
+    };
     const { t } = useTranslation();
 
-    const canImport =
-        permissions.includes('asset_import.create') ||
-        permissions.includes('asset_import.update') ||
-        ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canImport = moduleAbilities.assets.import;
 
     const [xlsx, setXlsx] = useState<File | null>(null);
     const [zip, setZip] = useState<File | null>(null);

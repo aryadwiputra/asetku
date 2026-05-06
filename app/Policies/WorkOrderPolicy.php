@@ -30,15 +30,11 @@ class WorkOrderPolicy
 
     public function view(User $user, AssetMaintenance $workOrder): bool
     {
-        if ($user->can('work_order.view')) {
+        if ($user->can('work_order.view_all')) {
             return true;
         }
 
-        if ($workOrder->assigned_to !== null && $workOrder->assigned_to === $user->id) {
-            return (int) ($user->current_organization_id ?? 0) === (int) $workOrder->organization_id;
-        }
-
-        return $this->viewAny($user);
+        return $this->viewAny($user) && $workOrder->isVisibleTo($user);
     }
 
     public function create(User $user): bool

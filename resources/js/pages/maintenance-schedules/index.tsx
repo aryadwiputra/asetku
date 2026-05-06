@@ -26,10 +26,12 @@ type Props = {
 
 export default function MaintenanceSchedulesIndex({ items, filtersMeta }: Props) {
     const { t } = useTranslation();
-    const { orgRole, permissions } = usePage().props as { orgRole: string | null; permissions: string[] };
+    const { moduleAbilities } = usePage().props as {
+        moduleAbilities: { maintenanceSchedules: { create: boolean; update: boolean } };
+    };
 
-    const canCreate =
-        permissions.includes('maintenance_schedule.create') || ['Owner', 'Admin', 'Manager'].includes(orgRole || '');
+    const canCreate = moduleAbilities.maintenanceSchedules.create;
+    const canUpdate = moduleAbilities.maintenanceSchedules.update;
 
     const columns: DataTableColumn<Row>[] = [
         {
@@ -79,7 +81,7 @@ export default function MaintenanceSchedulesIndex({ items, filtersMeta }: Props)
             label: t('common.edit'),
             icon: <Pencil className="mr-2 h-4 w-4" />,
             onClick: (row) => router.visit(schedulesEdit(row.id).url),
-            visible: () => true,
+            visible: () => canUpdate,
         },
     ];
 

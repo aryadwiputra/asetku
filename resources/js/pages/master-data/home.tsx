@@ -28,7 +28,7 @@ type MasterDataItem = {
 };
 
 export default function MasterDataHome() {
-    const { orgRole } = usePage().props as { orgRole: string | null };
+    const { orgRoleLabel } = usePage().props as { orgRoleLabel: string | null };
     const { t } = useTranslation();
 
     const items: MasterDataItem[] = [
@@ -146,10 +146,10 @@ export default function MasterDataHome() {
                     })}
                 </div>
 
-                {orgRole ? (
+                {orgRoleLabel ? (
                     <div className="text-sm text-muted-foreground">
                         <Building2 className="mr-2 inline h-4 w-4" />
-                        {t('master_data.current_role', { role: orgRole })}
+                        {t('master_data.current_role', { role: orgRoleLabel })}
                         <Badge className="ml-2" variant="secondary">
                             {t('common.active')}
                         </Badge>

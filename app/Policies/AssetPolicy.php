@@ -101,4 +101,42 @@ class AssetPolicy
             OrganizationMemberRole::Manager,
         ]);
     }
+
+    public function import(User $user): bool
+    {
+        if ($user->can('asset.import') || $user->can('asset_import.create') || $user->can('asset_import.update')) {
+            return true;
+        }
+
+        $organizationId = $user->current_organization_id;
+
+        if ($organizationId === null) {
+            return false;
+        }
+
+        return $user->hasOrganizationRole((int) $organizationId, [
+            OrganizationMemberRole::Owner,
+            OrganizationMemberRole::Admin,
+            OrganizationMemberRole::Manager,
+        ]);
+    }
+
+    public function export(User $user): bool
+    {
+        if ($user->can('asset.export')) {
+            return true;
+        }
+
+        $organizationId = $user->current_organization_id;
+
+        if ($organizationId === null) {
+            return false;
+        }
+
+        return $user->hasOrganizationRole((int) $organizationId, [
+            OrganizationMemberRole::Owner,
+            OrganizationMemberRole::Admin,
+            OrganizationMemberRole::Manager,
+        ]);
+    }
 }

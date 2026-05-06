@@ -30,6 +30,7 @@ class WorkOrderController extends Controller
         $filters = $request->filters();
 
         $query = AssetMaintenance::query()
+            ->visibleTo($request->user())
             ->with([
                 'asset:id,code,name,branch_id,asset_category_id,asset_status_id,asset_condition_id,person_in_charge_id,asset_user_id',
                 'asset.branch:id,name,code',
@@ -117,6 +118,7 @@ class WorkOrderController extends Controller
         $this->authorize('viewAny', AssetMaintenance::class);
 
         $items = AssetMaintenance::query()
+            ->visibleTo($user)
             ->where('assigned_to', $user->id)
             ->with([
                 'asset:id,code,name,branch_id,asset_status_id,asset_condition_id',

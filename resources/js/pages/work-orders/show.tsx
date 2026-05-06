@@ -103,11 +103,9 @@ type Props = {
 
 export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
     const { t } = useTranslation();
-    const { orgRole, permissions } = usePage().props as { orgRole: string | null; permissions: string[] };
-
     const canManage = abilities.update;
     const canProgress = abilities.updateProgress;
-    const canAssign = canManage && (permissions.includes('work_order.update') || ['Owner', 'Admin', 'Manager'].includes(orgRole || ''));
+    const canAssign = canManage;
 
     const technicianOptions = meta.technicians
         .filter((p) => p.name)
