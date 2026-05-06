@@ -1,6 +1,3 @@
-import '@fullcalendar/daygrid/index.css';
-import '@fullcalendar/timegrid/index.css';
-
 import type { EventClickArg, EventDropArg, EventInput, EventSourceFuncArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';

@@ -12,8 +12,31 @@ use App\Notifications\MaintenanceScheduleDueInSevenDaysNotification;
 use App\Services\OrganizationContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Notification;
+use Inertia\Testing\AssertableInertia as Assert;
 
 use function Pest\Laravel\actingAs;
+
+test('maintenance calendar page loads', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    actingAs($user)
+        ->get(route('maintenance-calendar.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('maintenance-calendar/index')
+            ->has('meta.branches')
+            ->has('meta.categories')
+            ->has('meta.technicians')
+            ->has('abilities.canCreateSchedule')
+            ->has('abilities.canUpdateSchedule')
+        );
+});
 
 test('events endpoint generates occurrences and supports filters', function () {
     $organization = Organization::factory()->create();
