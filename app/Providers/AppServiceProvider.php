@@ -19,6 +19,8 @@ use App\Models\AssetMaintenance;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
 use App\Models\AssetWarrantyClaim;
+use App\Models\AuditFinding;
+use App\Models\AuditSchedule;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\MaintenanceChecklistTemplate;
@@ -45,6 +47,8 @@ use App\Policies\AssetPolicy;
 use App\Policies\AssetStatusPolicy;
 use App\Policies\AssetUserPolicy;
 use App\Policies\AssetWarrantyClaimPolicy;
+use App\Policies\AuditFindingPolicy;
+use App\Policies\AuditSchedulePolicy;
 use App\Policies\BranchPolicy;
 use App\Policies\DepartmentPolicy;
 use App\Policies\InvitationPolicy;
@@ -174,6 +178,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(MaintenanceSchedule::class, MaintenanceSchedulePolicy::class);
         Gate::policy(MaintenanceChecklistTemplate::class, MaintenanceChecklistTemplatePolicy::class);
         Gate::policy(TechnicianProfile::class, TechnicianProfilePolicy::class);
+        Gate::policy(AuditSchedule::class, AuditSchedulePolicy::class);
+        Gate::policy(AuditFinding::class, AuditFindingPolicy::class);
 
         Gate::define('viewApiDocs', function ($user): bool {
             return $user->hasRole('admin');

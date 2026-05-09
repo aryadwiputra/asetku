@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Building2, CalendarDays, ChevronDown, ClipboardList, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
+import { BookOpen, Building2, CalendarDays, ChevronDown, ClipboardList, ClipboardCheck, FolderGit2, History, LayoutGrid, MapPin, Package, Plus, Settings, TrendingDown, Trash2, UploadCloud, Users, Wrench } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -45,6 +45,7 @@ import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checkl
 import { index as techniciansIndex } from '@/routes/technicians';
 import { index as maintenanceCalendarIndex } from '@/routes/maintenance-calendar';
 import { index as inventoryReportIndex } from '@/routes/reports/inventory';
+import { index as auditSchedulesIndex } from '@/actions/App/Http/Controllers/AuditScheduleController';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -57,6 +58,7 @@ export function AppSidebar() {
             assets?: { view?: boolean; create?: boolean; import?: boolean };
             workOrders?: { viewIndex?: boolean; viewAssigned?: boolean };
             maintenanceSchedules?: { view?: boolean };
+            audit?: { view?: boolean; create?: boolean };
             reports?: { inventoryView?: boolean };
         };
     };
@@ -74,6 +76,7 @@ export function AppSidebar() {
     const canViewWorkOrders = moduleAbilities?.workOrders?.viewIndex === true;
     const canViewAssignedWorkOrders = moduleAbilities?.workOrders?.viewAssigned === true;
     const canViewMaintenanceSchedules = moduleAbilities?.maintenanceSchedules?.view === true;
+    const canViewAudit = moduleAbilities?.audit?.view === true;
 
     const workspaceNavItems: NavItem[] = [
         {
@@ -188,6 +191,16 @@ export function AppSidebar() {
           ]
         : [];
 
+    const auditNavItems: NavItem[] = canViewAudit
+        ? [
+              {
+                  title: t('audit.title'),
+                  href: auditSchedulesIndex(),
+                  icon: ClipboardCheck,
+              },
+          ]
+        : [];
+
     const adminNavItems: NavItem[] = [
         ...(userPermissions.includes('user.view')
             ? [
@@ -290,6 +303,7 @@ export function AppSidebar() {
                 {maintenanceNavItems.length > 0 ? <NavMain label={t('common.maintenance')} items={maintenanceNavItems} /> : null}
                 {operationsNavItems.length > 0 ? <NavMain label={t('common.operations')} items={operationsNavItems} /> : null}
                 {financeNavItems.length > 0 ? <NavMain label={t('common.finance')} items={financeNavItems} /> : null}
+                {auditNavItems.length > 0 ? <NavMain label={t('audit.title')} items={auditNavItems} /> : null}
                 {reportsNavItems.length > 0 ? <NavMain label={t('common.reports')} items={reportsNavItems} /> : null}
                 {adminNavItems.length > 0 ? <NavMain label={t('common.administration')} items={adminNavItems} /> : null}
                 {showSettings && (

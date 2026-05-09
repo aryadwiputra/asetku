@@ -185,6 +185,10 @@ class TranslationsResolver
             $modules[] = 'datatable';
         }
 
+        if (str_starts_with($routeName, 'audit.')) {
+            $modules[] = 'audit';
+        }
+
         return array_values(array_unique($modules));
     }
 }

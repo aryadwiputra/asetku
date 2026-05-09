@@ -10,6 +10,7 @@ use App\Models\AssetLocation;
 use App\Models\AssetMaintenance;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
+use App\Models\AuditSchedule;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\MaintenanceSchedule;
@@ -119,6 +120,12 @@ class SharedProps
             'reports' => [
                 'inventoryView' => $user ? Gate::forUser($user)->allows('viewInventoryReport') : false,
                 'inventoryExport' => $user ? Gate::forUser($user)->allows('exportInventoryReport') : false,
+            ],
+            'audit' => [
+                'view' => $user ? Gate::forUser($user)->allows('viewAny', AuditSchedule::class) : false,
+                'create' => $user ? Gate::forUser($user)->allows('create', AuditSchedule::class) : false,
+                'update' => $user ? Gate::forUser($user)->allows('update', new AuditSchedule) : false,
+                'delete' => $user ? Gate::forUser($user)->allows('delete', new AuditSchedule) : false,
             ],
         ];
 

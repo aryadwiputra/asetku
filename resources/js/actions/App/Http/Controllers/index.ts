@@ -55,6 +55,8 @@ import MaintenanceScheduleRescheduleController from './MaintenanceScheduleResche
 import MaintenanceScheduleController from './MaintenanceScheduleController'
 import MaintenanceChecklistController from './MaintenanceChecklistController'
 import TechnicianController from './TechnicianController'
+import AuditScheduleController from './AuditScheduleController'
+import AuditFindingController from './AuditFindingController'
 import Reports from './Reports'
 
 const Controllers = {
@@ -115,6 +117,8 @@ const Controllers = {
     MaintenanceScheduleController: Object.assign(MaintenanceScheduleController, MaintenanceScheduleController),
     MaintenanceChecklistController: Object.assign(MaintenanceChecklistController, MaintenanceChecklistController),
     TechnicianController: Object.assign(TechnicianController, TechnicianController),
+    AuditScheduleController: Object.assign(AuditScheduleController, AuditScheduleController),
+    AuditFindingController: Object.assign(AuditFindingController, AuditFindingController),
     Reports: Object.assign(Reports, Reports),
 }
 

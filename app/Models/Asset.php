@@ -199,6 +199,11 @@ class Asset extends Model
         return $this->hasMany(AssetAudit::class);
     }
 
+    public function auditFindings(): HasMany
+    {
+        return $this->hasMany(AuditFinding::class);
+    }
+
     public function maintenances(): HasMany
     {
         return $this->hasMany(AssetMaintenance::class);
@@ -209,6 +214,10 @@ class Asset extends Model
         return $this->hasMany(AssetPhoto::class);
     }
 
+    /**
+     * @deprecated Use media() pivot with MediaAsset instead for new attachments.
+     *             The AssetPhoto model is legacy and not maintained.
+     */
     public function primaryPhoto(): HasOne
     {
         return $this->hasOne(AssetPhoto::class)->where('is_primary', true);
