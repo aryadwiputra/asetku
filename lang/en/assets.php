@@ -116,10 +116,76 @@ return [
         'custom_fields' => 'Custom fields',
         'map' => 'Map',
         'map_desc' => 'Asset coordinates (if available).',
+        'movements' => 'Movements',
+        'movements_desc' => 'Asset transfer and placement history.',
+        'maintenance' => 'Maintenance',
+        'maintenance_desc' => 'Maintenance and service history.',
+        'depreciation' => 'Depreciation',
+        'depreciation_desc' => 'Depreciation schedule and entries.',
+        'audits' => 'Audits',
+        'audits_desc' => 'Audit records and findings.',
+    ],
+
+    'tabs' => [
+        'overview' => 'Overview',
+        'history' => 'History',
+        'movements' => 'Movements',
+        'maintenance' => 'Maintenance',
+        'warranty' => 'Warranty',
+        'attachments' => 'Attachments',
+        'depreciation' => 'Depreciation',
+        'audits' => 'Audits',
     ],
 
     'map' => [
         'empty' => 'No coordinates set.',
+    ],
+
+    'movements' => [
+        'empty' => 'No movements yet.',
+        'fields' => [
+            'type' => 'Type',
+            'from' => 'From',
+            'to' => 'To',
+            'status' => 'Status',
+            'performed_at' => 'Date',
+        ],
+    ],
+
+    'maintenance' => [
+        'empty' => 'No maintenance records yet.',
+        'fields' => [
+            'type' => 'Type',
+            'description' => 'Description',
+            'vendor' => 'Vendor / Technician',
+            'cost' => 'Cost',
+            'status' => 'Status',
+            'performed_at' => 'Date',
+        ],
+    ],
+
+    'depreciation' => [
+        'empty' => 'No depreciation entries yet.',
+        'fields' => [
+            'period' => 'Period',
+            'cost' => 'Cost',
+            'residual_value' => 'Residual',
+            'book_value_start' => 'Book Value (Start)',
+            'depreciation' => 'Depreciation',
+            'accumulated' => 'Accumulated',
+            'book_value_end' => 'Book Value (End)',
+            'units' => 'Units',
+        ],
+    ],
+
+    'audits' => [
+        'empty' => 'No audit records yet.',
+        'fields' => [
+            'audited_at' => 'Audit Date',
+            'status' => 'Status',
+            'location' => 'Location',
+            'notes' => 'Notes',
+        ],
     ],
 
     'create' => [
@@ -160,6 +226,8 @@ return [
         'expiring_soon' => 'Expiring soon',
         'expired' => 'Expired',
         'days_remaining' => ':count days remaining',
+        'claims' => 'Warranty Claims',
+        'no_claims' => 'No claims yet.',
         'claim_created' => 'Warranty claim created.',
         'claim_updated' => 'Warranty claim updated.',
         'fields' => [

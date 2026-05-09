@@ -230,8 +230,28 @@ class WorkOrderController extends Controller
 
         $user = $request->user();
 
+        $workOrderArray = $workOrder->toArray();
+        $workOrderArray['media'] = $workOrder->media->map(function ($row) {
+            $asset = $row->mediaAsset;
+
+            return [
+                'id' => $row->id,
+                'kind' => $row->kind,
+                'document_type' => $row->document_type,
+                'is_primary' => (bool) $row->is_primary,
+                'media_asset' => $asset ? [
+                    'id' => $asset->id,
+                    'title' => $asset->title,
+                    'url' => $asset->getFirstMediaUrl('file'),
+                    'thumb_url' => $asset->getFirstMediaUrl('file', 'thumb'),
+                    'mime' => $asset->getFirstMedia('file')?->mime_type,
+                    'size' => $asset->getFirstMedia('file')?->size,
+                ] : null,
+            ];
+        });
+
         return Inertia::render('work-orders/show', [
-            'workOrder' => $workOrder,
+            'workOrder' => $workOrderArray,
             'abilities' => [
                 'update' => $user ? $user->can('update', $workOrder) : false,
                 'updateProgress' => $user ? $user->can('updateProgress', $workOrder) : false,

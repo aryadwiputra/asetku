@@ -116,10 +116,76 @@ return [
         'custom_fields' => 'Field tambahan',
         'map' => 'Peta',
         'map_desc' => 'Koordinat aset (jika tersedia).',
+        'movements' => 'Mutasi',
+        'movements_desc' => 'Riwayat transfer dan penempatan aset.',
+        'maintenance' => 'Pemeliharaan',
+        'maintenance_desc' => 'Riwayat pemeliharaan dan servis.',
+        'depreciation' => 'Depresiasi',
+        'depreciation_desc' => 'Jadwal dan entri depresiasi.',
+        'audits' => 'Audit',
+        'audits_desc' => 'Riwayat dan temuan audit.',
+    ],
+
+    'tabs' => [
+        'overview' => 'Ringkasan',
+        'history' => 'Riwayat',
+        'movements' => 'Mutasi',
+        'maintenance' => 'Pemeliharaan',
+        'warranty' => 'Garansi',
+        'attachments' => 'Lampiran',
+        'depreciation' => 'Depresiasi',
+        'audits' => 'Audit',
     ],
 
     'map' => [
         'empty' => 'Koordinat belum diatur.',
+    ],
+
+    'movements' => [
+        'empty' => 'Belum ada mutasi.',
+        'fields' => [
+            'type' => 'Jenis',
+            'from' => 'Dari',
+            'to' => 'Ke',
+            'status' => 'Status',
+            'performed_at' => 'Tanggal',
+        ],
+    ],
+
+    'maintenance' => [
+        'empty' => 'Belum ada catatan pemeliharaan.',
+        'fields' => [
+            'type' => 'Jenis',
+            'description' => 'Deskripsi',
+            'vendor' => 'Vendor / Teknisi',
+            'cost' => 'Biaya',
+            'status' => 'Status',
+            'performed_at' => 'Tanggal',
+        ],
+    ],
+
+    'depreciation' => [
+        'empty' => 'Belum ada entri depresiasi.',
+        'fields' => [
+            'period' => 'Periode',
+            'cost' => 'Biaya',
+            'residual_value' => 'Residu',
+            'book_value_start' => 'Nilai Buku (Awal)',
+            'depreciation' => 'Depresiasi',
+            'accumulated' => 'Akumulasi',
+            'book_value_end' => 'Nilai Buku (Akhir)',
+            'units' => 'Unit',
+        ],
+    ],
+
+    'audits' => [
+        'empty' => 'Belum ada catatan audit.',
+        'fields' => [
+            'audited_at' => 'Tanggal Audit',
+            'status' => 'Status',
+            'location' => 'Lokasi',
+            'notes' => 'Catatan',
+        ],
     ],
 
     'create' => [
@@ -161,6 +227,8 @@ return [
         'expiring_soon' => 'Segera berakhir',
         'expired' => 'Sudah berakhir',
         'days_remaining' => 'Sisa :count hari',
+        'claims' => 'Klaim Garansi',
+        'no_claims' => 'Belum ada klaim.',
         'claim_created' => 'Klaim garansi dibuat.',
         'claim_updated' => 'Klaim garansi diperbarui.',
         'fields' => [

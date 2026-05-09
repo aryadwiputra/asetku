@@ -217,7 +217,7 @@ complete.form = completeForm
 
 /**
 * @see \App\Http\Controllers\MediaUploadController::destroy
-* @see app/Http/Controllers/MediaUploadController.php:135
+* @see app/Http/Controllers/MediaUploadController.php:141
 * @route '/media/uploads/{upload}'
 */
 export const destroy = (args: { upload: string | { id: string } } | [upload: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -232,7 +232,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaUploadController::destroy
-* @see app/Http/Controllers/MediaUploadController.php:135
+* @see app/Http/Controllers/MediaUploadController.php:141
 * @route '/media/uploads/{upload}'
 */
 destroy.url = (args: { upload: string | { id: string } } | [upload: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
@@ -265,7 +265,7 @@ destroy.url = (args: { upload: string | { id: string } } | [upload: string | { i
 
 /**
 * @see \App\Http\Controllers\MediaUploadController::destroy
-* @see app/Http/Controllers/MediaUploadController.php:135
+* @see app/Http/Controllers/MediaUploadController.php:141
 * @route '/media/uploads/{upload}'
 */
 destroy.delete = (args: { upload: string | { id: string } } | [upload: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -275,7 +275,7 @@ destroy.delete = (args: { upload: string | { id: string } } | [upload: string | 
 
 /**
 * @see \App\Http\Controllers\MediaUploadController::destroy
-* @see app/Http/Controllers/MediaUploadController.php:135
+* @see app/Http/Controllers/MediaUploadController.php:141
 * @route '/media/uploads/{upload}'
 */
 const destroyForm = (args: { upload: string | { id: string } } | [upload: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -290,7 +290,7 @@ const destroyForm = (args: { upload: string | { id: string } } | [upload: string
 
 /**
 * @see \App\Http\Controllers\MediaUploadController::destroy
-* @see app/Http/Controllers/MediaUploadController.php:135
+* @see app/Http/Controllers/MediaUploadController.php:141
 * @route '/media/uploads/{upload}'
 */
 destroyForm.delete = (args: { upload: string | { id: string } } | [upload: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

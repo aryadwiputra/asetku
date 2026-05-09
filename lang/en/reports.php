@@ -38,6 +38,13 @@ return [
                 'notes' => 'Notes',
                 'checked_by' => 'Checked by',
                 'signature' => 'Signature',
+                'code' => 'Code',
+                'asset' => 'Asset',
+                'location' => 'Location',
+                'pic' => 'PIC',
+                'status' => 'Status',
+                'condition' => 'Condition',
+                'qr' => 'QR',
             ],
         ],
         'empty' => [

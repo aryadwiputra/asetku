@@ -69,18 +69,18 @@ export default function InventoryStocktakePrint({ branch, assets, meta }: Props)
                 <table className="mt-4 w-full border-collapse text-xs">
                     <thead>
                         <tr>
-                            <th className="w-[120px] border p-2 text-left">Code</th>
-                            <th className="border p-2 text-left">Asset</th>
-                            <th className="w-[120px] border p-2 text-left">Location</th>
-                            <th className="w-[120px] border p-2 text-left">PIC</th>
-                            <th className="w-[90px] border p-2 text-left">Status</th>
-                            <th className="w-[90px] border p-2 text-left">Condition</th>
+                            <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.code')}</th>
+                            <th className="border p-2 text-left">{t('reports.inventory.stocktake.columns.asset')}</th>
+                            <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.location')}</th>
+                            <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.pic')}</th>
+                            <th className="w-[90px] border p-2 text-left">{t('reports.inventory.stocktake.columns.status')}</th>
+                            <th className="w-[90px] border p-2 text-left">{t('reports.inventory.stocktake.columns.condition')}</th>
                             <th className="w-[60px] border p-2 text-left">{t('reports.inventory.stocktake.columns.found')}</th>
                             <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.condition_actual')}</th>
                             <th className="w-[160px] border p-2 text-left">{t('reports.inventory.stocktake.columns.notes')}</th>
                             <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.checked_by')}</th>
                             <th className="w-[120px] border p-2 text-left">{t('reports.inventory.stocktake.columns.signature')}</th>
-                            <th className="w-[140px] border p-2 text-left">QR</th>
+                            <th className="w-[140px] border p-2 text-left">{t('reports.inventory.stocktake.columns.qr')}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -606,7 +606,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 export const update = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -621,7 +621,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 update.url = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -654,7 +654,7 @@ update.url = (args: { workOrder: number | { id: number } } | [workOrder: number 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 update.put = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -664,7 +664,7 @@ update.put = (args: { workOrder: number | { id: number } } | [workOrder: number 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 update.patch = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -674,7 +674,7 @@ update.patch = (args: { workOrder: number | { id: number } } | [workOrder: numbe
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 const updateForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -689,7 +689,7 @@ const updateForm = (args: { workOrder: number | { id: number } } | [workOrder: n
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 updateForm.put = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -704,7 +704,7 @@ updateForm.put = (args: { workOrder: number | { id: number } } | [workOrder: num
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:258
+* @see app/Http/Controllers/WorkOrderController.php:278
 * @route '/work-orders/{workOrder}'
 */
 updateForm.patch = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

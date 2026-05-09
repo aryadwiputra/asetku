@@ -38,6 +38,13 @@ return [
                 'notes' => 'Catatan',
                 'checked_by' => 'Dicek oleh',
                 'signature' => 'Tanda tangan',
+                'code' => 'Kode',
+                'asset' => 'Aset',
+                'location' => 'Lokasi',
+                'pic' => 'PIC',
+                'status' => 'Status',
+                'condition' => 'Kondisi',
+                'qr' => 'QR',
             ],
         ],
         'empty' => [

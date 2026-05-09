@@ -6,11 +6,15 @@ use App\Http\Requests\Assets\StoreAssetRequest;
 use App\Http\Requests\Assets\UpdateAssetRequest;
 use App\Http\Requests\DataTableRequest;
 use App\Models\Asset;
+use App\Models\AssetAudit;
 use App\Models\AssetCategory;
 use App\Models\AssetClass;
 use App\Models\AssetCondition;
+use App\Models\AssetDepreciationEntry;
 use App\Models\AssetHistory;
 use App\Models\AssetLocation;
+use App\Models\AssetMaintenance;
+use App\Models\AssetMovement;
 use App\Models\AssetStatus;
 use App\Models\AssetUser;
 use App\Models\AssetWarrantyClaim;
@@ -207,10 +211,100 @@ class AssetController extends Controller
                 'vendor_contract' => $claim->vendorContract ? ['id' => $claim->vendorContract->id, 'title' => $claim->vendorContract->title, 'contract_number' => $claim->vendorContract->contract_number] : null,
             ]);
 
+        $movements = $asset->movements()
+            ->with([
+                'fromBranch:id,name', 'toBranch:id,name',
+                'fromLocation:id,name', 'toLocation:id,name',
+                'fromDepartment:id,name', 'toDepartment:id,name',
+                'fromUser:id,name', 'toUser:id,name',
+            ])
+            ->orderByDesc('performed_at')
+            ->limit(100)
+            ->get()
+            ->map(fn (AssetMovement $movement): array => [
+                'id' => $movement->id,
+                'type' => $movement->type,
+                'status' => $movement->status,
+                'notes' => $movement->notes,
+                'performed_at' => $movement->performed_at?->toISOString(),
+                'from_branch' => $movement->fromBranch ? ['id' => $movement->fromBranch->id, 'name' => $movement->fromBranch->name] : null,
+                'to_branch' => $movement->toBranch ? ['id' => $movement->toBranch->id, 'name' => $movement->toBranch->name] : null,
+                'from_location' => $movement->fromLocation ? ['id' => $movement->fromLocation->id, 'name' => $movement->fromLocation->name] : null,
+                'to_location' => $movement->toLocation ? ['id' => $movement->toLocation->id, 'name' => $movement->toLocation->name] : null,
+                'from_department' => $movement->fromDepartment ? ['id' => $movement->fromDepartment->id, 'name' => $movement->fromDepartment->name] : null,
+                'to_department' => $movement->toDepartment ? ['id' => $movement->toDepartment->id, 'name' => $movement->toDepartment->name] : null,
+                'from_user' => $movement->fromUser ? ['id' => $movement->fromUser->id, 'name' => $movement->fromUser->name] : null,
+                'to_user' => $movement->toUser ? ['id' => $movement->toUser->id, 'name' => $movement->toUser->name] : null,
+                'created_at' => $movement->created_at,
+            ]);
+
+        $maintenances = $asset->maintenances()
+            ->with([
+                'vendor:id,name',
+                'technician:id,name',
+                'branch:id,name',
+            ])
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get()
+            ->map(fn (AssetMaintenance $maintenance): array => [
+                'id' => $maintenance->id,
+                'type' => $maintenance->type,
+                'source' => $maintenance->source,
+                'priority' => $maintenance->priority,
+                'status' => $maintenance->status,
+                'description' => $maintenance->description,
+                'cost' => $maintenance->cost,
+                'vendor' => $maintenance->vendor ? ['id' => $maintenance->vendor->id, 'name' => $maintenance->vendor->name] : null,
+                'technician' => $maintenance->technician ? ['id' => $maintenance->technician->id, 'name' => $maintenance->technician->name] : null,
+                'branch' => $maintenance->branch ? ['id' => $maintenance->branch->id, 'name' => $maintenance->branch->name] : null,
+                'performed_at' => $maintenance->performed_at?->toISOString(),
+                'created_at' => $maintenance->created_at,
+            ]);
+
+        $audits = $asset->audits()
+            ->with(['location:id,name'])
+            ->orderByDesc('audited_at')
+            ->limit(100)
+            ->get()
+            ->map(fn (AssetAudit $audit): array => [
+                'id' => $audit->id,
+                'status' => $audit->status,
+                'notes' => $audit->notes,
+                'audited_at' => $audit->audited_at?->toISOString(),
+                'location' => $audit->location ? ['id' => $audit->location->id, 'name' => $audit->location->name] : null,
+                'created_at' => $audit->created_at,
+            ]);
+
+        $depreciationEntries = AssetDepreciationEntry::query()
+            ->where('asset_id', $asset->id)
+            ->orderBy('period_end')
+            ->limit(60)
+            ->get()
+            ->map(fn (AssetDepreciationEntry $entry): array => [
+                'id' => $entry->id,
+                'period_start' => $entry->period_start?->toDateString(),
+                'period_end' => $entry->period_end?->toDateString(),
+                'method' => $entry->method,
+                'cost' => $entry->cost,
+                'residual_value' => $entry->residual_value,
+                'book_value_start' => $entry->book_value_start,
+                'depreciation_amount' => $entry->depreciation_amount,
+                'accumulated_depreciation' => $entry->accumulated_depreciation,
+                'book_value_end' => $entry->book_value_end,
+                'units_in_period' => $entry->units_in_period,
+                'units_total_estimate' => $entry->units_total_estimate,
+                'units_unit' => $entry->units_unit,
+            ]);
+
         return Inertia::render('assets/show', [
             'asset' => $asset,
             'histories' => $histories,
             'attachments' => $media,
+            'movements' => $movements,
+            'maintenances' => $maintenances,
+            'audits' => $audits,
+            'depreciationEntries' => $depreciationEntries,
             'formMeta' => $this->formMeta(),
             'computedBookValue' => $asset->bookValue(),
             'warrantyStatus' => $warrantyStatusService->determine($asset),

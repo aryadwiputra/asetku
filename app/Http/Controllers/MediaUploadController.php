@@ -111,25 +111,31 @@ class MediaUploadController extends Controller implements HasMiddleware
         $this->assembleChunks($upload, $assembledRelativePath);
 
         $absolutePath = Storage::disk('local')->path($assembledRelativePath);
-        $this->validateAssembledFile($absolutePath, $upload);
 
-        $asset = MediaAsset::create([
-            'title' => $request->validated('title') ?? $upload->title,
-            'uploaded_by' => $request->user()->id,
-        ]);
+        try {
+            $this->validateAssembledFile($absolutePath, $upload);
 
-        $asset
-            ->addMedia($absolutePath)
-            ->usingName(pathinfo($upload->original_name, PATHINFO_FILENAME))
-            ->usingFileName($this->safeFileName($upload->original_name))
-            ->toMediaCollection('file');
+            $asset = MediaAsset::create([
+                'title' => $request->validated('title') ?? $upload->title,
+                'uploaded_by' => $request->user()->id,
+            ]);
 
-        $this->cleanup($upload, $assembledRelativePath);
-        $upload->delete();
+            $asset
+                ->addMedia($absolutePath)
+                ->usingName(pathinfo($upload->original_name, PATHINFO_FILENAME))
+                ->usingFileName($this->safeFileName($upload->original_name))
+                ->toMediaCollection('file');
 
-        return response()->json([
-            'asset_id' => $asset->id,
-        ]);
+            $this->cleanup($upload, $assembledRelativePath);
+            $upload->delete();
+
+            return response()->json([
+                'asset_id' => $asset->id,
+            ]);
+        } catch (\Exception $e) {
+            $this->cleanup($upload, $assembledRelativePath);
+            throw $e;
+        }
     }
 
     public function destroy(Request $request, MediaUpload $upload): JsonResponse

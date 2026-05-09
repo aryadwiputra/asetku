@@ -1,5 +1,21 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
-import { Copy, Download, Pencil, Printer, QrCode, Trash2, Upload } from 'lucide-react';
+import {
+    Archive,
+    Copy,
+    Download,
+    FileText,
+    History,
+    MapPin,
+    Paperclip,
+    Pencil,
+    Printer,
+    QrCode,
+    Receipt,
+    Trash2,
+    Truck,
+    Upload,
+    Wrench,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import AssetAttachmentController from '@/actions/App/Http/Controllers/AssetAttachmentController';
@@ -18,6 +34,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { chunk, complete, destroy as destroyUpload, store as storeUpload } from '@/routes/media-uploads';
 import { print as printLabels } from '@/routes/assets/labels';
 import { show as qrShow } from '@/routes/qr';
@@ -50,6 +67,63 @@ type HistoryRow = {
     actor: { id: number; name: string } | null;
     payload: unknown;
     created_at: string;
+};
+
+type MovementRow = {
+    id: number;
+    type: string;
+    status: string;
+    notes: string | null;
+    performed_at: string | null;
+    from_branch: { id: number; name: string } | null;
+    to_branch: { id: number; name: string } | null;
+    from_location: { id: number; name: string } | null;
+    to_location: { id: number; name: string } | null;
+    from_department: { id: number; name: string } | null;
+    to_department: { id: number; name: string } | null;
+    from_user: { id: number; name: string } | null;
+    to_user: { id: number; name: string } | null;
+    created_at: string;
+};
+
+type MaintenanceRow = {
+    id: number;
+    type: string;
+    source: string | null;
+    priority: string | null;
+    status: string;
+    description: string | null;
+    cost: string | null;
+    vendor: { id: number; name: string } | null;
+    technician: { id: number; name: string } | null;
+    branch: { id: number; name: string } | null;
+    performed_at: string | null;
+    created_at: string;
+};
+
+type AuditRow = {
+    id: number;
+    status: string;
+    notes: string | null;
+    audited_at: string | null;
+    location: { id: number; name: string } | null;
+    created_at: string;
+};
+
+type DepreciationEntryRow = {
+    id: number;
+    period_start: string | null;
+    period_end: string | null;
+    method: string;
+    cost: string;
+    residual_value: string;
+    book_value_start: string;
+    depreciation_amount: string;
+    accumulated_depreciation: string;
+    book_value_end: string;
+    units_in_period: string | null;
+    units_total_estimate: string | null;
+    units_unit: string | null;
 };
 
 type Asset = {
@@ -85,6 +159,10 @@ type Props = {
     asset: Asset;
     histories: HistoryRow[];
     attachments: Attachment[];
+    movements: MovementRow[];
+    maintenances: MaintenanceRow[];
+    audits: AuditRow[];
+    depreciationEntries: DepreciationEntryRow[];
     formMeta: {
         branches: Array<{ id: number; name: string; code: string }>;
         departments: Array<{ id: number; name: string; code: string; branch_id: number }>;
@@ -106,7 +184,35 @@ type Props = {
     }>;
 };
 
-export default function AssetShow({ asset, histories, attachments, formMeta, computedBookValue, warrantyStatus, warrantyClaims }: Props) {
+const allowedStages = ['acquisition', 'receiving', 'placement', 'usage', 'maintenance', 'mutation', 'disposal'] as const;
+const allowedDocumentTypes = [
+    'invoice',
+    'po',
+    'bast',
+    'receipt',
+    'work_order',
+    'service_report',
+    'assignment_letter',
+    'loan_form',
+    'disposal_report',
+    'sale_proof',
+    'other',
+] as const;
+const allowedMovementTypes = ['placement', 'transfer', 'borrow', 'return'] as const;
+
+export default function AssetShow({
+    asset,
+    histories,
+    attachments,
+    movements,
+    maintenances,
+    audits,
+    depreciationEntries,
+    formMeta,
+    computedBookValue,
+    warrantyStatus,
+    warrantyClaims,
+}: Props) {
     const { moduleAbilities, organization, locale } = usePage().props as {
         moduleAbilities: {
             assets: { update: boolean; delete: boolean };
@@ -123,6 +229,7 @@ export default function AssetShow({ asset, histories, attachments, formMeta, com
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [lifecycleOpen, setLifecycleOpen] = useState(false);
     const [movementOpen, setMovementOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('overview');
 
     const [lifecycleStage, setLifecycleStage] = useState<string>('receiving');
     const [lifecyclePerformedAt, setLifecyclePerformedAt] = useState<string>('');
@@ -164,7 +271,7 @@ export default function AssetShow({ asset, histories, attachments, formMeta, com
         <>
             <Head title={t('assets.show.title', { code: asset.code })} />
 
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
+            <div className="flex h-full flex-1 flex-col rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                         <Heading variant="small" title={asset.name} description={t('assets.show.subtitle', { code: asset.code })} />
@@ -224,208 +331,97 @@ export default function AssetShow({ asset, histories, attachments, formMeta, com
                     </div>
                 </div>
 
-                <div className="grid gap-6 lg:grid-cols-3">
-                    <div className="space-y-6 lg:col-span-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.details')}</CardTitle>
-                                <CardDescription>{t('assets.sections.details_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="grid gap-4 md:grid-cols-2">
-                                <Detail label={t('assets.fields.code')} value={asset.code} />
-                                <Detail label={t('assets.fields.name')} value={asset.name} />
-                                <Detail label={t('assets.fields.branch')} value={asset.branch?.name} />
-                                <Detail label={t('assets.fields.department')} value={asset.department?.name} />
-                                <Detail label={t('assets.fields.location')} value={asset.location?.name} />
-                                <Detail label={t('assets.fields.category')} value={asset.category?.name} />
-                                <Detail label={t('assets.fields.pic')} value={asset.person_in_charge?.name} />
-                                <Detail label={t('assets.fields.asset_user')} value={asset.user?.name} />
-                                <Detail label={t('assets.fields.purchase_date')} value={asset.purchase_date} />
-                                <Detail
-                                    label={t('assets.fields.cost')}
-                                    value={asset.cost ? currencyFormatter.format(Number(asset.cost)) : null}
-                                />
-                            </CardContent>
-                        </Card>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6 flex-1 flex-col">
+                    <TabsList className="grid w-full grid-cols-8">
+                        <TabsTrigger value="overview" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <FileText className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.overview')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="history" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <History className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.history')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="movements" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <Truck className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.movements')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="maintenance" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <Wrench className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.maintenance')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="warranty" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <Receipt className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.warranty')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="attachments" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <Paperclip className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.attachments')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="depreciation" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <MapPin className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.depreciation')}</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="audits" className="flex items-center gap-2 text-xs sm:text-sm">
+                            <Archive className="h-4 w-4" />
+                            <span className="hidden sm:inline">{t('assets.tabs.audits')}</span>
+                        </TabsTrigger>
+                    </TabsList>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.financial')}</CardTitle>
-                                <CardDescription>{t('assets.sections.financial_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="grid gap-4 md:grid-cols-2">
-                                <Detail
-                                    label={t('assets.fields.book_value')}
-                                    value={currencyFormatter.format(Number.isFinite(computedBookValue) ? computedBookValue : 0)}
-                                />
-                                <Detail label={t('assets.fields.depreciation_method')} value={asset.depreciation_method} />
-                                <Detail label={t('assets.fields.useful_life_months')} value={asset.useful_life_months} />
-                                <Detail
-                                    label={t('assets.fields.residual_value')}
-                                    value={asset.residual_value ? currencyFormatter.format(Number(asset.residual_value)) : null}
-                                />
-                            </CardContent>
-                        </Card>
+                    <TabsContent value="overview" className="mt-6">
+                        <OverviewTab
+                            asset={asset}
+                            formMeta={formMeta}
+                            computedBookValue={computedBookValue}
+                            currencyFormatter={currencyFormatter}
+                            dateTimeFormatter={dateTimeFormatter}
+                            qrUrl={qrUrl}
+                            canUpdate={canUpdate}
+                        />
+                    </TabsContent>
 
-                        <AttachmentsCard assetId={asset.id} attachments={attachments} canManage={canUpdate} />
+                    <TabsContent value="history" className="mt-6">
+                        <HistoryTab
+                            histories={histories}
+                            dateTimeFormatter={dateTimeFormatter}
+                            canUpdate={canUpdate}
+                            onRecordEvent={() => setLifecycleOpen(true)}
+                            onRecordMovement={() => setMovementOpen(true)}
+                        />
+                    </TabsContent>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.history')}</CardTitle>
-	                            <CardDescription>{t('assets.sections.history_desc')}</CardDescription>
-	                        </CardHeader>
-	                        <CardContent className="space-y-3">
-	                            {canUpdate ? (
-	                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-	                                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setLifecycleOpen(true)}>
-	                                        {t('assets.lifecycle.actions.record_event')}
-	                                    </Button>
-	                                    <Button variant="outline" className="w-full sm:w-auto" onClick={() => setMovementOpen(true)}>
-	                                        {t('assets.lifecycle.actions.record_movement')}
-	                                    </Button>
-	                                </div>
-	                            ) : null}
-	                            {histories.length === 0 ? (
-	                                <div className="text-sm text-muted-foreground">{t('assets.history.empty')}</div>
-	                            ) : (
-	                                histories.map((h) => (
-	                                    <div key={h.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
-                                            <div className="min-w-0">
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <Badge variant="secondary">{h.action}</Badge>
-                                                    <div className="truncate text-sm font-medium">{h.description || '—'}</div>
-	                                        </div>
-	                                        <div className="mt-1 text-xs text-muted-foreground">
-	                                            {dateTimeFormatter.format(new Date(h.performed_at ?? h.created_at))}
-	                                            {h.actor?.name ? ` • ${h.actor.name}` : ''}
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                            ))
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
+                    <TabsContent value="movements" className="mt-6">
+                        <MovementsTab movements={movements} dateTimeFormatter={dateTimeFormatter} />
+                    </TabsContent>
 
-                    <div className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.vendor_contract')}</CardTitle>
-                                <CardDescription>{t('assets.sections.vendor_contract_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <Detail label={t('assets.fields.vendor_contract')} value={asset.vendor_contract?.title ?? asset.vendor_contract?.contract_number ?? asset.vendor_contract?.vendor_name} />
-                                <Detail label={t('vendor_contracts.fields.vendor')} value={asset.vendor_contract?.vendor?.name ?? asset.vendor_contract?.vendor_name} />
-                                {asset.vendor_contract?.id ? (
-                                    <Link href={VendorContractController.show.url({ vendor_contract: asset.vendor_contract.id })}>
-                                        <Button variant="outline" className="w-full">{t('common.view')}</Button>
-                                    </Link>
-                                ) : null}
-                            </CardContent>
-                        </Card>
+                    <TabsContent value="maintenance" className="mt-6">
+                        <MaintenanceTab maintenances={maintenances} currencyFormatter={currencyFormatter} dateTimeFormatter={dateTimeFormatter} />
+                    </TabsContent>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.warranty')}</CardTitle>
-                                <CardDescription>{t('assets.sections.warranty_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex flex-wrap gap-2">
-                                    <Badge variant={warrantyStatus.status === 'expired' ? 'destructive' : 'secondary'}>
-                                        {t(`assets.warranty.${warrantyStatus.status}`)}
-                                    </Badge>
-                                    {warrantyStatus.days_remaining !== null ? (
-                                        <Badge variant="outline">{t('assets.warranty.days_remaining', { count: warrantyStatus.days_remaining })}</Badge>
-                                    ) : null}
-                                </div>
-                                <Detail label={t('assets.fields.warranty')} value={asset.warranty?.name} />
-                                <Detail label={t('vendor_contracts.fields.end_date')} value={warrantyStatus.warranty_end} />
+                    <TabsContent value="warranty" className="mt-6">
+                        <WarrantyTab
+                            asset={asset}
+                            warrantyStatus={warrantyStatus}
+                            warrantyClaims={warrantyClaims}
+                            canUpdate={canUpdate}
+                        />
+                    </TabsContent>
 
-                                {canUpdate ? (
-                                    <Form action={AssetWarrantyClaimController.store.url({ asset: asset.id })} method="post" className="space-y-3">
-                                        {({ errors, processing }) => (
-                                            <>
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="claim_reference">{t('assets.warranty.fields.claim_reference')}</Label>
-                                                    <Input id="claim_reference" name="claim_reference" />
-                                                    <InputError message={errors.claim_reference} />
-                                                </div>
-                                                <input type="hidden" name="status" value="submitted" />
-                                                <Button disabled={processing}>{t('common.save')}</Button>
-                                            </>
-                                        )}
-                                    </Form>
-                                ) : null}
+                    <TabsContent value="attachments" className="mt-6">
+                        <AttachmentsTab assetId={asset.id} attachments={attachments} canManage={canUpdate} />
+                    </TabsContent>
 
-                                <div className="space-y-3">
-                                    {warrantyClaims.length === 0 ? <div className="text-sm text-muted-foreground">—</div> : warrantyClaims.map((claim) => (
-                                        <div key={claim.id} className="rounded-lg border p-3">
-                                            <div className="flex items-center justify-between gap-3">
-                                                <div className="font-medium">{claim.claim_reference ?? `#${claim.id}`}</div>
-                                                <Badge variant="outline">{claim.status}</Badge>
-                                            </div>
-                                            <div className="mt-2 text-xs text-muted-foreground">{claim.vendor?.name ?? claim.vendor_contract?.title ?? '—'}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
+                    <TabsContent value="depreciation" className="mt-6">
+                        <DepreciationTab
+                            asset={asset}
+                            entries={depreciationEntries}
+                            currencyFormatter={currencyFormatter}
+                        />
+                    </TabsContent>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.qr')}</CardTitle>
-                                <CardDescription>{t('assets.sections.qr_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <div className="break-all rounded-md bg-muted p-3 text-xs">{qrUrl}</div>
-                                <Link href={qrUrl}>
-                                    <Button variant="outline" className="w-full">
-                                        <QrCode className="mr-2 h-4 w-4" />
-                                        {t('assets.actions.open_qr')}
-                                    </Button>
-                                </Link>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t('assets.sections.map')}</CardTitle>
-                                <CardDescription>{t('assets.sections.map_desc')}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                {asset.latitude !== null && asset.longitude !== null ? (
-                                    <BranchLocationPicker latitude={asset.latitude} longitude={asset.longitude} onChange={() => {}} readOnly />
-                                ) : (
-                                    <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-                                        {t('assets.map.empty')}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        {asset.metadata && Object.keys(asset.metadata).length > 0 ? (
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{t('assets.sections.metadata')}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-sm">
-                                    {Object.entries(asset.metadata).map(([k, v]) => (
-                                        <div key={k} className="flex items-start justify-between gap-3">
-                                            <div className="text-muted-foreground">{k}</div>
-                                            <div className="min-w-0 break-words text-right">{String(v)}</div>
-                                        </div>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        ) : null}
-
-                        <Link href={assetsIndex()}>
-                            <Button variant="ghost" className="w-full">
-                                {t('common.back')}
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
+                    <TabsContent value="audits" className="mt-6">
+                        <AuditsTab audits={audits} dateTimeFormatter={dateTimeFormatter} />
+                    </TabsContent>
+                </Tabs>
             </div>
 
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
@@ -522,7 +518,7 @@ export default function AssetShow({ asset, histories, attachments, formMeta, com
                     <div className="grid gap-4">
                         <div className="grid gap-2">
                             <Label>{t('assets.lifecycle.fields.movement_type')}</Label>
-                            <Select value={movementType} onValueChange={(v) => setMovementType(v as any)}>
+                            <Select value={movementType} onValueChange={(v) => setMovementType(v as typeof movementType)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
@@ -672,7 +668,401 @@ function Detail({ label, value }: { label: string; value?: string | number | nul
     );
 }
 
-function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number; attachments: Attachment[]; canManage: boolean }) {
+function OverviewTab({
+    asset,
+    computedBookValue,
+    currencyFormatter,
+    qrUrl,
+}: {
+    asset: Asset;
+    formMeta: Props['formMeta'];
+    computedBookValue: number;
+    currencyFormatter: Intl.NumberFormat;
+    dateTimeFormatter: Intl.DateTimeFormat;
+    qrUrl: string;
+    canUpdate: boolean;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <div className="grid gap-6 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('assets.sections.details')}</CardTitle>
+                        <CardDescription>{t('assets.sections.details_desc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-4 md:grid-cols-2">
+                        <Detail label={t('assets.fields.code')} value={asset.code} />
+                        <Detail label={t('assets.fields.name')} value={asset.name} />
+                        <Detail label={t('assets.fields.branch')} value={asset.branch?.name} />
+                        <Detail label={t('assets.fields.department')} value={asset.department?.name} />
+                        <Detail label={t('assets.fields.location')} value={asset.location?.name} />
+                        <Detail label={t('assets.fields.category')} value={asset.category?.name} />
+                        <Detail label={t('assets.fields.pic')} value={asset.person_in_charge?.name} />
+                        <Detail label={t('assets.fields.asset_user')} value={asset.user?.name} />
+                        <Detail label={t('assets.fields.purchase_date')} value={asset.purchase_date} />
+                        <Detail label={t('assets.fields.cost')} value={asset.cost ? currencyFormatter.format(Number(asset.cost)) : null} />
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('assets.sections.financial')}</CardTitle>
+                        <CardDescription>{t('assets.sections.financial_desc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-4 md:grid-cols-2">
+                        <Detail
+                            label={t('assets.fields.book_value')}
+                            value={currencyFormatter.format(Number.isFinite(computedBookValue) ? computedBookValue : 0)}
+                        />
+                        <Detail label={t('assets.fields.depreciation_method')} value={asset.depreciation_method} />
+                        <Detail label={t('assets.fields.useful_life_months')} value={asset.useful_life_months} />
+                        <Detail
+                            label={t('assets.fields.residual_value')}
+                            value={asset.residual_value ? currencyFormatter.format(Number(asset.residual_value)) : null}
+                        />
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('assets.sections.vendor_contract')}</CardTitle>
+                        <CardDescription>{t('assets.sections.vendor_contract_desc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <Detail label={t('assets.fields.vendor_contract')} value={asset.vendor_contract?.title ?? asset.vendor_contract?.contract_number ?? asset.vendor_contract?.vendor_name} />
+                        <Detail label={t('vendor_contracts.fields.vendor')} value={asset.vendor_contract?.vendor?.name ?? asset.vendor_contract?.vendor_name} />
+                        {asset.vendor_contract?.id ? (
+                            <Link href={VendorContractController.show.url({ vendor_contract: asset.vendor_contract.id })}>
+                                <Button variant="outline" className="w-full">{t('common.view')}</Button>
+                            </Link>
+                        ) : null}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('assets.sections.qr')}</CardTitle>
+                        <CardDescription>{t('assets.sections.qr_desc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <div className="break-all rounded-md bg-muted p-3 text-xs">{qrUrl}</div>
+                        <Link href={qrUrl}>
+                            <Button variant="outline" className="w-full">
+                                <QrCode className="mr-2 h-4 w-4" />
+                                {t('assets.actions.open_qr')}
+                            </Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('assets.sections.map')}</CardTitle>
+                        <CardDescription>{t('assets.sections.map_desc')}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {asset.latitude !== null && asset.longitude !== null ? (
+                            <BranchLocationPicker latitude={asset.latitude} longitude={asset.longitude} onChange={() => {}} readOnly />
+                        ) : (
+                            <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                                {t('assets.map.empty')}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {asset.metadata && Object.keys(asset.metadata).length > 0 ? (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('assets.sections.metadata')}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                            {Object.entries(asset.metadata).map(([k, v]) => (
+                                <div key={k} className="flex items-start justify-between gap-3">
+                                    <div className="text-muted-foreground">{k}</div>
+                                    <div className="min-w-0 break-words text-right">{String(v)}</div>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                ) : null}
+
+                <Link href={assetsIndex()}>
+                    <Button variant="ghost" className="w-full">
+                        {t('common.back')}
+                    </Button>
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+function HistoryTab({
+    histories,
+    dateTimeFormatter,
+    canUpdate,
+    onRecordEvent,
+    onRecordMovement,
+}: {
+    histories: HistoryRow[];
+    dateTimeFormatter: Intl.DateTimeFormat;
+    canUpdate: boolean;
+    onRecordEvent: () => void;
+    onRecordMovement: () => void;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('assets.sections.history')}</CardTitle>
+                <CardDescription>{t('assets.sections.history_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                {canUpdate ? (
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                        <Button variant="outline" className="w-full sm:w-auto" onClick={onRecordEvent}>
+                            {t('assets.lifecycle.actions.record_event')}
+                        </Button>
+                        <Button variant="outline" className="w-full sm:w-auto" onClick={onRecordMovement}>
+                            {t('assets.lifecycle.actions.record_movement')}
+                        </Button>
+                    </div>
+                ) : null}
+                {histories.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">{t('assets.history.empty')}</div>
+                ) : (
+                    histories.map((h) => (
+                        <div key={h.id} className="flex items-start justify-between gap-3 rounded-lg border p-3">
+                            <div className="min-w-0">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <Badge variant="secondary">{h.action}</Badge>
+                                    <div className="truncate text-sm font-medium">{h.description || '—'}</div>
+                                </div>
+                            </div>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                                {dateTimeFormatter.format(new Date(h.performed_at ?? h.created_at))}
+                                {h.actor?.name ? ` • ${h.actor.name}` : ''}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+function MovementsTab({ movements, dateTimeFormatter }: { movements: MovementRow[]; dateTimeFormatter: Intl.DateTimeFormat }) {
+    const { t } = useTranslation();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('assets.sections.movements')}</CardTitle>
+                <CardDescription>{t('assets.sections.movements_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {movements.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">{t('assets.movements.empty')}</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left">
+                                    <th className="pb-2">{t('assets.movements.fields.type')}</th>
+                                    <th className="pb-2">{t('assets.movements.fields.from')}</th>
+                                    <th className="pb-2">{t('assets.movements.fields.to')}</th>
+                                    <th className="pb-2">{t('assets.movements.fields.performed_at')}</th>
+                                    <th className="pb-2">{t('assets.movements.fields.status')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {movements.map((m) => (
+                                    <tr key={m.id} className="border-b last:border-0">
+                                        <td className="py-2">
+                                            <Badge variant="secondary">{t(`assets.lifecycle.movement_types.${m.type}`)}</Badge>
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="text-xs text-muted-foreground">
+                                                {m.from_branch?.name ?? '—'}
+                                                {m.from_location?.name ? ` / ${m.from_location.name}` : ''}
+                                                {m.from_department?.name ? ` / ${m.from_department.name}` : ''}
+                                                {m.from_user?.name ? ` / ${m.from_user.name}` : ''}
+                                            </div>
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="text-xs text-muted-foreground">
+                                                {m.to_branch?.name ?? '—'}
+                                                {m.to_location?.name ? ` / ${m.to_location.name}` : ''}
+                                                {m.to_department?.name ? ` / ${m.to_department.name}` : ''}
+                                                {m.to_user?.name ? ` / ${m.to_user.name}` : ''}
+                                            </div>
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="text-xs text-muted-foreground">
+                                                {m.performed_at ? dateTimeFormatter.format(new Date(m.performed_at)) : '—'}
+                                            </div>
+                                        </td>
+                                        <td className="py-2">
+                                            <Badge variant="outline">{m.status}</Badge>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+function MaintenanceTab({
+    maintenances,
+    currencyFormatter,
+    dateTimeFormatter,
+}: {
+    maintenances: MaintenanceRow[];
+    currencyFormatter: Intl.NumberFormat;
+    dateTimeFormatter: Intl.DateTimeFormat;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('assets.sections.maintenance')}</CardTitle>
+                <CardDescription>{t('assets.sections.maintenance_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {maintenances.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">{t('assets.maintenance.empty')}</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left">
+                                    <th className="pb-2">{t('assets.maintenance.fields.type')}</th>
+                                    <th className="pb-2">{t('assets.maintenance.fields.description')}</th>
+                                    <th className="pb-2">{t('assets.maintenance.fields.vendor')}</th>
+                                    <th className="pb-2">{t('assets.maintenance.fields.cost')}</th>
+                                    <th className="pb-2">{t('assets.maintenance.fields.status')}</th>
+                                    <th className="pb-2">{t('assets.maintenance.fields.performed_at')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {maintenances.map((m) => (
+                                    <tr key={m.id} className="border-b last:border-0">
+                                        <td className="py-2">
+                                            <Badge variant="secondary">{m.type}</Badge>
+                                        </td>
+                                        <td className="py-2 max-w-[200px] truncate">{m.description ?? '—'}</td>
+                                        <td className="py-2">{m.vendor?.name ?? m.technician?.name ?? '—'}</td>
+                                        <td className="py-2">
+                                            {m.cost ? currencyFormatter.format(Number(m.cost)) : '—'}
+                                        </td>
+                                        <td className="py-2">
+                                            <Badge variant="outline">{m.status}</Badge>
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="text-xs text-muted-foreground">
+                                                {m.performed_at ? dateTimeFormatter.format(new Date(m.performed_at)) : '—'}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+function WarrantyTab({
+    asset,
+    warrantyStatus,
+    warrantyClaims,
+    canUpdate,
+}: {
+    asset: Asset;
+    warrantyStatus: Props['warrantyStatus'];
+    warrantyClaims: Props['warrantyClaims'];
+    canUpdate: boolean;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('assets.sections.warranty')}</CardTitle>
+                    <CardDescription>{t('assets.sections.warranty_desc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                        <Badge variant={warrantyStatus.status === 'expired' ? 'destructive' : 'secondary'}>
+                            {t(`assets.warranty.${warrantyStatus.status}`)}
+                        </Badge>
+                        {warrantyStatus.days_remaining !== null ? (
+                            <Badge variant="outline">{t('assets.warranty.days_remaining', { count: warrantyStatus.days_remaining })}</Badge>
+                        ) : null}
+                    </div>
+                    <Detail label={t('assets.fields.warranty')} value={asset.warranty?.name} />
+                    <Detail label={t('vendor_contracts.fields.end_date')} value={warrantyStatus.warranty_end} />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('assets.warranty.claims')}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {canUpdate ? (
+                        <Form action={AssetWarrantyClaimController.store.url({ asset: asset.id })} method="post" className="space-y-3">
+                            {({ errors, processing }) => (
+                                <>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="claim_reference">{t('assets.warranty.fields.claim_reference')}</Label>
+                                        <Input id="claim_reference" name="claim_reference" />
+                                        <InputError message={errors.claim_reference} />
+                                    </div>
+                                    <input type="hidden" name="status" value="submitted" />
+                                    <Button disabled={processing}>{t('common.save')}</Button>
+                                </>
+                            )}
+                        </Form>
+                    ) : null}
+
+                    <div className="space-y-3">
+                        {warrantyClaims.length === 0 ? (
+                            <div className="text-sm text-muted-foreground">{t('assets.warranty.no_claims')}</div>
+                        ) : (
+                            warrantyClaims.map((claim) => (
+                                <div key={claim.id} className="rounded-lg border p-3">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="font-medium">{claim.claim_reference ?? `#${claim.id}`}</div>
+                                        <Badge variant="outline">{claim.status}</Badge>
+                                    </div>
+                                    <div className="mt-2 text-xs text-muted-foreground">
+                                        {claim.vendor?.name ?? claim.vendor_contract?.title ?? '—'}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
+function AttachmentsTab({ assetId, attachments, canManage }: { assetId: number; attachments: Attachment[]; canManage: boolean }) {
     const { t } = useTranslation();
     const [file, setFile] = useState<File | null>(null);
     const [kind, setKind] = useState<'photo' | 'document'>('photo');
@@ -781,102 +1171,148 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('assets.sections.attachments')}</CardTitle>
-                <CardDescription>{t('assets.sections.attachments_desc')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {canManage ? (
-                    <div className="rounded-lg border p-4">
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="grid gap-2">
-                                <Label>{t('assets.attachments.fields.file')}</Label>
-                                <Input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('assets.sections.attachments')}</CardTitle>
+                    <CardDescription>{t('assets.sections.attachments_desc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {canManage ? (
+                        <div className="rounded-lg border p-4">
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-2">
+                                    <Label>{t('assets.attachments.fields.file')}</Label>
+                                    <Input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label>{t('assets.attachments.fields.kind')}</Label>
+                                    <Select value={kind} onValueChange={(v) => setKind(v === 'document' ? 'document' : 'photo')}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="photo">{t('assets.attachments.kinds.photo')}</SelectItem>
+                                            <SelectItem value="document">{t('assets.attachments.kinds.document')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                {kind === 'document' ? (
+                                    <>
+                                        <div className="grid gap-2">
+                                            <Label>{t('assets.lifecycle.fields.stage')}</Label>
+                                            <Select value={stage} onValueChange={setStage}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder={t('assets.lifecycle.placeholders.stage')} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allowedStages.map((s) => (
+                                                        <SelectItem key={s} value={s}>
+                                                            {t(`assets.lifecycle.stages.${s}`)}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="grid gap-2">
+                                            <Label>{t('assets.lifecycle.fields.document_type')}</Label>
+                                            <Select value={documentType} onValueChange={setDocumentType}>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allowedDocumentTypes.map((dt) => (
+                                                        <SelectItem key={dt} value={dt}>
+                                                            {t(`assets.lifecycle.document_types.${dt}`)}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </>
+                                ) : null}
                             </div>
-                            <div className="grid gap-2">
-                                <Label>{t('assets.attachments.fields.kind')}</Label>
-                                <Select value={kind} onValueChange={(v) => setKind(v === 'document' ? 'document' : 'photo')}>
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="photo">{t('assets.attachments.kinds.photo')}</SelectItem>
-                                        <SelectItem value="document">{t('assets.attachments.kinds.document')}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            {kind === 'document' ? (
-                                <>
-                                    <div className="grid gap-2">
-                                        <Label>{t('assets.lifecycle.fields.stage')}</Label>
-                                        <Select value={stage} onValueChange={setStage}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t('assets.lifecycle.placeholders.stage')} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {allowedStages.map((s) => (
-                                                    <SelectItem key={s} value={s}>
-                                                        {t(`assets.lifecycle.stages.${s}`)}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <Label>{t('assets.lifecycle.fields.document_type')}</Label>
-                                        <Select value={documentType} onValueChange={setDocumentType}>
-                                            <SelectTrigger>
-                                                <SelectValue />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {allowedDocumentTypes.map((dt) => (
-                                                    <SelectItem key={dt} value={dt}>
-                                                        {t(`assets.lifecycle.document_types.${dt}`)}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </>
+
+                            {kind === 'photo' ? (
+                                <div className="mt-3 flex items-center gap-2">
+                                    <input
+                                        id="primary"
+                                        type="checkbox"
+                                        checked={isPrimary}
+                                        onChange={(e) => setIsPrimary(e.target.checked)}
+                                    />
+                                    <Label htmlFor="primary">{t('assets.attachments.fields.primary')}</Label>
+                                </div>
                             ) : null}
-                        </div>
 
-                        {kind === 'photo' ? (
-                            <div className="mt-3 flex items-center gap-2">
-                                <input
-                                    id="primary"
-                                    type="checkbox"
-                                    checked={isPrimary}
-                                    onChange={(e) => setIsPrimary(e.target.checked)}
-                                />
-                                <Label htmlFor="primary">{t('assets.attachments.fields.primary')}</Label>
+                            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+                                <Button disabled={!file || uploading} onClick={uploadAndAttach} className="w-full sm:w-auto">
+                                    <Upload className="mr-2 h-4 w-4" />
+                                    {t('assets.attachments.actions.upload')}
+                                </Button>
+                                {progress !== null ? <div className="text-sm text-muted-foreground">{progress}%</div> : null}
+                                {error ? <InputError message={error} /> : null}
                             </div>
-                        ) : null}
-
-                        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-                            <Button disabled={!file || uploading} onClick={uploadAndAttach} className="w-full sm:w-auto">
-                                <Upload className="mr-2 h-4 w-4" />
-                                {t('assets.attachments.actions.upload')}
-                            </Button>
-                            {progress !== null ? <div className="text-sm text-muted-foreground">{progress}%</div> : null}
-                            {error ? <InputError message={error} /> : null}
                         </div>
-                    </div>
-                ) : null}
+                    ) : null}
 
-                <div className="space-y-3">
-                    <div className="text-sm font-medium">{t('assets.attachments.kinds.photo')}</div>
-                    {photos.length === 0 ? (
-                        <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
-                    ) : (
-                        <div className="grid gap-3 sm:grid-cols-2">
-                            {photos.map((a) => (
-                                <div key={a.id} className="rounded-lg border p-3">
-                                    <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-3">
+                        <div className="text-sm font-medium">{t('assets.attachments.kinds.photo')}</div>
+                        {photos.length === 0 ? (
+                            <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
+                        ) : (
+                            <div className="grid gap-3 sm:grid-cols-2">
+                                {photos.map((a) => (
+                                    <div key={a.id} className="rounded-lg border p-3">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <div className="truncate text-sm font-medium">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
+                                                {a.is_primary ? <Badge className="mt-1">{t('assets.attachments.primary')}</Badge> : null}
+                                            </div>
+                                            <div className="shrink-0 flex items-center gap-2">
+                                                {a.media_asset?.url ? (
+                                                    <a href={a.media_asset.url} target="_blank" rel="noreferrer">
+                                                        <Button variant="outline" size="sm">
+                                                            <Download className="h-4 w-4" />
+                                                        </Button>
+                                                    </a>
+                                                ) : null}
+                                                {canManage ? (
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => router.delete(AssetAttachmentController.destroy.url({ asset: assetId, assetMedia: a.id }), { preserveScroll: true })}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                        {a.media_asset?.thumb_url ? (
+                                            <img src={a.media_asset.thumb_url} alt={a.media_asset.title || ''} className="mt-3 h-40 w-full rounded-md object-cover" />
+                                        ) : null}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="text-sm font-medium">{t('assets.attachments.kinds.document')}</div>
+                        {documents.length === 0 ? (
+                            <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
+                        ) : (
+                            <div className="space-y-2">
+                                {documents.map((a) => (
+                                    <div key={a.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
                                         <div className="min-w-0">
-                                            <div className="truncate text-sm font-medium">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
-                                            {a.is_primary ? <Badge className="mt-1">{t('assets.attachments.primary')}</Badge> : null}
+                                            <div className="truncate text-sm">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
+                                            {a.stage || a.document_type ? (
+                                                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                                    {a.stage ? <span>{t(`assets.lifecycle.stages.${a.stage}`)}</span> : null}
+                                                    {a.document_type ? <span>• {t(`assets.lifecycle.document_types.${a.document_type}`)}</span> : null}
+                                                </div>
+                                            ) : null}
                                         </div>
                                         <div className="shrink-0 flex items-center gap-2">
                                             {a.media_asset?.url ? (
@@ -897,73 +1333,124 @@ function AttachmentsCard({ assetId, attachments, canManage }: { assetId: number;
                                             ) : null}
                                         </div>
                                     </div>
-                                    {a.media_asset?.thumb_url ? (
-                                        <img src={a.media_asset.thumb_url} alt={a.media_asset.title || ''} className="mt-3 h-40 w-full rounded-md object-cover" />
-                                    ) : null}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
 
-                <div className="space-y-3">
-                    <div className="text-sm font-medium">{t('assets.attachments.kinds.document')}</div>
-	                    {documents.length === 0 ? (
-	                        <div className="text-sm text-muted-foreground">{t('assets.attachments.empty')}</div>
-	                    ) : (
-	                        <div className="space-y-2">
-	                            {documents.map((a) => (
-	                                <div key={a.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
-	                                    <div className="min-w-0">
-	                                        <div className="truncate text-sm">{a.media_asset?.title || `#${a.media_asset?.id}`}</div>
-	                                        {a.stage || a.document_type ? (
-	                                            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-	                                                {a.stage ? <span>{t(`assets.lifecycle.stages.${a.stage}`)}</span> : null}
-	                                                {a.document_type ? <span>• {t(`assets.lifecycle.document_types.${a.document_type}`)}</span> : null}
-	                                            </div>
-	                                        ) : null}
-	                                    </div>
-	                                    <div className="shrink-0 flex items-center gap-2">
-	                                        {a.media_asset?.url ? (
-	                                            <a href={a.media_asset.url} target="_blank" rel="noreferrer">
-	                                                <Button variant="outline" size="sm">
-	                                                    <Download className="h-4 w-4" />
-                                                </Button>
-                                            </a>
+function DepreciationTab({
+    asset,
+    entries,
+    currencyFormatter,
+}: {
+    asset: Asset;
+    entries: DepreciationEntryRow[];
+    currencyFormatter: Intl.NumberFormat;
+}) {
+    const { t } = useTranslation();
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('assets.sections.depreciation')}</CardTitle>
+                <CardDescription>{t('assets.sections.depreciation_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {entries.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">{t('assets.depreciation.empty')}</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left">
+                                    <th className="pb-2">{t('assets.depreciation.fields.period')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.cost')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.residual_value')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.book_value_start')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.depreciation')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.accumulated')}</th>
+                                    <th className="pb-2 text-right">{t('assets.depreciation.fields.book_value_end')}</th>
+                                    {asset.depreciation_method === 'units_of_production' ? (
+                                        <th className="pb-2 text-right">{t('assets.depreciation.fields.units')}</th>
+                                    ) : null}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {entries.map((e) => (
+                                    <tr key={e.id} className="border-b last:border-0">
+                                        <td className="py-2">
+                                            {e.period_start} — {e.period_end}
+                                        </td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.cost))}</td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.residual_value))}</td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.book_value_start))}</td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.depreciation_amount))}</td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.accumulated_depreciation))}</td>
+                                        <td className="py-2 text-right">{currencyFormatter.format(Number(e.book_value_end))}</td>
+                                        {asset.depreciation_method === 'units_of_production' ? (
+                                            <td className="py-2 text-right">
+                                                {e.units_in_period ? `${e.units_in_period} / ${e.units_total_estimate ?? '?'} ${e.units_unit ?? ''}` : '—'}
+                                            </td>
                                         ) : null}
-                                        {canManage ? (
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => router.delete(AssetAttachmentController.destroy.url({ asset: assetId, assetMedia: a.id }), { preserveScroll: true })}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        ) : null}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
 }
 
-const allowedStages = ['acquisition', 'receiving', 'placement', 'usage', 'maintenance', 'mutation', 'disposal'] as const;
-const allowedDocumentTypes = [
-    'invoice',
-    'po',
-    'bast',
-    'receipt',
-    'work_order',
-    'service_report',
-    'assignment_letter',
-    'loan_form',
-    'disposal_report',
-    'sale_proof',
-    'other',
-] as const;
+function AuditsTab({ audits, dateTimeFormatter }: { audits: AuditRow[]; dateTimeFormatter: Intl.DateTimeFormat }) {
+    const { t } = useTranslation();
 
-const allowedMovementTypes = ['placement', 'transfer', 'borrow', 'return'] as const;
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('assets.sections.audits')}</CardTitle>
+                <CardDescription>{t('assets.sections.audits_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {audits.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">{t('assets.audits.empty')}</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b text-left">
+                                    <th className="pb-2">{t('assets.audits.fields.audited_at')}</th>
+                                    <th className="pb-2">{t('assets.audits.fields.status')}</th>
+                                    <th className="pb-2">{t('assets.audits.fields.location')}</th>
+                                    <th className="pb-2">{t('assets.audits.fields.notes')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {audits.map((a) => (
+                                    <tr key={a.id} className="border-b last:border-0">
+                                        <td className="py-2">
+                                            <div className="text-xs text-muted-foreground">
+                                                {a.audited_at ? dateTimeFormatter.format(new Date(a.audited_at)) : '—'}
+                                            </div>
+                                        </td>
+                                        <td className="py-2">
+                                            <Badge variant="outline">{a.status}</Badge>
+                                        </td>
+                                        <td className="py-2">{a.location?.name ?? '—'}</td>
+                                        <td className="py-2 max-w-[200px] truncate">{a.notes ?? '—'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
