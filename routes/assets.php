@@ -16,6 +16,8 @@ use App\Http\Controllers\AssetMovementController;
 use App\Http\Controllers\AssetSavedFilterController;
 use App\Http\Controllers\AssetUsageLogController;
 use App\Http\Controllers\AssetWarrantyClaimController;
+use App\Http\Controllers\AuditFindingController;
+use App\Http\Controllers\AuditScheduleController;
 use App\Http\Controllers\DepreciationAssetController;
 use App\Http\Controllers\DepreciationController;
 use App\Http\Controllers\DepreciationExportController;
@@ -141,4 +143,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('technicians', TechnicianController::class)
         ->parameters(['technicians' => 'technician'])
         ->except(['show']);
+
+    // Audit module
+    Route::prefix('audit')->name('audit.')->group(function () {
+        Route::get('schedules', [AuditScheduleController::class, 'index'])->name('schedules.index');
+        Route::get('schedules/create', [AuditScheduleController::class, 'create'])->name('schedules.create');
+        Route::post('schedules', [AuditScheduleController::class, 'store'])->name('schedules.store');
+        Route::get('schedules/{auditSchedule}', [AuditScheduleController::class, 'show'])->name('schedules.show');
+        Route::get('schedules/{auditSchedule}/edit', [AuditScheduleController::class, 'edit'])->name('schedules.edit');
+        Route::patch('schedules/{auditSchedule}', [AuditScheduleController::class, 'update'])->name('schedules.update');
+        Route::delete('schedules/{auditSchedule}', [AuditScheduleController::class, 'destroy'])->name('schedules.destroy');
+        Route::post('schedules/{auditSchedule}/start', [AuditScheduleController::class, 'start'])->name('schedules.start');
+        Route::post('schedules/{auditSchedule}/complete', [AuditScheduleController::class, 'complete'])->name('schedules.complete');
+
+        Route::get('findings', [AuditFindingController::class, 'index'])->name('findings.index');
+        Route::get('findings/create/{asset}', [AuditFindingController::class, 'createForAsset'])->name('findings.create');
+        Route::post('findings', [AuditFindingController::class, 'store'])->name('findings.store');
+        Route::get('findings/{auditFinding}/edit', [AuditFindingController::class, 'edit'])->name('findings.edit');
+        Route::patch('findings/{auditFinding}', [AuditFindingController::class, 'update'])->name('findings.update');
+        Route::post('findings/{auditFinding}/approve', [AuditFindingController::class, 'approve'])->name('findings.approve');
+        Route::post('findings/{auditFinding}/reject', [AuditFindingController::class, 'reject'])->name('findings.reject');
+        Route::delete('findings/{auditFinding}', [AuditFindingController::class, 'destroy'])->name('findings.destroy');
+    });
 });

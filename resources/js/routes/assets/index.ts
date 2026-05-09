@@ -9,7 +9,7 @@ import savedFilters from './saved-filters'
 import importMethod from './import'
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -24,7 +24,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -33,7 +33,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -43,7 +43,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -53,7 +53,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -73,7 +73,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::index
-* @see app/Http/Controllers/AssetController.php:40
+* @see app/Http/Controllers/AssetController.php:44
 * @route '/assets'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -90,7 +90,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -105,7 +105,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -114,7 +114,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -124,7 +124,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -134,7 +134,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -144,7 +144,7 @@ const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -154,7 +154,7 @@ createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::create
-* @see app/Http/Controllers/AssetController.php:72
+* @see app/Http/Controllers/AssetController.php:76
 * @route '/assets/create'
 */
 createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -171,7 +171,7 @@ create.form = createForm
 
 /**
 * @see \App\Http\Controllers\AssetController::store
-* @see app/Http/Controllers/AssetController.php:79
+* @see app/Http/Controllers/AssetController.php:83
 * @route '/assets'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -186,7 +186,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::store
-* @see app/Http/Controllers/AssetController.php:79
+* @see app/Http/Controllers/AssetController.php:83
 * @route '/assets'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -195,7 +195,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AssetController::store
-* @see app/Http/Controllers/AssetController.php:79
+* @see app/Http/Controllers/AssetController.php:83
 * @route '/assets'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -205,7 +205,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\AssetController::store
-* @see app/Http/Controllers/AssetController.php:79
+* @see app/Http/Controllers/AssetController.php:83
 * @route '/assets'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -215,7 +215,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\AssetController::store
-* @see app/Http/Controllers/AssetController.php:79
+* @see app/Http/Controllers/AssetController.php:83
 * @route '/assets'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -227,7 +227,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 export const show = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -242,7 +242,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 show.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -275,7 +275,7 @@ show.url = (args: { asset: number | { id: number } } | [asset: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 show.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -285,7 +285,7 @@ show.get = (args: { asset: number | { id: number } } | [asset: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 show.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -295,7 +295,7 @@ show.head = (args: { asset: number | { id: number } } | [asset: number | { id: n
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 const showForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -305,7 +305,7 @@ const showForm = (args: { asset: number | { id: number } } | [asset: number | { 
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 showForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -315,7 +315,7 @@ showForm.get = (args: { asset: number | { id: number } } | [asset: number | { id
 
 /**
 * @see \App\Http\Controllers\AssetController::show
-* @see app/Http/Controllers/AssetController.php:127
+* @see app/Http/Controllers/AssetController.php:131
 * @route '/assets/{asset}'
 */
 showForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -332,7 +332,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 export const edit = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -347,7 +347,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 edit.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -380,7 +380,7 @@ edit.url = (args: { asset: number | { id: number } } | [asset: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 edit.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -390,7 +390,7 @@ edit.get = (args: { asset: number | { id: number } } | [asset: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 edit.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -400,7 +400,7 @@ edit.head = (args: { asset: number | { id: number } } | [asset: number | { id: n
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 const editForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -410,7 +410,7 @@ const editForm = (args: { asset: number | { id: number } } | [asset: number | { 
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 editForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -420,7 +420,7 @@ editForm.get = (args: { asset: number | { id: number } } | [asset: number | { id
 
 /**
 * @see \App\Http\Controllers\AssetController::edit
-* @see app/Http/Controllers/AssetController.php:221
+* @see app/Http/Controllers/AssetController.php:315
 * @route '/assets/{asset}/edit'
 */
 editForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -437,7 +437,7 @@ edit.form = editForm
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 export const update = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -452,7 +452,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 update.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -485,7 +485,7 @@ update.url = (args: { asset: number | { id: number } } | [asset: number | { id: 
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 update.put = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -495,7 +495,7 @@ update.put = (args: { asset: number | { id: number } } | [asset: number | { id: 
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 update.patch = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -505,7 +505,7 @@ update.patch = (args: { asset: number | { id: number } } | [asset: number | { id
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 const updateForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -520,7 +520,7 @@ const updateForm = (args: { asset: number | { id: number } } | [asset: number | 
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 updateForm.put = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -535,7 +535,7 @@ updateForm.put = (args: { asset: number | { id: number } } | [asset: number | { 
 
 /**
 * @see \App\Http\Controllers\AssetController::update
-* @see app/Http/Controllers/AssetController.php:239
+* @see app/Http/Controllers/AssetController.php:333
 * @route '/assets/{asset}'
 */
 updateForm.patch = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -552,7 +552,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\AssetController::destroy
-* @see app/Http/Controllers/AssetController.php:330
+* @see app/Http/Controllers/AssetController.php:424
 * @route '/assets/{asset}'
 */
 export const destroy = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -567,7 +567,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\AssetController::destroy
-* @see app/Http/Controllers/AssetController.php:330
+* @see app/Http/Controllers/AssetController.php:424
 * @route '/assets/{asset}'
 */
 destroy.url = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -600,7 +600,7 @@ destroy.url = (args: { asset: number | { id: number } } | [asset: number | { id:
 
 /**
 * @see \App\Http\Controllers\AssetController::destroy
-* @see app/Http/Controllers/AssetController.php:330
+* @see app/Http/Controllers/AssetController.php:424
 * @route '/assets/{asset}'
 */
 destroy.delete = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -610,7 +610,7 @@ destroy.delete = (args: { asset: number | { id: number } } | [asset: number | { 
 
 /**
 * @see \App\Http\Controllers\AssetController::destroy
-* @see app/Http/Controllers/AssetController.php:330
+* @see app/Http/Controllers/AssetController.php:424
 * @route '/assets/{asset}'
 */
 const destroyForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -625,7 +625,7 @@ const destroyForm = (args: { asset: number | { id: number } } | [asset: number |
 
 /**
 * @see \App\Http\Controllers\AssetController::destroy
-* @see app/Http/Controllers/AssetController.php:330
+* @see app/Http/Controllers/AssetController.php:424
 * @route '/assets/{asset}'
 */
 destroyForm.delete = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
