@@ -147,7 +147,7 @@ Modul operasional agar user bisa melakukan perubahan lifecycle tanpa membuka det
 
 ## Demo Data (Realistic Seed + Internet Images)
 
-Seeder demo membuat holding “PT Maju Bersama” + 3 organisasi + cabang + master data + aset realistis, termasuk download foto aset dari **Wikimedia Commons** (best-effort).
+Seeder demo membuat holding “PT Maju Bersama” + 3 organisasi + cabang + master data + aset realistis, termasuk download foto dan dokumen demo asset dari sumber publik eksternal saat seeding berjalan.
 
 Aktifkan demo seed:
 
@@ -156,7 +156,7 @@ SEED_DEMO_ASSETS=true php artisan migrate:fresh --seed
 ```
 
 Catatan:
-- Membutuhkan internet untuk download gambar (gagal download tidak membatalkan seeding).
+- Membutuhkan internet untuk mendownload foto dan dokumen demo asset.
 - File media disimpan ke disk `public`. Pastikan sudah menjalankan `php artisan storage:link`.
 - User default (`superadmin@example.com`, `admin@example.com`) akan di-attach sebagai member demo organizations agar bisa switch org dan melihat data demo.
 

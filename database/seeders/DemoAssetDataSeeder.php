@@ -28,33 +28,49 @@ use Illuminate\Support\Str;
 
 class DemoAssetDataSeeder extends Seeder
 {
-    private const MINIMAL_PDF_BASE64 = 'JVBERi0xLjQKJeLjz9MKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPj4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQovQ29udGVudHMgNCAwIFIKL1Jlc291cmNlcyA8PAovRm9udCA8PAovRjEgNSAwIFIKPj4KPj4KPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA3NQo+PgpzdHJlYW0KQlQKL0YxIDI0IFRmCjUwIDEyMCBUZAooRGVtbyBBc2V0a3UpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PAovVHlwZSAvRm9udAovU3VidHlwZSAvVHlwZTEKL0Jhc2VGb250IC9IZWx2ZXRpY2EKPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAxNSAwMDAwMCBuIAowMDAwMDAwMDY2IDAwMDAwIG4gCjAwMDAwMDAxMjEgMDAwMDAgbiAKMDAwMDAwMDI4NCAwMDAwMCBuIAowMDAwMDAwNDQ1IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNTE0CiUlRU9G';
-
     /**
-     * Wikimedia Commons stable URLs (Special:FilePath).
-     *
-     * @var array<string, list<string>>
+     * @var array<string, array{photos:list<string>, document:string}>
      */
-    private const IMAGE_URLS = [
+    private const REMOTE_MEDIA = [
         'laptop' => [
-            'https://commons.wikimedia.org/wiki/Special:FilePath/IBM_ThinkPad_Laptop.JPG',
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Laptop_computer.jpg',
+            'photos' => [
+                'https://commons.wikimedia.org/wiki/Special:FilePath/IBM_ThinkPad_Laptop.JPG',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Acer_Aspire_8920_Gemstone.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/IBM_ThinkPad_Laptop.JPG',
+            ],
+            'document' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ],
         'printer' => [
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Toshiba_e-STUDIO6529A_Printer.jpg',
+            'photos' => [
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Toshiba_e-STUDIO6529A_Printer.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Toshiba_e-STUDIO6529A_Printer.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Toshiba_e-STUDIO6529A_Printer.jpg',
+            ],
+            'document' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ],
         'network' => [
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Cisco_2800_series_router_(1).jpg',
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Servers_in_a_Rack.jpg',
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Computer_server_rack.jpg',
-            'https://commons.wikimedia.org/wiki/Special:FilePath/WifiAccessPoint.jpg',
+            'photos' => [
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Cisco_2800_series_router_(1).jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Servers_in_a_Rack.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/WifiAccessPoint.jpg',
+            ],
+            'document' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ],
         'vehicle' => [
-            'https://commons.wikimedia.org/wiki/Special:FilePath/A_forklift.jpg',
-            'https://commons.wikimedia.org/wiki/Special:FilePath/2020_Toyota_HiAce_(front).jpg',
+            'photos' => [
+                'https://commons.wikimedia.org/wiki/Special:FilePath/A_forklift.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/2020_Toyota_HiAce_(front).jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/A_forklift.jpg',
+            ],
+            'document' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ],
         'furniture' => [
-            'https://commons.wikimedia.org/wiki/Special:FilePath/Office_Chair.jpg',
+            'photos' => [
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Office_Chair.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Office_Chair.jpg',
+                'https://commons.wikimedia.org/wiki/Special:FilePath/Office_Chair.jpg',
+            ],
+            'document' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ],
     ];
 
@@ -178,46 +194,49 @@ class DemoAssetDataSeeder extends Seeder
                 ],
             );
 
-            $this->ensureAcquisitionDocument($asset, $uploadedBy);
-
-            $hasPhoto = $asset->media()->where('kind', 'photo')->exists();
-            if ($hasPhoto) {
-                continue;
-            }
+            $this->ensureAcquisitionDocument($asset, $def['image_kind'], $uploadedBy);
 
             if (! (bool) env('SEED_DEMO_MEDIA', true)) {
                 continue;
             }
 
-            $urls = array_slice(self::IMAGE_URLS[$def['image_kind']] ?? [], 0, 3);
+            foreach ($this->photoUrlsForKind($def['image_kind']) as $index => $url) {
+                $alreadyAttached = $asset->media()
+                    ->where('kind', 'photo')
+                    ->where('sort_order', $index)
+                    ->exists();
 
-            foreach ($urls as $index => $url) {
-                $downloaded = $this->downloadImage($url);
+                if ($alreadyAttached) {
+                    continue;
+                }
+
+                $downloaded = $this->downloadRemoteFile($url, ['image/jpeg', 'image/png', 'image/webp']);
                 if (! $downloaded) {
                     continue;
                 }
 
                 $title = "{$asset->code} Photo ".($index + 1);
-                $fileName = Str::slug($asset->code.'-photo-'.($index + 1)).'.'.$downloaded['ext'];
 
                 $mediaAsset = $this->createMediaAssetFromBytes(
                     title: $title,
                     uploadedBy: $uploadedBy,
                     bytes: $downloaded['bytes'],
-                    fileName: $fileName,
+                    fileName: Str::slug($asset->code.'-photo-'.($index + 1)).'.'.$downloaded['ext'],
                 );
 
-                if (! $mediaAsset) {
-                    continue;
+                if ($mediaAsset) {
+                    AssetMedia::query()->firstOrCreate(
+                        [
+                            'asset_id' => $asset->id,
+                            'media_asset_id' => $mediaAsset->id,
+                            'kind' => 'photo',
+                        ],
+                        [
+                            'sort_order' => $index,
+                            'is_primary' => $index === 0,
+                        ],
+                    );
                 }
-
-                AssetMedia::query()->create([
-                    'asset_id' => $asset->id,
-                    'media_asset_id' => $mediaAsset->id,
-                    'kind' => 'photo',
-                    'sort_order' => $index,
-                    'is_primary' => $index === 0,
-                ]);
             }
         }
     }
@@ -395,31 +414,44 @@ class DemoAssetDataSeeder extends Seeder
         ];
     }
 
+    private function photoUrlsForKind(string $kind): array
+    {
+        return self::REMOTE_MEDIA[$kind]['photos'] ?? [];
+    }
+
+    private function documentUrlForKind(string $kind): ?string
+    {
+        return self::REMOTE_MEDIA[$kind]['document'] ?? null;
+    }
+
     /**
+     * @param  list<string>  $acceptedMimeTypes
      * @return array{bytes:string,mime:string,ext:string}|null
      */
-    private function downloadImage(string $url): ?array
+    private function downloadRemoteFile(string $url, array $acceptedMimeTypes): ?array
     {
         try {
-            // Wikimedia requires a User-Agent (and asks to respect robot policy).
-            // Use a stable, descriptive UA so requests are not blocked.
             $userAgent = trim(sprintf(
                 '%s DemoAssetDataSeeder (+%s)',
                 (string) config('app.name', 'asetku'),
                 (string) config('app.url', 'http://localhost'),
             ));
 
-            $response = Http::timeout(20)
+            $response = Http::timeout(30)
+                ->connectTimeout(10)
                 ->withUserAgent($userAgent)
-                ->accept('image/*')
-                ->retry(2, 200, throw: false)
+                ->accept(implode(',', $acceptedMimeTypes))
+                ->retry(2, 250, throw: false)
                 ->get($url);
         } catch (ConnectionException $e) {
-            Log::warning('DemoAssetDataSeeder image download failed', ['url' => $url, 'error' => $e->getMessage()]);
+            Log::warning('DemoAssetDataSeeder media download connection failed', [
+                'url' => $url,
+                'error' => $e->getMessage(),
+            ]);
 
             return null;
         } catch (RequestException $e) {
-            Log::warning('DemoAssetDataSeeder image download request exception', [
+            Log::warning('DemoAssetDataSeeder media download request exception', [
                 'url' => $url,
                 'status' => $e->response?->status(),
                 'error' => $e->getMessage(),
@@ -429,40 +461,72 @@ class DemoAssetDataSeeder extends Seeder
         }
 
         if (! $response->successful()) {
-            Log::warning('DemoAssetDataSeeder image download non-200', ['url' => $url, 'status' => $response->status()]);
+            Log::warning('DemoAssetDataSeeder media download non-200', [
+                'url' => $url,
+                'status' => $response->status(),
+            ]);
 
             return null;
         }
 
-        $mime = (string) $response->header('Content-Type');
-        if (! str_starts_with($mime, 'image/')) {
-            Log::warning('DemoAssetDataSeeder image download not image/*', ['url' => $url, 'mime' => $mime]);
+        $mime = trim(strtolower(Str::before((string) $response->header('Content-Type'), ';')));
+        if ($mime === '' || ! in_array($mime, $acceptedMimeTypes, true)) {
+            Log::warning('DemoAssetDataSeeder media download mime rejected', [
+                'url' => $url,
+                'mime' => $mime,
+            ]);
 
             return null;
         }
 
         $bytes = (string) $response->body();
         if ($bytes === '') {
-            Log::warning('DemoAssetDataSeeder image download empty body', ['url' => $url]);
+            Log::warning('DemoAssetDataSeeder media download empty body', ['url' => $url]);
 
             return null;
         }
 
         $max = min((int) config('media-library.max_file_size', 1024 * 1024 * 200), 10 * 1024 * 1024);
         if (strlen($bytes) > $max) {
-            Log::warning('DemoAssetDataSeeder image download too large', ['url' => $url, 'size' => strlen($bytes), 'max' => $max]);
+            Log::warning('DemoAssetDataSeeder media download too large', [
+                'url' => $url,
+                'size' => strlen($bytes),
+                'max' => $max,
+            ]);
 
             return null;
         }
 
-        $ext = match (true) {
-            str_starts_with($mime, 'image/jpeg') => 'jpg',
-            str_starts_with($mime, 'image/png') => 'png',
-            str_starts_with($mime, 'image/webp') => 'webp',
-            default => 'jpg',
-        };
+        $ext = $this->extensionFromMimeType($mime) ?? $this->extensionFromUrl($url) ?? 'bin';
 
-        return ['bytes' => $bytes, 'mime' => $mime, 'ext' => $ext];
+        return [
+            'bytes' => $bytes,
+            'mime' => $mime,
+            'ext' => $ext,
+        ];
+    }
+
+    private function extensionFromMimeType(string $mime): ?string
+    {
+        return match ($mime) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'application/pdf' => 'pdf',
+            default => null,
+        };
+    }
+
+    private function extensionFromUrl(string $url): ?string
+    {
+        $path = parse_url($url, PHP_URL_PATH);
+        if (! is_string($path) || $path === '') {
+            return null;
+        }
+
+        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return $ext !== '' ? $ext : null;
     }
 
     private function createMediaAssetFromBytes(string $title, int $uploadedBy, string $bytes, string $fileName): ?MediaAsset
@@ -490,7 +554,7 @@ class DemoAssetDataSeeder extends Seeder
         return $mediaAsset;
     }
 
-    private function ensureAcquisitionDocument(Asset $asset, int $uploadedBy): void
+    private function ensureAcquisitionDocument(Asset $asset, string $kind, int $uploadedBy): void
     {
         $hasDoc = $asset->media()
             ->where('kind', 'document')
@@ -502,18 +566,23 @@ class DemoAssetDataSeeder extends Seeder
             return;
         }
 
-        $bytes = base64_decode(self::MINIMAL_PDF_BASE64, true);
-        if (! is_string($bytes) || $bytes === '') {
+        $url = $this->documentUrlForKind($kind);
+        if (! is_string($url) || $url === '') {
+            return;
+        }
+
+        $downloaded = $this->downloadRemoteFile($url, ['application/pdf']);
+        if (! $downloaded) {
             return;
         }
 
         $title = "{$asset->code} Invoice";
-        $fileName = Str::slug($asset->code.'-invoice').'.pdf';
+        $fileName = Str::slug($asset->code.'-invoice').'.'.$downloaded['ext'];
 
         $mediaAsset = $this->createMediaAssetFromBytes(
             title: $title,
             uploadedBy: $uploadedBy,
-            bytes: $bytes,
+            bytes: $downloaded['bytes'],
             fileName: $fileName,
         );
 

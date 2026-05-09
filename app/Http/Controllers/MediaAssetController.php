@@ -135,8 +135,8 @@ class MediaAssetController extends Controller implements HasMiddleware
                     'name' => $media->name,
                     'mime_type' => $media->mime_type,
                     'size' => $media->size,
-                    'url' => $media->getFullUrl(),
-                    'thumb_url' => $isImage ? $media->getFullUrl('thumb') : null,
+                    'url' => $asset->getFirstMediaUrl('file'),
+                    'thumb_url' => $isImage ? $asset->getFirstMediaUrl('file', 'thumb') : null,
                 ]
                 : null,
             'created_at' => $asset->created_at?->toISOString() ?? now()->toISOString(),
