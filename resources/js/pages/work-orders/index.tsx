@@ -13,6 +13,7 @@ type Branch = { id: number; name: string; code: string };
 
 type Row = {
     id: number;
+    work_order_number: string;
     description: string;
     type: string;
     source: string;
@@ -63,6 +64,7 @@ export default function WorkOrdersIndex({ items, filtersMeta }: Props) {
                 <div className="min-w-0">
                     <div className="truncate font-medium">{row.asset?.name || '-'}</div>
                     <div className="truncate text-xs text-muted-foreground">{row.asset?.code || '-'}</div>
+                    <div className="truncate text-xs text-muted-foreground">{row.work_order_number}</div>
                     <div className="mt-1 truncate text-xs text-muted-foreground">{row.description}</div>
                 </div>
             ),

@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::update
 * @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
@@ -56,38 +56,6 @@ update.patch = (args: { schedule: number | { id: number } } | [schedule: number 
     url: update.url(args, options),
     method: 'patch',
 })
-
-/**
-* @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
-* @route '/maintenance-schedules/{schedule}/reschedule'
-*/
-const updateForm = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceScheduleRescheduleController::update
-* @see app/Http/Controllers/MaintenanceScheduleRescheduleController.php:16
-* @route '/maintenance-schedules/{schedule}/reschedule'
-*/
-updateForm.patch = (args: { schedule: number | { id: number } } | [schedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
 
 const MaintenanceScheduleRescheduleController = { update }
 

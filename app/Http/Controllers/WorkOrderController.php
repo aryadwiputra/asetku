@@ -73,6 +73,7 @@ class WorkOrderController extends Controller
         if ($search !== '') {
             $query->where(function (Builder $q) use ($search): void {
                 $q->where('description', 'like', "%{$search}%")
+                    ->orWhere('work_order_number', 'like', "%{$search}%")
                     ->orWhereHas('asset', function (Builder $assetQ) use ($search): void {
                         $assetQ->where('code', 'like', "%{$search}%")
                             ->orWhere('name', 'like', "%{$search}%");

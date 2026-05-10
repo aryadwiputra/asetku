@@ -24,7 +24,7 @@ class AssetAttachmentController extends Controller
 
         if ($kind === 'photo') {
             $count = $asset->media()->where('kind', 'photo')->count();
-            if ($count >= 10) {
+            if ($count >= 20) {
                 return back()->withErrors(['kind' => __('assets.attachments.max_photos')]);
             }
         }

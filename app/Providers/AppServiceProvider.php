@@ -222,6 +222,43 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        Gate::define('viewMaintenanceReport', function (User $user): bool {
+            if ($user->can('report_maintenance.view')) {
+                return true;
+            }
+
+            $organizationId = $user->current_organization_id;
+
+            if ($organizationId === null) {
+                return false;
+            }
+
+            return $user->hasOrganizationRole((int) $organizationId, [
+                OrganizationMemberRole::Owner,
+                OrganizationMemberRole::Admin,
+                OrganizationMemberRole::Manager,
+                OrganizationMemberRole::Member,
+            ]);
+        });
+
+        Gate::define('exportMaintenanceReport', function (User $user): bool {
+            if ($user->can('report_maintenance.export') || $user->can('work_order.export')) {
+                return true;
+            }
+
+            $organizationId = $user->current_organization_id;
+
+            if ($organizationId === null) {
+                return false;
+            }
+
+            return $user->hasOrganizationRole((int) $organizationId, [
+                OrganizationMemberRole::Owner,
+                OrganizationMemberRole::Admin,
+                OrganizationMemberRole::Manager,
+            ]);
+        });
+
         Gate::before(function ($user, $ability) {
             return $user->hasRole('super-admin') ? true : null;
         });

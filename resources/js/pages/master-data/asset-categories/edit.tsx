@@ -25,6 +25,7 @@ type Props = {
         useful_life_months: number | null;
         residual_value: string | number | null;
         capex_opex_default: string | null;
+        category_default_maintenance_interval: number | null;
     };
     parents: Array<{ id: number; name: string; code: string }>;
 };
@@ -126,6 +127,20 @@ export default function EditAssetCategory({ item, parents }: Props) {
                                     <Label htmlFor="capex_opex_default">{t('asset_categories.fields.capex_opex_default')}</Label>
                                     <Input id="capex_opex_default" name="capex_opex_default" defaultValue={item.capex_opex_default ?? ''} />
                                     <InputError message={errors.capex_opex_default} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="category_default_maintenance_interval">
+                                        {t('asset_categories.fields.category_default_maintenance_interval')}
+                                    </Label>
+                                    <Input
+                                        id="category_default_maintenance_interval"
+                                        name="category_default_maintenance_interval"
+                                        type="number"
+                                        min={1}
+                                        defaultValue={item.category_default_maintenance_interval ?? undefined}
+                                    />
+                                    <InputError message={errors.category_default_maintenance_interval} />
                                 </div>
                             </Card>
 

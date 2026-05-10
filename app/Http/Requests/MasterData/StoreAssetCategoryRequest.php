@@ -3,7 +3,6 @@
 namespace App\Http\Requests\MasterData;
 
 use App\Services\OrganizationContext;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -36,6 +35,7 @@ class StoreAssetCategoryRequest extends FormRequest
             'useful_life_months' => ['nullable', 'integer', 'min:1', 'max:6000'],
             'residual_value' => ['nullable', 'numeric', 'min:0'],
             'capex_opex_default' => ['nullable', 'string', 'max:50'],
+            'category_default_maintenance_interval' => ['nullable', 'integer', 'min:1', 'max:3650'],
         ];
     }
 }

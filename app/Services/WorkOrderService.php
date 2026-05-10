@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Asset;
 use App\Models\AssetMaintenance;
 use App\Models\AssetMaintenanceTask;
+use App\Models\AssetStatus;
 use App\Models\MaintenanceChecklistTemplate;
 use App\Models\MaintenanceSchedule;
 use App\Models\TechnicianProfile;
@@ -18,6 +19,8 @@ class WorkOrderService
     public function __construct(
         private readonly AssetAuditLogger $audit,
         private readonly WorkOrderSlaService $sla,
+        private readonly WorkOrderNumberGenerator $numbers,
+        private readonly AssetStatusTransitionResolver $statusTransitions,
     ) {}
 
     /**
@@ -168,6 +171,7 @@ class WorkOrderService
         }
 
         $workOrder->save();
+        $this->syncAssetMaintenanceStatusAfterWorkOrderUpdate($workOrder, $actor, $previousStatus);
 
         $this->audit->logWorkOrderProgressed(
             $workOrder->asset()->firstOrFail(),
@@ -197,6 +201,22 @@ class WorkOrderService
         $workOrder->save();
     }
 
+    public function recalculateTaskProgress(AssetMaintenance $workOrder): void
+    {
+        if (in_array($workOrder->status, ['completed', 'cancelled'], true)) {
+            return;
+        }
+
+        $totalTasks = $workOrder->tasks()->count();
+        if ($totalTasks === 0) {
+            return;
+        }
+
+        $completedTasks = $workOrder->tasks()->whereNotNull('completed_at')->count();
+        $workOrder->progress_percent = (int) round(($completedTasks / $totalTasks) * 100);
+        $workOrder->save();
+    }
+
     /**
      * @param  array<string, mixed>  $payload
      */
@@ -206,7 +226,9 @@ class WorkOrderService
             $workOrder = new AssetMaintenance;
 
             $workOrder->organization_id = $asset->organization_id;
+            $workOrder->work_order_number = $this->numbers->generate((int) $asset->organization_id, now());
             $workOrder->asset_id = $asset->id;
+            $workOrder->asset_status_before_maintenance_id = $this->statusSnapshotForCorrectiveWorkOrder($asset, $payload);
             $workOrder->branch_id = $payload['branch_id'] ?? $asset->branch_id;
             $workOrder->type = $payload['type'] ?? 'corrective';
             $workOrder->source = $payload['source'] ?? 'manual';
@@ -226,6 +248,7 @@ class WorkOrderService
             $workOrder->requested_by = $actor?->id;
 
             $workOrder->save();
+            $this->syncAssetStatusForActiveCorrectiveWorkOrder($asset, $workOrder, $actor);
 
             $this->sla->applyDueDates($workOrder);
             $workOrder->save();
@@ -297,5 +320,161 @@ class WorkOrderService
         } catch (\Throwable) {
             return null;
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function statusSnapshotForCorrectiveWorkOrder(Asset $asset, array $payload): ?int
+    {
+        if (($payload['type'] ?? 'corrective') !== 'corrective') {
+            return null;
+        }
+
+        $asset->loadMissing('status:id,code');
+        $currentCode = strtolower((string) ($asset->status?->code ?? ''));
+
+        if (! in_array($currentCode, ['repair', 'under_maintenance'], true)) {
+            return $asset->asset_status_id;
+        }
+
+        return AssetMaintenance::query()
+            ->where('asset_id', $asset->id)
+            ->where('type', 'corrective')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->whereNotNull('asset_status_before_maintenance_id')
+            ->orderBy('id')
+            ->value('asset_status_before_maintenance_id');
+    }
+
+    private function syncAssetMaintenanceStatusAfterWorkOrderUpdate(AssetMaintenance $workOrder, User $actor, string $previousStatus): void
+    {
+        if ($workOrder->type !== 'corrective') {
+            return;
+        }
+
+        $asset = $workOrder->asset()->first();
+        if (! $asset instanceof Asset) {
+            return;
+        }
+
+        if (in_array($workOrder->status, ['open', 'acknowledged', 'in_progress'], true)) {
+            if (in_array($previousStatus, ['completed', 'cancelled'], true)) {
+                $this->syncAssetStatusForActiveCorrectiveWorkOrder($asset, $workOrder, $actor);
+            }
+
+            return;
+        }
+
+        if (! in_array($workOrder->status, ['completed', 'cancelled'], true)) {
+            return;
+        }
+
+        $hasOtherActiveCorrectiveWorkOrders = AssetMaintenance::query()
+            ->where('asset_id', $asset->id)
+            ->where('type', 'corrective')
+            ->whereNotIn('status', ['completed', 'cancelled'])
+            ->whereKeyNot($workOrder->id)
+            ->exists();
+
+        if ($hasOtherActiveCorrectiveWorkOrders) {
+            return;
+        }
+
+        $asset->loadMissing('status:id,code');
+        $currentCode = strtolower((string) ($asset->status?->code ?? ''));
+
+        if (! in_array($currentCode, ['repair', 'under_maintenance'], true)) {
+            return;
+        }
+
+        $restoreStatus = $this->restoreStatusForCompletedCorrectiveWorkOrder($workOrder);
+        if (! $restoreStatus instanceof AssetStatus) {
+            return;
+        }
+
+        $decision = $this->statusTransitions->decision($asset, $restoreStatus);
+        if ($decision['type'] === 'blocked') {
+            return;
+        }
+
+        $fromStatusId = $asset->asset_status_id;
+        $asset->asset_status_id = $restoreStatus->id;
+        $asset->save();
+
+        $this->audit->logStatusChanged(
+            asset: $asset,
+            actor: $actor,
+            fromStatusId: $fromStatusId,
+            toStatusId: $restoreStatus->id,
+            performedAt: now(),
+            notes: __('assets.lifecycle.notes.restored_after_maintenance', [
+                'number' => $workOrder->work_order_number,
+            ]),
+        );
+    }
+
+    private function syncAssetStatusForActiveCorrectiveWorkOrder(Asset $asset, AssetMaintenance $workOrder, ?User $actor): void
+    {
+        if ($workOrder->type !== 'corrective') {
+            return;
+        }
+
+        $repairStatus = AssetStatus::query()
+            ->whereIn('code', ['repair', 'under_maintenance'])
+            ->orderByRaw("case when code = 'repair' then 0 else 1 end")
+            ->first(['id', 'code']);
+
+        if (! $repairStatus instanceof AssetStatus) {
+            return;
+        }
+
+        $asset->loadMissing('status:id,code');
+        $currentCode = strtolower((string) ($asset->status?->code ?? ''));
+
+        if (in_array($currentCode, ['repair', 'under_maintenance'], true)) {
+            return;
+        }
+
+        $decision = $this->statusTransitions->decision($asset, $repairStatus);
+        if ($decision['type'] === 'blocked') {
+            return;
+        }
+
+        $fromStatusId = $asset->asset_status_id;
+        $asset->asset_status_id = $repairStatus->id;
+        $asset->save();
+
+        if (! $actor instanceof User) {
+            return;
+        }
+
+        $this->audit->logStatusChanged(
+            asset: $asset,
+            actor: $actor,
+            fromStatusId: $fromStatusId,
+            toStatusId: $repairStatus->id,
+            performedAt: now(),
+            notes: __('assets.lifecycle.notes.moved_to_maintenance', [
+                'number' => $workOrder->work_order_number,
+            ]),
+        );
+    }
+
+    private function restoreStatusForCompletedCorrectiveWorkOrder(AssetMaintenance $workOrder): ?AssetStatus
+    {
+        $candidateId = $workOrder->asset_status_before_maintenance_id;
+
+        if (is_numeric($candidateId)) {
+            $status = AssetStatus::query()->find((int) $candidateId, ['id', 'code']);
+
+            if ($status instanceof AssetStatus && ! in_array(strtolower((string) $status->code), ['repair', 'under_maintenance'], true)) {
+                return $status;
+            }
+        }
+
+        return AssetStatus::query()
+            ->where('code', 'active')
+            ->first(['id', 'code']);
     }
 }

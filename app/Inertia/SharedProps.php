@@ -120,6 +120,8 @@ class SharedProps
             'reports' => [
                 'inventoryView' => $user ? Gate::forUser($user)->allows('viewInventoryReport') : false,
                 'inventoryExport' => $user ? Gate::forUser($user)->allows('exportInventoryReport') : false,
+                'maintenanceView' => $user ? Gate::forUser($user)->allows('viewMaintenanceReport') : false,
+                'maintenanceExport' => $user ? Gate::forUser($user)->allows('exportMaintenanceReport') : false,
             ],
             'audit' => [
                 'view' => $user ? Gate::forUser($user)->allows('viewAny', AuditSchedule::class) : false,

@@ -27,6 +27,8 @@ import MaintenanceCalendarController from './MaintenanceCalendarController'
 import MaintenanceCalendarEventsController from './MaintenanceCalendarEventsController'
 import MaintenanceCalendarFeedTokenController from './MaintenanceCalendarFeedTokenController'
 import AssetController from './AssetController'
+import AssetBulkStatusController from './AssetBulkStatusController'
+import AssetQrTokenController from './AssetQrTokenController'
 import VendorContractController from './VendorContractController'
 import AssetDisposalController from './AssetDisposalController'
 import AssetDisposalApprovalController from './AssetDisposalApprovalController'
@@ -89,6 +91,8 @@ const Controllers = {
     MaintenanceCalendarEventsController: Object.assign(MaintenanceCalendarEventsController, MaintenanceCalendarEventsController),
     MaintenanceCalendarFeedTokenController: Object.assign(MaintenanceCalendarFeedTokenController, MaintenanceCalendarFeedTokenController),
     AssetController: Object.assign(AssetController, AssetController),
+    AssetBulkStatusController: Object.assign(AssetBulkStatusController, AssetBulkStatusController),
+    AssetQrTokenController: Object.assign(AssetQrTokenController, AssetQrTokenController),
     VendorContractController: Object.assign(VendorContractController, VendorContractController),
     AssetDisposalController: Object.assign(AssetDisposalController, AssetDisposalController),
     AssetDisposalApprovalController: Object.assign(AssetDisposalApprovalController, AssetDisposalApprovalController),

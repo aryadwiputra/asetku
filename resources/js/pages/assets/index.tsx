@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { store as bulkStatusStore } from '@/routes/assets/bulk-status';
 import { index as assetsIndex } from '@/routes/assets';
 import { exportMethod as assetsExport } from '@/routes/assets';
 import { print as printLabels } from '@/routes/assets/labels';
@@ -79,6 +80,8 @@ type Props = {
     };
 };
 
+type StatusTransitionType = 'allowed' | 'discouraged' | 'blocked';
+
 export default function AssetsIndex({ items, summary, savedFilters, filtersMeta }: Props) {
     const { moduleAbilities, organization, locale } = usePage().props as {
         moduleAbilities: {
@@ -109,9 +112,16 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     const [saveFilterOpen, setSaveFilterOpen] = useState(false);
     const [renameFilterOpen, setRenameFilterOpen] = useState(false);
     const [deleteFilterOpen, setDeleteFilterOpen] = useState(false);
+    const [deleteAssetOpen, setDeleteAssetOpen] = useState(false);
+    const [bulkStatusOpen, setBulkStatusOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState<SavedFilter | null>(null);
+    const [selectedAsset, setSelectedAsset] = useState<AssetRow | null>(null);
     const [filterName, setFilterName] = useState('');
     const [setAsDefault, setSetAsDefault] = useState(false);
+    const [bulkAssetIds, setBulkAssetIds] = useState<number[]>([]);
+    const [bulkStatusId, setBulkStatusId] = useState<string>('__none__');
+    const [bulkPerformedAt, setBulkPerformedAt] = useState('');
+    const [bulkNotes, setBulkNotes] = useState('');
 
     const savedFiltersResolved = savedFilters ?? [];
     const appliedParams = useMemo(() => new URLSearchParams(pageUrl.split('?')[1] ?? ''), [pageUrl]);
@@ -240,15 +250,20 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
             icon: <Trash2 className="mr-2 h-4 w-4" />,
             variant: 'destructive',
             onClick: (row) => {
-                if (confirm(t('assets.actions.delete_confirm', { code: row.code }))) {
-                    router.delete(AssetController.destroy.url({ asset: row.id }));
-                }
+                setSelectedAsset(row);
+                setDeleteAssetOpen(true);
             },
             visible: () => canDelete,
         },
     ];
 
     const bulkActions: BulkAction[] = [
+        {
+            key: 'change_status',
+            label: t('assets.actions.bulk_change_status'),
+            icon: <Activity className="mr-2 h-4 w-4" />,
+            requireConfirm: false,
+        },
         {
             key: 'print_labels',
             label: t('labels.actions.print'),
@@ -258,10 +273,41 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
     ];
 
     function onBulkAction(key: string, ids: number[]) {
+        if (key === 'change_status') {
+            setBulkAssetIds(ids);
+            setBulkStatusId('__none__');
+            setBulkPerformedAt('');
+            setBulkNotes('');
+            setBulkStatusOpen(true);
+            return;
+        }
+
         if (key === 'print_labels') {
             const url = printLabels({ query: { ids } }).url;
             window.open(url, '_blank', 'noopener,noreferrer');
         }
+    }
+
+    function submitBulkStatusChange() {
+        router.post(
+            bulkStatusStore().url,
+            {
+                asset_ids: bulkAssetIds,
+                asset_status_id: bulkStatusId === '__none__' ? null : Number(bulkStatusId),
+                performed_at: bulkPerformedAt || null,
+                notes: bulkNotes || null,
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setBulkStatusOpen(false);
+                    setBulkAssetIds([]);
+                    setBulkStatusId('__none__');
+                    setBulkPerformedAt('');
+                    setBulkNotes('');
+                },
+            },
+        );
     }
 
     function applyFilters() {
@@ -549,6 +595,33 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
         pics: [],
         assetUsers: [],
     };
+
+    const selectedBulkStatus = useMemo(
+        () => meta.statuses.find((status) => String(status.id) === bulkStatusId) ?? null,
+        [bulkStatusId, meta.statuses],
+    );
+
+    const bulkTransition = useMemo((): { type: StatusTransitionType; reason: string | null } => {
+        if (!selectedBulkStatus) {
+            return { type: 'allowed', reason: null };
+        }
+
+        if (!['disposed', 'disposal'].includes((selectedBulkStatus.code ?? '').toLowerCase())) {
+            return { type: 'allowed', reason: null };
+        }
+
+        const selectedRows = items.data.filter((row) => bulkAssetIds.includes(row.id));
+        const allAlreadyDisposed = selectedRows.every((row) => ['disposed', 'disposal'].includes((row.status?.code ?? '').toLowerCase()));
+
+        if (allAlreadyDisposed) {
+            return { type: 'allowed', reason: null };
+        }
+
+        return {
+            type: 'discouraged',
+            reason: t('assets.lifecycle.transitions.discouraged_direct_disposal'),
+        };
+    }, [bulkAssetIds, items.data, selectedBulkStatus, t]);
 
     const filterSelects = useMemo(() => {
         return {
@@ -1322,6 +1395,110 @@ export default function AssetsIndex({ items, summary, savedFilters, filtersMeta 
                             {t('common.cancel')}
                         </Button>
                         <Button onClick={submitSaveCurrentFilter} disabled={filterName.trim() === ''} className="w-full sm:w-auto">
+                            {t('common.save')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={deleteAssetOpen} onOpenChange={setDeleteAssetOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('common.confirm')}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="text-sm text-muted-foreground">
+                        {selectedAsset ? t('assets.actions.delete_confirm', { code: selectedAsset.code }) : null}
+                    </div>
+
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setDeleteAssetOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            className="w-full sm:w-auto"
+                            onClick={() => {
+                                if (!selectedAsset) {
+                                    return;
+                                }
+
+                                router.delete(AssetController.destroy.url({ asset: selectedAsset.id }), {
+                                    preserveScroll: true,
+                                    onSuccess: () => {
+                                        setDeleteAssetOpen(false);
+                                        setSelectedAsset(null);
+                                    },
+                                });
+                            }}
+                        >
+                            {t('common.delete')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={bulkStatusOpen} onOpenChange={setBulkStatusOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('assets.actions.bulk_change_status')}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <div className="text-sm text-muted-foreground">
+                            {t('assets.actions.bulk_change_status_confirm', { count: bulkAssetIds.length })}
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.status')}</Label>
+                            <Select value={bulkStatusId} onValueChange={setBulkStatusId}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('assets.placeholders.status')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="__none__">{t('common.none')}</SelectItem>
+                                    {meta.statuses.map((status) => (
+                                        <SelectItem key={status.id} value={String(status.id)}>
+                                            {status.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {bulkTransition.reason ? (
+                            <div
+                                className={cn(
+                                    'rounded-lg border px-3 py-2 text-sm',
+                                    bulkTransition.type === 'discouraged'
+                                        ? 'border-amber-300 bg-amber-50 text-amber-900'
+                                        : 'border-destructive/30 bg-destructive/5 text-destructive',
+                                )}
+                            >
+                                {bulkTransition.reason}
+                            </div>
+                        ) : null}
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.performed_at')}</Label>
+                            <Input type="datetime-local" value={bulkPerformedAt} onChange={(e) => setBulkPerformedAt(e.target.value)} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.notes')}</Label>
+                            <Input value={bulkNotes} onChange={(e) => setBulkNotes(e.target.value)} />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setBulkStatusOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            className="w-full sm:w-auto"
+                            onClick={submitBulkStatusChange}
+                            disabled={bulkTransition.type === 'blocked'}
+                        >
                             {t('common.save')}
                         </Button>
                     </DialogFooter>

@@ -25,6 +25,7 @@ class AssetCategory extends Model
         'useful_life_months',
         'residual_value',
         'capex_opex_default',
+        'category_default_maintenance_interval',
     ];
 
     /**
@@ -35,6 +36,7 @@ class AssetCategory extends Model
         return [
             'useful_life_months' => 'integer',
             'residual_value' => 'decimal:2',
+            'category_default_maintenance_interval' => 'integer',
         ];
     }
 

@@ -24,4 +24,14 @@ class AssetStatus extends Model
     {
         return $this->hasMany(Asset::class, 'asset_status_id');
     }
+
+    public function outgoingTransitions(): HasMany
+    {
+        return $this->hasMany(AssetStatusTransition::class, 'from_status_id');
+    }
+
+    public function incomingTransitions(): HasMany
+    {
+        return $this->hasMany(AssetStatusTransition::class, 'to_status_id');
+    }
 }

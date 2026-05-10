@@ -1,7 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
+* @see app/Http/Controllers/WorkOrderController.php:112
 * @route '/work-orders/my'
 */
 export const my = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ my.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
+* @see app/Http/Controllers/WorkOrderController.php:112
 * @route '/work-orders/my'
 */
 my.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ my.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
+* @see app/Http/Controllers/WorkOrderController.php:112
 * @route '/work-orders/my'
 */
 my.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ my.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
+* @see app/Http/Controllers/WorkOrderController.php:112
 * @route '/work-orders/my'
 */
 my.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,45 +44,8 @@ my.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
-* @route '/work-orders/my'
-*/
-const myForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: my.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
-* @route '/work-orders/my'
-*/
-myForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: my.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::my
-* @see app/Http/Controllers/WorkOrderController.php:111
-* @route '/work-orders/my'
-*/
-myForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: my.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-my.form = myForm
-
-/**
 * @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
+* @see app/Http/Controllers/WorkOrderController.php:201
 * @route '/work-orders/by-token/{token}'
 */
 export const byToken = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -97,7 +60,7 @@ byToken.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
+* @see app/Http/Controllers/WorkOrderController.php:201
 * @route '/work-orders/by-token/{token}'
 */
 byToken.url = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -124,7 +87,7 @@ byToken.url = (args: { token: string | number } | [token: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
+* @see app/Http/Controllers/WorkOrderController.php:201
 * @route '/work-orders/by-token/{token}'
 */
 byToken.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -134,50 +97,13 @@ byToken.get = (args: { token: string | number } | [token: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
+* @see app/Http/Controllers/WorkOrderController.php:201
 * @route '/work-orders/by-token/{token}'
 */
 byToken.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: byToken.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
-* @route '/work-orders/by-token/{token}'
-*/
-const byTokenForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: byToken.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
-* @route '/work-orders/by-token/{token}'
-*/
-byTokenForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: byToken.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::byToken
-* @see app/Http/Controllers/WorkOrderController.php:200
-* @route '/work-orders/by-token/{token}'
-*/
-byTokenForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: byToken.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-byToken.form = byTokenForm
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::index
@@ -224,45 +150,8 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\WorkOrderController::index
-* @see app/Http/Controllers/WorkOrderController.php:25
-* @route '/work-orders'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::index
-* @see app/Http/Controllers/WorkOrderController.php:25
-* @route '/work-orders'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::index
-* @see app/Http/Controllers/WorkOrderController.php:25
-* @route '/work-orders'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
-
-/**
 * @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
+* @see app/Http/Controllers/WorkOrderController.php:140
 * @route '/work-orders/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -277,7 +166,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
+* @see app/Http/Controllers/WorkOrderController.php:140
 * @route '/work-orders/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -286,7 +175,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
+* @see app/Http/Controllers/WorkOrderController.php:140
 * @route '/work-orders/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -296,7 +185,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
+* @see app/Http/Controllers/WorkOrderController.php:140
 * @route '/work-orders/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -305,45 +194,8 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
-* @route '/work-orders/create'
-*/
-const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
-* @route '/work-orders/create'
-*/
-createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::create
-* @see app/Http/Controllers/WorkOrderController.php:139
-* @route '/work-orders/create'
-*/
-createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
 * @see \App\Http\Controllers\WorkOrderController::store
-* @see app/Http/Controllers/WorkOrderController.php:176
+* @see app/Http/Controllers/WorkOrderController.php:177
 * @route '/work-orders'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -358,7 +210,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::store
-* @see app/Http/Controllers/WorkOrderController.php:176
+* @see app/Http/Controllers/WorkOrderController.php:177
 * @route '/work-orders'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -367,7 +219,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::store
-* @see app/Http/Controllers/WorkOrderController.php:176
+* @see app/Http/Controllers/WorkOrderController.php:177
 * @route '/work-orders'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -376,30 +228,8 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\WorkOrderController::store
-* @see app/Http/Controllers/WorkOrderController.php:176
-* @route '/work-orders'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::store
-* @see app/Http/Controllers/WorkOrderController.php:176
-* @route '/work-orders'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
-
-/**
 * @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
+* @see app/Http/Controllers/WorkOrderController.php:213
 * @route '/work-orders/{workOrder}'
 */
 export const show = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -414,7 +244,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
+* @see app/Http/Controllers/WorkOrderController.php:213
 * @route '/work-orders/{workOrder}'
 */
 show.url = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -447,7 +277,7 @@ show.url = (args: { workOrder: number | { id: number } } | [workOrder: number | 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
+* @see app/Http/Controllers/WorkOrderController.php:213
 * @route '/work-orders/{workOrder}'
 */
 show.get = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -457,50 +287,13 @@ show.get = (args: { workOrder: number | { id: number } } | [workOrder: number | 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
+* @see app/Http/Controllers/WorkOrderController.php:213
 * @route '/work-orders/{workOrder}'
 */
 show.head = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
-* @route '/work-orders/{workOrder}'
-*/
-const showForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
-* @route '/work-orders/{workOrder}'
-*/
-showForm.get = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::show
-* @see app/Http/Controllers/WorkOrderController.php:212
-* @route '/work-orders/{workOrder}'
-*/
-showForm.head = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::edit
@@ -565,45 +358,8 @@ edit.head = (args: { workOrder: string | number } | [workOrder: string | number 
 })
 
 /**
-* @see \App\Http\Controllers\WorkOrderController::edit
-* @see app/Http/Controllers/WorkOrderController.php:0
-* @route '/work-orders/{workOrder}/edit'
-*/
-const editForm = (args: { workOrder: string | number } | [workOrder: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::edit
-* @see app/Http/Controllers/WorkOrderController.php:0
-* @route '/work-orders/{workOrder}/edit'
-*/
-editForm.get = (args: { workOrder: string | number } | [workOrder: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::edit
-* @see app/Http/Controllers/WorkOrderController.php:0
-* @route '/work-orders/{workOrder}/edit'
-*/
-editForm.head = (args: { workOrder: string | number } | [workOrder: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
+* @see app/Http/Controllers/WorkOrderController.php:279
 * @route '/work-orders/{workOrder}'
 */
 export const update = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -618,7 +374,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
+* @see app/Http/Controllers/WorkOrderController.php:279
 * @route '/work-orders/{workOrder}'
 */
 update.url = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -651,7 +407,7 @@ update.url = (args: { workOrder: number | { id: number } } | [workOrder: number 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
+* @see app/Http/Controllers/WorkOrderController.php:279
 * @route '/work-orders/{workOrder}'
 */
 update.put = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -661,60 +417,13 @@ update.put = (args: { workOrder: number | { id: number } } | [workOrder: number 
 
 /**
 * @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
+* @see app/Http/Controllers/WorkOrderController.php:279
 * @route '/work-orders/{workOrder}'
 */
 update.patch = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
-* @route '/work-orders/{workOrder}'
-*/
-const updateForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
-* @route '/work-orders/{workOrder}'
-*/
-updateForm.put = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PUT',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\WorkOrderController::update
-* @see app/Http/Controllers/WorkOrderController.php:278
-* @route '/work-orders/{workOrder}'
-*/
-updateForm.patch = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
 
 const WorkOrderController = { my, byToken, index, create, store, show, edit, update }
 

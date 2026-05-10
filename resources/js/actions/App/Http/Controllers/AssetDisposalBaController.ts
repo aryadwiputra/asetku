@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetDisposalBaController::show
 * @see app/Http/Controllers/AssetDisposalBaController.php:16
@@ -66,43 +66,6 @@ show.head = (args: { disposal: number | { id: number } } | [disposal: number | {
     url: show.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\AssetDisposalBaController::show
-* @see app/Http/Controllers/AssetDisposalBaController.php:16
-* @route '/disposals/{disposal}/ba'
-*/
-const showForm = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AssetDisposalBaController::show
-* @see app/Http/Controllers/AssetDisposalBaController.php:16
-* @route '/disposals/{disposal}/ba'
-*/
-showForm.get = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AssetDisposalBaController::show
-* @see app/Http/Controllers/AssetDisposalBaController.php:16
-* @route '/disposals/{disposal}/ba'
-*/
-showForm.head = (args: { disposal: number | { id: number } } | [disposal: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
 
 const AssetDisposalBaController = { show }
 

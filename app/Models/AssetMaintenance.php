@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\OrganizationMemberRole;
 use App\Models\Concerns\BelongsToOrganization;
+use App\Services\WorkOrderNumberGenerator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +20,9 @@ class AssetMaintenance extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'work_order_number',
         'asset_id',
+        'asset_status_before_maintenance_id',
         'type',
         'source',
         'priority',
@@ -91,6 +94,23 @@ class AssetMaintenance extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $maintenance): void {
+            if (
+                $maintenance->work_order_number !== null
+                || $maintenance->organization_id === null
+            ) {
+                return;
+            }
+
+            $timestamp = $maintenance->created_at ?? now();
+
+            $maintenance->work_order_number = app(WorkOrderNumberGenerator::class)
+                ->generate((int) $maintenance->organization_id, $timestamp);
+        });
+    }
+
     public function asset(): BelongsTo
     {
         return $this->belongsTo(Asset::class);
@@ -99,6 +119,11 @@ class AssetMaintenance extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function statusBeforeMaintenance(): BelongsTo
+    {
+        return $this->belongsTo(AssetStatus::class, 'asset_status_before_maintenance_id');
     }
 
     public function technician(): BelongsTo

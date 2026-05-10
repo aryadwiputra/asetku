@@ -5,9 +5,10 @@ return [
     'description' => 'Kelola pemeliharaan aset, penugasan teknisi, progres, dan SLA.',
     'my_title' => 'Work order saya',
     'my_description' => 'Daftar work order yang ditugaskan kepada Anda.',
-    'show_title' => 'Work order #:id',
+    'show_title' => 'Work order :number',
     'create_description' => 'Buat work order baru untuk aset.',
     'fields' => [
+        'number' => 'Nomor work order',
         'asset' => 'Aset',
         'asset_search' => 'Cari aset',
         'description' => 'Deskripsi',
@@ -35,6 +36,7 @@ return [
         'acknowledge' => 'Terima',
         'start' => 'Mulai',
         'complete' => 'Selesaikan',
+        'cancel' => 'Batalkan work order',
         'assign' => 'Tugaskan teknisi',
         'upload' => 'Upload',
         'add_cost' => 'Tambah biaya',
@@ -80,6 +82,12 @@ return [
         'completed_by' => 'Selesai oleh: :name',
         'total_cost' => 'Total biaya: :cost',
     ],
+    'dialogs' => [
+        'complete_title' => 'Selesaikan work order',
+        'cancel_title' => 'Batalkan work order',
+        'reason_label' => 'Alasan',
+        'reason_placeholder' => 'Jelaskan alasan work order ini diselesaikan atau dibatalkan.',
+    ],
     'sections' => [
         'overview' => 'Ringkasan',
         'actions' => 'Aksi',
@@ -111,13 +119,13 @@ return [
     ],
     'notifications' => [
         'assigned' => [
-            'subject' => 'Work order ditugaskan (#:id)',
-            'line1' => 'Anda menerima work order (#:id).',
+            'subject' => 'Work order ditugaskan (:number)',
+            'line1' => 'Anda menerima work order (:number).',
             'line2' => 'Deskripsi: :description',
         ],
         'sla_breached' => [
-            'subject' => 'SLA work order terlewat (#:id)',
-            'line1' => 'Work order melewati SLA (#:id).',
+            'subject' => 'SLA work order terlewat (:number)',
+            'line1' => 'Work order melewati SLA (:number).',
             'line2' => 'Jenis: :kind',
         ],
     ],
@@ -125,5 +133,6 @@ return [
         'technician_profile_required' => 'User yang dipilih belum memiliki profil teknisi aktif.',
         'technician_branch_mismatch' => 'Cabang teknisi tidak sesuai dengan cabang work order.',
         'technician_skill_mismatch' => 'Teknisi tidak memiliki keahlian yang dibutuhkan.',
+        'reason_required' => 'Alasan wajib diisi saat menyelesaikan atau membatalkan work order.',
     ],
 ];

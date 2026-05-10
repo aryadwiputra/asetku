@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
 * @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
@@ -62,43 +62,6 @@ feed.head = (args: { token: string | number } | [token: string | number ] | stri
 })
 
 /**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-const feedForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: feed.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-feedForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: feed.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::feed
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-feedForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: feed.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-feed.form = feedForm
-
-/**
 * @see \App\Http\Controllers\MaintenanceCalendarController::index
 * @see app/Http/Controllers/MaintenanceCalendarController.php:17
 * @route '/maintenance-calendar'
@@ -141,43 +104,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:17
-* @route '/maintenance-calendar'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:17
-* @route '/maintenance-calendar'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarController::index
-* @see app/Http/Controllers/MaintenanceCalendarController.php:17
-* @route '/maintenance-calendar'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarEventsController::events
@@ -224,43 +150,6 @@ events.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\MaintenanceCalendarEventsController::events
-* @see app/Http/Controllers/MaintenanceCalendarEventsController.php:16
-* @route '/maintenance-calendar/events'
-*/
-const eventsForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: events.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarEventsController::events
-* @see app/Http/Controllers/MaintenanceCalendarEventsController.php:16
-* @route '/maintenance-calendar/events'
-*/
-eventsForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: events.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarEventsController::events
-* @see app/Http/Controllers/MaintenanceCalendarEventsController.php:16
-* @route '/maintenance-calendar/events'
-*/
-eventsForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: events.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-events.form = eventsForm
-
-/**
 * @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
 * @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
 * @route '/maintenance-calendar/feed-token'
@@ -293,28 +182,6 @@ feedToken.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: feedToken.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
-* @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
-* @route '/maintenance-calendar/feed-token'
-*/
-const feedTokenForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: feedToken.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedTokenController::feedToken
-* @see app/Http/Controllers/MaintenanceCalendarFeedTokenController.php:15
-* @route '/maintenance-calendar/feed-token'
-*/
-feedTokenForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: feedToken.url(options),
-    method: 'post',
-})
-
-feedToken.form = feedTokenForm
 
 const maintenanceCalendar = {
     feed: Object.assign(feed, feed),

@@ -17,6 +17,7 @@ return [
         'useful_life_months' => 'Useful life (months)',
         'residual_value' => 'Residual value',
         'capex_opex_default' => 'Capex/Opex default',
+        'category_default_maintenance_interval' => 'Default maintenance interval (days)',
     ],
     'depreciation_methods' => [
         'straight_line' => 'Straight line',
@@ -39,4 +40,3 @@ return [
         'deleted' => 'Category deleted.',
     ],
 ];
-

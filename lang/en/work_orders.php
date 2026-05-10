@@ -5,9 +5,10 @@ return [
     'description' => 'Track maintenance work, assignments, progress, and SLA.',
     'my_title' => 'My work orders',
     'my_description' => 'Work orders assigned to you.',
-    'show_title' => 'Work order #:id',
+    'show_title' => 'Work order :number',
     'create_description' => 'Create a new work order for an asset.',
     'fields' => [
+        'number' => 'Work order number',
         'asset' => 'Asset',
         'asset_search' => 'Find asset',
         'description' => 'Description',
@@ -35,6 +36,7 @@ return [
         'acknowledge' => 'Acknowledge',
         'start' => 'Start',
         'complete' => 'Complete',
+        'cancel' => 'Cancel work order',
         'assign' => 'Assign technician',
         'upload' => 'Upload',
         'add_cost' => 'Add cost line',
@@ -80,6 +82,12 @@ return [
         'completed_by' => 'Completed by: :name',
         'total_cost' => 'Total cost: :cost',
     ],
+    'dialogs' => [
+        'complete_title' => 'Complete work order',
+        'cancel_title' => 'Cancel work order',
+        'reason_label' => 'Reason',
+        'reason_placeholder' => 'Explain why this work order is being completed or cancelled.',
+    ],
     'sections' => [
         'overview' => 'Overview',
         'actions' => 'Actions',
@@ -111,13 +119,13 @@ return [
     ],
     'notifications' => [
         'assigned' => [
-            'subject' => 'Work order assigned (#:id)',
-            'line1' => 'A work order has been assigned to you (#:id).',
+            'subject' => 'Work order assigned (:number)',
+            'line1' => 'A work order has been assigned to you (:number).',
             'line2' => 'Description: :description',
         ],
         'sla_breached' => [
-            'subject' => 'Work order SLA breached (#:id)',
-            'line1' => 'A work order is overdue (#:id).',
+            'subject' => 'Work order SLA breached (:number)',
+            'line1' => 'A work order is overdue (:number).',
             'line2' => 'Type: :kind',
         ],
     ],
@@ -125,5 +133,6 @@ return [
         'technician_profile_required' => 'Selected user does not have an active technician profile.',
         'technician_branch_mismatch' => 'Technician branch does not match the work order branch.',
         'technician_skill_mismatch' => 'Technician does not have the required skill.',
+        'reason_required' => 'A reason is required when completing or cancelling a work order.',
     ],
 ];

@@ -1,4 +1,4 @@
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { CheckCircle2, Download, Paperclip, Plus, UserCog } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -11,9 +11,11 @@ import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { chunk, complete, destroy as destroyUpload, store as storeUpload } from '@/routes/media-uploads';
 import { index as workOrdersIndex } from '@/routes/work-orders';
 import { useTranslation } from '@/hooks/use-translation';
@@ -29,6 +31,7 @@ type MediaAsset = {
 
 type WorkOrder = {
     id: number;
+    work_order_number: string;
     type: string;
     source: string;
     priority: string;
@@ -123,14 +126,29 @@ export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
         progress_percent: String(workOrder.progress_percent ?? 0),
         internal_notes: workOrder.internal_notes || '',
     });
+    const [statusDialog, setStatusDialog] = useState<'completed' | 'cancelled' | null>(null);
+    const [statusReason, setStatusReason] = useState('');
 
     function patch(data: Record<string, any>) {
         router.patch(WorkOrderController.update.url({ workOrder: workOrder.id }), data, { preserveScroll: true });
     }
 
+    function submitStatusChange() {
+        if (!statusDialog) {
+            return;
+        }
+
+        patch({
+            status: statusDialog,
+            internal_notes: statusReason,
+        });
+        setStatusDialog(null);
+        setStatusReason('');
+    }
+
     return (
         <>
-            <Head title={t('work_orders.show_title', { id: workOrder.id })} />
+            <Head title={t('work_orders.show_title', { number: workOrder.work_order_number })} />
 
             <div className="flex h-full flex-1 flex-col gap-6 rounded-xl px-4 py-4 sm:px-6 sm:py-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -138,7 +156,7 @@ export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
                         <Heading
                             variant="small"
                             title={workOrder.asset?.name || t('work_orders.title')}
-                            description={`${workOrder.asset?.code || ''} • #${workOrder.id}`}
+                            description={`${workOrder.asset?.code || ''} • ${workOrder.work_order_number}`}
                         />
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                             <Badge>{t(`work_orders.status.${workOrder.status}`)}</Badge>
@@ -162,6 +180,7 @@ export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
                         <CardContent className="space-y-3 text-sm">
                             <div className="grid gap-3 md:grid-cols-2">
                                 <Detail label={t('work_orders.fields.description')} value={workOrder.description} />
+                                <Detail label={t('work_orders.fields.number')} value={workOrder.work_order_number} />
                                 <Detail label={t('work_orders.fields.source')} value={t(`work_orders.sources.${workOrder.source}`)} />
                                 <Detail label={t('common.branch')} value={workOrder.branch ? `${workOrder.branch.code} • ${workOrder.branch.name}` : '-'} />
                                 <Detail label={t('work_orders.fields.assigned_to')} value={workOrder.technician?.name || '-'} />
@@ -195,11 +214,19 @@ export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
                                 </Button>
                                 <Button
                                     disabled={!canProgress}
-                                    onClick={() => patch({ status: 'completed' })}
+                                    onClick={() => setStatusDialog('completed')}
                                     className="w-full"
                                 >
                                     <CheckCircle2 className="mr-2 h-4 w-4" />
                                     {t('work_orders.actions.complete')}
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    disabled={!canProgress}
+                                    onClick={() => setStatusDialog('cancelled')}
+                                    className="w-full"
+                                >
+                                    {t('work_orders.actions.cancel')}
                                 </Button>
                             </div>
 
@@ -261,6 +288,34 @@ export default function WorkOrderShow({ workOrder, abilities, meta }: Props) {
                     </CardContent>
                 </Card>
             </div>
+
+            <Dialog open={statusDialog !== null} onOpenChange={(open) => (!open ? setStatusDialog(null) : null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {statusDialog === 'completed' ? t('work_orders.dialogs.complete_title') : t('work_orders.dialogs.cancel_title')}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-2">
+                        <Label htmlFor="status-reason">{t('work_orders.dialogs.reason_label')}</Label>
+                        <Textarea
+                            id="status-reason"
+                            value={statusReason}
+                            onChange={(e) => setStatusReason(e.target.value)}
+                            placeholder={t('work_orders.dialogs.reason_placeholder')}
+                        />
+                        <InputError message={progressForm.errors.internal_notes} />
+                    </div>
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setStatusDialog(null)}>
+                            {t('common.cancel')}
+                        </Button>
+                        <Button onClick={submitStatusChange} disabled={statusReason.trim() === ''}>
+                            {t('common.confirm')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

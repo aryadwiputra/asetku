@@ -1,12 +1,12 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Camera, Search, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import { QrScannerDialog } from '@/components/qr-scanner-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,13 +14,13 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 import { index as assetsIndex } from '@/routes/assets';
 import { store as storeAttachment, destroy as destroyAttachment } from '@/routes/assets/attachments';
-import { store as storeLifecycleEvent } from '@/routes/assets/lifecycle-events';
 import lifecycle, { byToken as lifecycleByToken, index as lifecycleIndex, show as lifecycleShow } from '@/routes/assets/lifecycle';
+import { store as storeLifecycleEvent } from '@/routes/assets/lifecycle-events';
 import { store as storeMovement } from '@/routes/assets/movements';
 import { chunk, complete, destroy as destroyUpload, store as storeUpload } from '@/routes/media-uploads';
-import { cn } from '@/lib/utils';
 
 type Lookup = { id: number; name: string; code?: string; branch_id?: number | null; is_active?: boolean };
 
@@ -252,152 +252,19 @@ AssetLifecyclePage.layout = {
 function ScanButton({ label, onToken }: { label: string; onToken: (token: string) => void }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [supported, setSupported] = useState(false);
-    const [scanning, setScanning] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const streamRef = useRef<MediaStream | null>(null);
-    const detectorRef = useRef<BarcodeDetector | null>(null);
-    const rafRef = useRef<number | null>(null);
-
-    useEffect(() => {
-        setSupported(typeof window !== 'undefined' && 'BarcodeDetector' in window);
-    }, []);
-
-    function parseToken(raw: string): string | null {
-        const trimmed = raw.trim();
-        if (trimmed === '') {
-            return null;
-        }
-
-        try {
-            const url = new URL(trimmed);
-            const match = url.pathname.match(/^\/q\/([^/]+)$/);
-            if (match?.[1]) {
-                return match[1];
-            }
-        } catch {
-            // ignore
-        }
-
-        return trimmed.length >= 16 ? trimmed : null;
-    }
-
-    function stop() {
-        if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-        }
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach((t) => t.stop());
-            streamRef.current = null;
-        }
-        setScanning(false);
-    }
-
-    async function start() {
-        setError(null);
-
-        if (!supported) {
-            setError(t('assets.lifecycle.page.scan_not_supported'));
-            return;
-        }
-        if (!videoRef.current) {
-            return;
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
-            streamRef.current = stream;
-            videoRef.current.srcObject = stream;
-            await videoRef.current.play();
-
-            detectorRef.current = new BarcodeDetector({ formats: ['qr_code'] });
-            setScanning(true);
-
-            const tick = async () => {
-                if (!videoRef.current || !detectorRef.current) {
-                    return;
-                }
-
-                try {
-                    const barcodes = await detectorRef.current.detect(videoRef.current);
-                    const raw = barcodes[0]?.rawValue;
-                    if (raw) {
-                        const token = parseToken(raw);
-                        if (token) {
-                            stop();
-                            setOpen(false);
-                            onToken(token);
-                            return;
-                        }
-                    }
-                } catch {
-                    // ignore frame errors
-                }
-
-                rafRef.current = window.requestAnimationFrame(tick);
-            };
-
-            rafRef.current = window.requestAnimationFrame(tick);
-        } catch (e) {
-            setError(e instanceof Error ? e.message : String(e));
-        }
-    }
-
-    useEffect(() => {
-        if (!open) {
-            stop();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open]);
 
     return (
-        <>
-            <Button variant="outline" className="w-full" onClick={() => setOpen(true)}>
-                <Camera className="mr-2 h-4 w-4" />
-                {label}
-            </Button>
-
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-xl">
-                    <DialogHeader>
-                        <DialogTitle>{t('assets.lifecycle.page.scan_title')}</DialogTitle>
-                    </DialogHeader>
-
-                    {!supported ? (
-                        <div className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
-                            {t('assets.lifecycle.page.scan_not_supported')}
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            <video ref={videoRef} className="aspect-video w-full rounded-lg border bg-black" playsInline />
-                            {error ? (
-                                <div className="rounded-lg border bg-destructive/10 p-3 text-sm text-destructive">
-                                    {error}
-                                </div>
-                            ) : null}
-                            <div className="flex flex-col gap-2 sm:flex-row">
-                                {!scanning ? (
-                                    <Button onClick={start} className="w-full sm:w-auto">
-                                        {t('assets.lifecycle.page.scan_start')}
-                                    </Button>
-                                ) : (
-                                    <Button variant="outline" onClick={stop} className="w-full sm:w-auto">
-                                        {t('assets.lifecycle.page.scan_stop')}
-                                    </Button>
-                                )}
-                                <Button variant="ghost" onClick={() => setOpen(false)} className="w-full sm:w-auto">
-                                    <X className="mr-2 h-4 w-4" />
-                                    {t('common.close')}
-                                </Button>
-                            </div>
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-        </>
+        <QrScannerDialog
+            label={label}
+            open={open}
+            onOpenChange={setOpen}
+            onToken={onToken}
+            title={t('assets.lifecycle.page.scan_title')}
+            unsupportedMessage={t('assets.lifecycle.page.scan_not_supported')}
+            startLabel={t('assets.lifecycle.page.scan_start')}
+            stopLabel={t('assets.lifecycle.page.scan_stop')}
+            triggerClassName="w-full"
+        />
     );
 }
 
@@ -819,6 +686,7 @@ function LifecycleAttachments({ assetId, attachments, canManage }: { assetId: nu
                     method: 'DELETE',
                     headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
                 });
+
                 throw e;
             }
         } catch (e) {

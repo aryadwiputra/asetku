@@ -21,6 +21,7 @@ use App\Models\AssetWarrantyClaim;
 use App\Models\Branch;
 use App\Models\CustomField;
 use App\Models\Department;
+use App\Models\MaintenanceSchedule;
 use App\Models\PersonInCharge;
 use App\Models\SavedFilter;
 use App\Models\Unit;
@@ -30,10 +31,12 @@ use App\Models\Warranty;
 use App\Queries\AssetListQuery;
 use App\Services\AssetAuditLogger;
 use App\Services\AssetCodeGenerator;
+use App\Services\AssetStatusTransitionResolver;
 use App\Services\AssetWarrantyStatusService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -108,6 +111,7 @@ class AssetController extends Controller
         $asset = DB::transaction(function () use ($data, $user): Asset {
             $asset = Asset::query()->create($data);
             $this->syncVendorContractAssignment($asset, is_numeric($data['vendor_contract_id'] ?? null) ? (int) $data['vendor_contract_id'] : null);
+            $this->createDefaultMaintenanceSchedule($asset);
 
             AssetHistory::query()->create([
                 'asset_id' => $asset->id,
@@ -128,8 +132,11 @@ class AssetController extends Controller
         return to_route('assets.show', $asset);
     }
 
-    public function show(Asset $asset, AssetWarrantyStatusService $warrantyStatusService): Response
-    {
+    public function show(
+        Asset $asset,
+        AssetWarrantyStatusService $warrantyStatusService,
+        AssetStatusTransitionResolver $statusTransitionResolver,
+    ): Response {
         $this->authorize('view', $asset);
 
         $asset->load([
@@ -306,6 +313,9 @@ class AssetController extends Controller
             'audits' => $audits,
             'depreciationEntries' => $depreciationEntries,
             'formMeta' => $this->formMeta(),
+            'statusMeta' => [
+                'availableStatuses' => $statusTransitionResolver->optionsForAsset($asset),
+            ],
             'computedBookValue' => $asset->bookValue(),
             'warrantyStatus' => $warrantyStatusService->determine($asset),
             'warrantyClaims' => $warrantyClaims,
@@ -540,7 +550,7 @@ class AssetController extends Controller
             'branches' => Branch::query()->where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
             'departments' => Department::query()->orderBy('name')->get(['id', 'name', 'code', 'branch_id']),
             'locations' => AssetLocation::query()->orderBy('name')->get(['id', 'name', 'code', 'branch_id', 'parent_id', 'type']),
-            'categories' => AssetCategory::query()->orderBy('name')->get(['id', 'name', 'code', 'parent_id', 'depreciation_method', 'useful_life_months', 'residual_value']),
+            'categories' => AssetCategory::query()->orderBy('name')->get(['id', 'name', 'code', 'parent_id', 'depreciation_method', 'useful_life_months', 'residual_value', 'category_default_maintenance_interval']),
             'statuses' => AssetStatus::query()->orderBy('name')->get(['id', 'name', 'code']),
             'conditions' => AssetCondition::query()->orderBy('name')->get(['id', 'name', 'code']),
             'classes' => AssetClass::query()->orderBy('name')->get(['id', 'name', 'code']),
@@ -643,5 +653,40 @@ class AssetController extends Controller
         }
 
         return $data;
+    }
+
+    private function createDefaultMaintenanceSchedule(Asset $asset): void
+    {
+        if ($asset->asset_category_id === null) {
+            return;
+        }
+
+        $category = AssetCategory::query()->find($asset->asset_category_id);
+        $intervalDays = $category?->category_default_maintenance_interval;
+
+        if (! is_int($intervalDays) || $intervalDays <= 0) {
+            return;
+        }
+
+        if (MaintenanceSchedule::query()
+            ->where('organization_id', $asset->organization_id)
+            ->where('asset_id', $asset->id)
+            ->exists()) {
+            return;
+        }
+
+        $baseDate = $asset->purchase_date
+            ? Carbon::parse($asset->purchase_date)
+            : now();
+
+        MaintenanceSchedule::query()->create([
+            'organization_id' => $asset->organization_id,
+            'asset_id' => $asset->id,
+            'name' => 'Preventive Maintenance',
+            'interval_days' => $intervalDays,
+            'next_due_at' => $baseDate->copy()->addDays($intervalDays)->toDateString(),
+            'default_priority' => 'normal',
+            'is_active' => true,
+        ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AssetMaintenance;
 use App\Models\AssetMaintenanceTask;
+use App\Services\WorkOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,7 +34,7 @@ class WorkOrderTaskController extends Controller
         return back();
     }
 
-    public function update(Request $request, AssetMaintenance $workOrder, AssetMaintenanceTask $task): RedirectResponse
+    public function update(Request $request, AssetMaintenance $workOrder, AssetMaintenanceTask $task, WorkOrderService $workOrders): RedirectResponse
     {
         $this->authorize('updateProgress', $workOrder);
 
@@ -59,6 +60,7 @@ class WorkOrderTaskController extends Controller
 
         $task->notes = $data['notes'] ?? null;
         $task->save();
+        $workOrders->recalculateTaskProgress($workOrder);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('work_orders.toast.updated')]);
 

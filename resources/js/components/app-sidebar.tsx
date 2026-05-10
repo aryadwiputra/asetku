@@ -45,6 +45,8 @@ import { index as maintenanceChecklistsIndex } from '@/routes/maintenance-checkl
 import { index as techniciansIndex } from '@/routes/technicians';
 import { index as maintenanceCalendarIndex } from '@/routes/maintenance-calendar';
 import { index as inventoryReportIndex } from '@/routes/reports/inventory';
+import { index as maintenanceCostsReportIndex } from '@/routes/reports/maintenance-costs';
+import { index as workOrdersReportIndex } from '@/routes/reports/work-orders';
 import { index as auditSchedulesIndex } from '@/actions/App/Http/Controllers/AuditScheduleController';
 import type { NavItem } from '@/types';
 
@@ -59,7 +61,7 @@ export function AppSidebar() {
             workOrders?: { viewIndex?: boolean; viewAssigned?: boolean };
             maintenanceSchedules?: { view?: boolean };
             audit?: { view?: boolean; create?: boolean };
-            reports?: { inventoryView?: boolean };
+            reports?: { inventoryView?: boolean; maintenanceView?: boolean };
         };
     };
     const { masterDataAbilities } = usePage().props as {
@@ -228,6 +230,7 @@ export function AppSidebar() {
     const canViewActivity = userPermissions.includes('activity.view');
     const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
     const canViewInventoryReport = moduleAbilities?.reports?.inventoryView === true;
+    const canViewMaintenanceReport = moduleAbilities?.reports?.maintenanceView === true;
 
     const settingsItems: NavItem[] = [
         ...(canViewMasterData ? [{ title: t('common.master_data'), href: masterDataIndex(), icon: null }] : []),
@@ -243,6 +246,20 @@ export function AppSidebar() {
                   {
                       title: t('common.inventory_report'),
                       href: inventoryReportIndex(),
+                      icon: null,
+                  },
+              ]
+            : []),
+        ...(canViewMaintenanceReport
+            ? [
+                  {
+                      title: t('common.work_orders_report'),
+                      href: workOrdersReportIndex(),
+                      icon: null,
+                  },
+                  {
+                      title: t('common.maintenance_costs_report'),
+                      href: maintenanceCostsReportIndex(),
                       icon: null,
                   },
               ]

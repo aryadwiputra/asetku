@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AuditFindingController::index
 * @see app/Http/Controllers/AuditFindingController.php:26
@@ -42,43 +42,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::index
-* @see app/Http/Controllers/AuditFindingController.php:26
-* @route '/audit/findings'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::index
-* @see app/Http/Controllers/AuditFindingController.php:26
-* @route '/audit/findings'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::index
-* @see app/Http/Controllers/AuditFindingController.php:26
-* @route '/audit/findings'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AuditFindingController::create
@@ -149,43 +112,6 @@ create.head = (args: { asset: number | { id: number } } | [asset: number | { id:
 })
 
 /**
-* @see \App\Http\Controllers\AuditFindingController::create
-* @see app/Http/Controllers/AuditFindingController.php:60
-* @route '/audit/findings/create/{asset}'
-*/
-const createForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::create
-* @see app/Http/Controllers/AuditFindingController.php:60
-* @route '/audit/findings/create/{asset}'
-*/
-createForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::create
-* @see app/Http/Controllers/AuditFindingController.php:60
-* @route '/audit/findings/create/{asset}'
-*/
-createForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: create.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-create.form = createForm
-
-/**
 * @see \App\Http\Controllers\AuditFindingController::store
 * @see app/Http/Controllers/AuditFindingController.php:91
 * @route '/audit/findings'
@@ -218,28 +144,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::store
-* @see app/Http/Controllers/AuditFindingController.php:91
-* @route '/audit/findings'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::store
-* @see app/Http/Controllers/AuditFindingController.php:91
-* @route '/audit/findings'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\AuditFindingController::edit
@@ -310,43 +214,6 @@ edit.head = (args: { auditFinding: number | { id: number } } | [auditFinding: nu
 })
 
 /**
-* @see \App\Http\Controllers\AuditFindingController::edit
-* @see app/Http/Controllers/AuditFindingController.php:159
-* @route '/audit/findings/{auditFinding}/edit'
-*/
-const editForm = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::edit
-* @see app/Http/Controllers/AuditFindingController.php:159
-* @route '/audit/findings/{auditFinding}/edit'
-*/
-editForm.get = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::edit
-* @see app/Http/Controllers/AuditFindingController.php:159
-* @route '/audit/findings/{auditFinding}/edit'
-*/
-editForm.head = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: edit.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-edit.form = editForm
-
-/**
 * @see \App\Http\Controllers\AuditFindingController::update
 * @see app/Http/Controllers/AuditFindingController.php:203
 * @route '/audit/findings/{auditFinding}'
@@ -403,38 +270,6 @@ update.patch = (args: { auditFinding: number | { id: number } } | [auditFinding:
     url: update.url(args, options),
     method: 'patch',
 })
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::update
-* @see app/Http/Controllers/AuditFindingController.php:203
-* @route '/audit/findings/{auditFinding}'
-*/
-const updateForm = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::update
-* @see app/Http/Controllers/AuditFindingController.php:203
-* @route '/audit/findings/{auditFinding}'
-*/
-updateForm.patch = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: update.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'PATCH',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\AuditFindingController::approve
@@ -495,28 +330,6 @@ approve.post = (args: { auditFinding: number | { id: number } } | [auditFinding:
 })
 
 /**
-* @see \App\Http\Controllers\AuditFindingController::approve
-* @see app/Http/Controllers/AuditFindingController.php:236
-* @route '/audit/findings/{auditFinding}/approve'
-*/
-const approveForm = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: approve.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::approve
-* @see app/Http/Controllers/AuditFindingController.php:236
-* @route '/audit/findings/{auditFinding}/approve'
-*/
-approveForm.post = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: approve.url(args, options),
-    method: 'post',
-})
-
-approve.form = approveForm
-
-/**
 * @see \App\Http\Controllers\AuditFindingController::reject
 * @see app/Http/Controllers/AuditFindingController.php:254
 * @route '/audit/findings/{auditFinding}/reject'
@@ -575,28 +388,6 @@ reject.post = (args: { auditFinding: number | { id: number } } | [auditFinding: 
 })
 
 /**
-* @see \App\Http\Controllers\AuditFindingController::reject
-* @see app/Http/Controllers/AuditFindingController.php:254
-* @route '/audit/findings/{auditFinding}/reject'
-*/
-const rejectForm = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reject.url(args, options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::reject
-* @see app/Http/Controllers/AuditFindingController.php:254
-* @route '/audit/findings/{auditFinding}/reject'
-*/
-rejectForm.post = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: reject.url(args, options),
-    method: 'post',
-})
-
-reject.form = rejectForm
-
-/**
 * @see \App\Http\Controllers\AuditFindingController::destroy
 * @see app/Http/Controllers/AuditFindingController.php:270
 * @route '/audit/findings/{auditFinding}'
@@ -653,38 +444,6 @@ destroy.delete = (args: { auditFinding: number | { id: number } } | [auditFindin
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::destroy
-* @see app/Http/Controllers/AuditFindingController.php:270
-* @route '/audit/findings/{auditFinding}'
-*/
-const destroyForm = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\AuditFindingController::destroy
-* @see app/Http/Controllers/AuditFindingController.php:270
-* @route '/audit/findings/{auditFinding}'
-*/
-destroyForm.delete = (args: { auditFinding: number | { id: number } } | [auditFinding: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
 
 const findings = {
     index: Object.assign(index, index),

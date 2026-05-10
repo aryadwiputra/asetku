@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MaintenanceCalendarFeedController::show
 * @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
@@ -60,43 +60,6 @@ show.head = (args: { token: string | number } | [token: string | number ] | stri
     url: show.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::show
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-const showForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::show
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-showForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\MaintenanceCalendarFeedController::show
-* @see app/Http/Controllers/MaintenanceCalendarFeedController.php:15
-* @route '/calendars/maintenance/{token}.ics'
-*/
-showForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
 
 const MaintenanceCalendarFeedController = { show }
 

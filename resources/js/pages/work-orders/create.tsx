@@ -1,13 +1,13 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { Camera, Search } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import WorkOrderController from '@/actions/App/Http/Controllers/WorkOrderController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import { QrScannerDialog } from '@/components/qr-scanner-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -45,6 +45,7 @@ export default function WorkOrdersCreate({ search, results, selectedAsset, meta 
 
     useEffect(() => {
         setPickedAsset(selectedAsset);
+
         if (selectedAsset) {
             form.setData('asset_id', String(selectedAsset.id));
         }
@@ -272,107 +273,18 @@ export default function WorkOrdersCreate({ search, results, selectedAsset, meta 
 function ScanButton({ label, onToken }: { label: string; onToken: (token: string) => void }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const detectorRef = useRef<any>(null);
-    const rafRef = useRef<number | null>(null);
-
-    useEffect(() => {
-        return () => cleanup();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    async function start() {
-        setError(null);
-
-        if (!(window as any).BarcodeDetector) {
-            setError(t('common.browser_not_supported'));
-            return;
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                await videoRef.current.play();
-            }
-
-            detectorRef.current = new (window as any).BarcodeDetector({ formats: ['qr_code'] });
-            scanLoop();
-        } catch (e) {
-            setError(t('common.camera_permission_denied'));
-        }
-    }
-
-    function cleanup() {
-        if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-        }
-
-        const video = videoRef.current;
-        const stream = (video?.srcObject as MediaStream | null) || null;
-
-        if (stream) {
-            stream.getTracks().forEach((t) => t.stop());
-        }
-
-        if (video) {
-            video.pause();
-            video.srcObject = null;
-        }
-
-        detectorRef.current = null;
-    }
-
-    async function scanLoop() {
-        const video = videoRef.current;
-        const detector = detectorRef.current;
-
-        if (!video || !detector) {
-            return;
-        }
-
-        try {
-            const barcodes = await detector.detect(video);
-            const rawValue = barcodes?.[0]?.rawValue;
-
-            if (rawValue && typeof rawValue === 'string') {
-                cleanup();
-                setOpen(false);
-                const token = rawValue.includes('/q/') ? rawValue.split('/q/').pop() : rawValue;
-                onToken((token || rawValue).trim());
-                return;
-            }
-        } catch {
-            // ignore
-        }
-
-        rafRef.current = requestAnimationFrame(scanLoop);
-    }
 
     return (
-        <>
-            <Button type="button" variant="outline" onClick={() => { setOpen(true); start(); }} className="w-full sm:w-auto">
-                <Camera className="mr-2 h-4 w-4" />
-                {label}
-            </Button>
-
-            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) cleanup(); }}>
-                <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                        <DialogTitle>{t('common.scan_qr')}</DialogTitle>
-                    </DialogHeader>
-                    {error ? (
-                        <div className="text-sm text-destructive">{error}</div>
-                    ) : (
-                        <div className="overflow-hidden rounded-lg border">
-                            <video ref={videoRef} className="h-[280px] w-full object-cover" playsInline muted />
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
-        </>
+        <QrScannerDialog
+            label={label}
+            open={open}
+            onOpenChange={setOpen}
+            onToken={onToken}
+            title={t('common.scan_qr')}
+            unsupportedMessage={t('common.browser_not_supported')}
+            startLabel={t('assets.lifecycle.page.scan_start')}
+            stopLabel={t('assets.lifecycle.page.scan_stop')}
+            triggerClassName="w-full sm:w-auto"
+        />
     );
 }

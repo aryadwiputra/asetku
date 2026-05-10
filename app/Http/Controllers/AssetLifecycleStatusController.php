@@ -34,6 +34,10 @@ class AssetLifecycleStatusController extends Controller
         DB::transaction(function () use ($asset, $audit, $notes, $performedAt, $toStatusId, $user): void {
             $fromStatusId = is_numeric($asset->asset_status_id) ? (int) $asset->asset_status_id : null;
 
+            if ($fromStatusId === $toStatusId) {
+                return;
+            }
+
             $asset->forceFill(['asset_status_id' => $toStatusId])->save();
 
             $audit->logStatusChanged(
@@ -51,4 +55,3 @@ class AssetLifecycleStatusController extends Controller
         return back();
     }
 }
-

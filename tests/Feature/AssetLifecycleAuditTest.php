@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Asset;
 use App\Models\AssetHistory;
 use App\Models\AssetMedia;
@@ -19,6 +20,7 @@ use function Pest\Laravel\actingAs;
 
 beforeEach(function () {
     $this->seed(RolePermissionSeeder::class);
+    $this->withoutMiddleware(HandleInertiaRequests::class);
 });
 
 test('updating an asset status records immutable history', function () {
@@ -29,6 +31,7 @@ test('updating an asset status records immutable history', function () {
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
+    $user->assignRole('super-admin');
 
     $branch = Branch::factory()->create(['organization_id' => $organization->id]);
 
@@ -77,6 +80,7 @@ test('attaching a document stores stage/type and logs audit event', function () 
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
+    $user->assignRole('super-admin');
 
     $branch = Branch::factory()->create(['organization_id' => $organization->id]);
 
@@ -131,6 +135,7 @@ test('creating a borrow movement updates asset and writes lifecycle history', fu
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
+    $user->assignRole('super-admin');
 
     $branch = Branch::factory()->create(['organization_id' => $organization->id]);
 
@@ -180,6 +185,7 @@ test('asset show includes performed_at on histories payload', function () {
         'email_verified_at' => now(),
         'current_organization_id' => $organization->id,
     ]);
+    $user->assignRole('super-admin');
 
     $branch = Branch::factory()->create(['organization_id' => $organization->id]);
 
@@ -206,4 +212,165 @@ test('asset show includes performed_at on histories payload', function () {
             ->component('assets/show')
             ->has('histories.0.performed_at')
         );
+});
+
+test('disposed assets cannot be reactivated directly', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+    $user->assignRole('super-admin');
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+
+    $disposed = AssetStatus::query()->create([
+        'organization_id' => $organization->id,
+        'name' => 'Disposed',
+        'code' => 'disposed',
+    ]);
+
+    $active = AssetStatus::query()->create([
+        'organization_id' => $organization->id,
+        'name' => 'Active',
+        'code' => 'active',
+    ]);
+
+    $asset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-0005',
+        'name' => 'Archived Laptop',
+        'branch_id' => $branch->id,
+        'asset_status_id' => $disposed->id,
+    ]);
+
+    actingAs($user)
+        ->from(route('assets.show', $asset))
+        ->post(route('assets.lifecycle.status', $asset), [
+            'asset_status_id' => $active->id,
+        ])
+        ->assertSessionHasErrors('asset_status_id');
+
+    $asset->refresh();
+
+    expect((int) $asset->asset_status_id)->toBe((int) $disposed->id);
+});
+
+test('bulk status update changes multiple assets and records audit history', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+    $user->assignRole('super-admin');
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+
+    $borrowed = AssetStatus::query()->create([
+        'organization_id' => $organization->id,
+        'name' => 'Borrowed',
+        'code' => 'borrowed',
+    ]);
+
+    $firstAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-1001',
+        'name' => 'Laptop Pool A',
+        'branch_id' => $branch->id,
+    ]);
+
+    $secondAsset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-1002',
+        'name' => 'Laptop Pool B',
+        'branch_id' => $branch->id,
+    ]);
+
+    actingAs($user)
+        ->post(route('assets.bulk-status.store'), [
+            'asset_ids' => [$firstAsset->id, $secondAsset->id],
+            'asset_status_id' => $borrowed->id,
+            'notes' => 'Bulk reassignment',
+        ])
+        ->assertRedirect();
+
+    $firstAsset->refresh();
+    $secondAsset->refresh();
+
+    expect((int) $firstAsset->asset_status_id)->toBe((int) $borrowed->id)
+        ->and((int) $secondAsset->asset_status_id)->toBe((int) $borrowed->id)
+        ->and(
+            AssetHistory::query()
+                ->whereIn('asset_id', [$firstAsset->id, $secondAsset->id])
+                ->where('action', 'status_changed')
+                ->count()
+        )->toBe(2);
+});
+
+test('asset allows up to twenty photos before rejecting more uploads', function () {
+    Storage::fake('public');
+
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+    $user->assignRole('super-admin');
+
+    $branch = Branch::factory()->create(['organization_id' => $organization->id]);
+
+    $asset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-2001',
+        'name' => 'Camera Kit',
+        'branch_id' => $branch->id,
+    ]);
+
+    foreach (range(1, 20) as $index) {
+        $mediaAsset = MediaAsset::query()->create([
+            'organization_id' => $organization->id,
+            'title' => "Photo {$index}",
+        ]);
+
+        $mediaAsset->addMediaFromString("photo-{$index}")
+            ->usingFileName("photo-{$index}.jpg")
+            ->toMediaCollection('file');
+
+        actingAs($user)
+            ->post(route('assets.attachments.store', $asset), [
+                'media_asset_id' => $mediaAsset->id,
+                'kind' => 'photo',
+            ])
+            ->assertRedirect();
+    }
+
+    $extraMediaAsset = MediaAsset::query()->create([
+        'organization_id' => $organization->id,
+        'title' => 'Photo 21',
+    ]);
+
+    $extraMediaAsset->addMediaFromString('photo-21')
+        ->usingFileName('photo-21.jpg')
+        ->toMediaCollection('file');
+
+    actingAs($user)
+        ->from(route('assets.show', $asset))
+        ->post(route('assets.attachments.store', $asset), [
+            'media_asset_id' => $extraMediaAsset->id,
+            'kind' => 'photo',
+        ])
+        ->assertSessionHasErrors('kind');
+
+    expect(
+        AssetMedia::query()
+            ->where('asset_id', $asset->id)
+            ->where('kind', 'photo')
+            ->count()
+    )->toBe(20);
 });

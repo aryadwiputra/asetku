@@ -103,6 +103,14 @@ export default function CreateAssetCategory({ parents }: Props) {
                                     <Input id="capex_opex_default" name="capex_opex_default" />
                                     <InputError message={errors.capex_opex_default} />
                                 </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="category_default_maintenance_interval">
+                                        {t('asset_categories.fields.category_default_maintenance_interval')}
+                                    </Label>
+                                    <Input id="category_default_maintenance_interval" name="category_default_maintenance_interval" type="number" min={1} />
+                                    <InputError message={errors.category_default_maintenance_interval} />
+                                </div>
                             </Card>
 
                             <div className="flex items-center gap-4">

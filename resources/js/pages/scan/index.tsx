@@ -1,11 +1,12 @@
 import { Head, router } from '@inertiajs/react';
-import { Camera, WifiOff } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Camera, Flashlight, FlashlightOff, WifiOff } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { parseQrToken, useQrScanner } from '@/hooks/use-qr-scanner';
 import { useTranslation } from '@/hooks/use-translation';
 import { show as qrShow } from '@/routes/qr';
 
@@ -25,119 +26,48 @@ function savePending(items: PendingScan[]) {
 
 export default function ScanIndex() {
     const { t } = useTranslation();
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const streamRef = useRef<MediaStream | null>(null);
-    const detectorRef = useRef<BarcodeDetector | null>(null);
-    const rafRef = useRef<number | null>(null);
-
-    const [supported, setSupported] = useState(false);
-    const [scanning, setScanning] = useState(false);
     const [manual, setManual] = useState('');
     const [pending, setPending] = useState<PendingScan[]>(() => loadPending());
-    const [error, setError] = useState<string | null>(null);
+    const {
+        error,
+        flashlightAvailable,
+        flashlightEnabled,
+        scanning,
+        supported,
+        toggleFlashlight,
+        videoRef,
+        start,
+        stop,
+    } = useQrScanner({
+        t,
+        unsupportedMessage: t('qr.scan.not_supported'),
+        onDetected: (token) => {
+            if (!navigator.onLine) {
+                const next = [...pending, { token, scanned_at: new Date().toISOString() }];
 
-    useEffect(() => {
-        setSupported(typeof window !== 'undefined' && 'BarcodeDetector' in window);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+                setPending(next);
+                savePending(next);
 
-    async function start() {
-        setError(null);
-
-        if (!videoRef.current) {
-            return;
-        }
-
-        if (!supported) {
-            setError(t('qr.scan.not_supported'));
-            return;
-        }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
-            streamRef.current = stream;
-            videoRef.current.srcObject = stream;
-            await videoRef.current.play();
-
-            detectorRef.current = new BarcodeDetector({ formats: ['qr_code'] });
-            setScanning(true);
-
-            const tick = async () => {
-                if (!videoRef.current || !detectorRef.current) {
-                    return;
-                }
-
-                try {
-                    const barcodes = await detectorRef.current.detect(videoRef.current);
-                    const raw = barcodes[0]?.rawValue;
-                    if (raw) {
-                        handleScan(raw);
-                        return;
-                    }
-                } catch {
-                    // ignore frame errors
-                }
-
-                rafRef.current = window.requestAnimationFrame(tick);
-            };
-
-            rafRef.current = window.requestAnimationFrame(tick);
-        } catch (e) {
-            setError(e instanceof Error ? e.message : String(e));
-        }
-    }
-
-    function stop() {
-        if (rafRef.current) {
-            cancelAnimationFrame(rafRef.current);
-            rafRef.current = null;
-        }
-
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach((t) => t.stop());
-            streamRef.current = null;
-        }
-
-        setScanning(false);
-    }
-
-    function parseToken(raw: string): string | null {
-        const trimmed = raw.trim();
-        if (trimmed === '') {
-            return null;
-        }
-
-        // If QR contains a full URL, extract /q/{token}.
-        try {
-            const url = new URL(trimmed);
-            const match = url.pathname.match(/^\/q\/([^/]+)$/);
-            if (match?.[1]) {
-                return match[1];
+                return;
             }
-        } catch {
-            // not a URL
-        }
 
-        // If it already looks like a token.
-        if (trimmed.length >= 16) {
-            return trimmed;
-        }
+            router.visit(qrShow(token).url);
+        },
+    });
 
-        return null;
-    }
+    function handleManualOpen() {
+        const token = parseQrToken(manual);
 
-    function handleScan(raw: string) {
-        const token = parseToken(raw);
         if (!token) {
             return;
         }
 
-        stop();
-
         if (!navigator.onLine) {
             const next = [...pending, { token, scanned_at: new Date().toISOString() }];
+
             setPending(next);
             savePending(next);
+
             return;
         }
 
@@ -146,6 +76,7 @@ export default function ScanIndex() {
 
     function flushPending() {
         const items = loadPending();
+
         if (items.length === 0) {
             return;
         }
@@ -165,8 +96,8 @@ export default function ScanIndex() {
         }
 
         window.addEventListener('online', onOnline);
+
         return () => window.removeEventListener('online', onOnline);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -187,9 +118,21 @@ export default function ScanIndex() {
                                 {t('qr.scan.actions.start')}
                             </Button>
                         ) : (
-                            <Button onClick={stop} variant="outline" className="w-full sm:w-auto">
-                                {t('qr.scan.actions.stop')}
-                            </Button>
+                            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                                {flashlightAvailable ? (
+                                    <Button onClick={toggleFlashlight} variant="secondary" className="w-full sm:w-auto">
+                                        {flashlightEnabled ? (
+                                            <FlashlightOff className="mr-2 h-4 w-4" />
+                                        ) : (
+                                            <Flashlight className="mr-2 h-4 w-4" />
+                                        )}
+                                        {flashlightEnabled ? t('common.flashlight_off') : t('common.flashlight_on')}
+                                    </Button>
+                                ) : null}
+                                <Button onClick={stop} variant="outline" className="w-full sm:w-auto">
+                                    {t('qr.scan.actions.stop')}
+                                </Button>
+                            </div>
                         )}
                     </div>
 
@@ -197,7 +140,15 @@ export default function ScanIndex() {
                         <video ref={videoRef} className="h-72 w-full bg-black object-cover" playsInline muted />
                     </div>
 
-                    {error ? <div className="text-sm text-destructive">{error}</div> : null}
+                    {error ? (
+                        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                            {error}
+                        </div>
+                    ) : (
+                        <div className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+                            {t('common.camera_permission_tip')}
+                        </div>
+                    )}
                 </Card>
 
                 <Card className="space-y-4 p-6">
@@ -207,7 +158,7 @@ export default function ScanIndex() {
                         <Button
                             variant="outline"
                             className="w-full sm:w-auto"
-                            onClick={() => handleScan(manual)}
+                            onClick={handleManualOpen}
                         >
                             {t('common.open')}
                         </Button>

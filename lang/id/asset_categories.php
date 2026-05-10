@@ -17,6 +17,7 @@ return [
         'useful_life_months' => 'Umur manfaat (bulan)',
         'residual_value' => 'Nilai residu',
         'capex_opex_default' => 'Default capex/opex',
+        'category_default_maintenance_interval' => 'Interval maintenance default (hari)',
     ],
     'depreciation_methods' => [
         'straight_line' => 'Garis lurus',
@@ -39,4 +40,3 @@ return [
         'deleted' => 'Kategori berhasil dihapus.',
     ],
 ];
-

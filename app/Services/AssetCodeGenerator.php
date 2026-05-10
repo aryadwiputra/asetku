@@ -22,8 +22,9 @@ class AssetCodeGenerator
 
         $year = $year ?? (int) now()->format('Y');
 
-        $next = DB::transaction(function () use ($branch, $year): int {
+        $next = DB::transaction(function () use ($branch, $year, $organizationId): int {
             $sequence = AssetCodeSequence::query()
+                ->where('organization_id', $organizationId)
                 ->where('branch_id', $branch->id)
                 ->where('year', $year)
                 ->lockForUpdate()
@@ -31,6 +32,7 @@ class AssetCodeGenerator
 
             if ($sequence === null) {
                 $sequence = AssetCodeSequence::query()->create([
+                    'organization_id' => $organizationId,
                     'branch_id' => $branch->id,
                     'year' => $year,
                     'last_number' => 0,

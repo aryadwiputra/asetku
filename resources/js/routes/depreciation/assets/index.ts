@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 import usageLogs from './usage-logs'
 /**
 * @see \App\Http\Controllers\DepreciationAssetController::show
@@ -69,43 +69,6 @@ show.head = (args: { asset: number | { id: number } } | [asset: number | { id: n
 })
 
 /**
-* @see \App\Http\Controllers\DepreciationAssetController::show
-* @see app/Http/Controllers/DepreciationAssetController.php:15
-* @route '/depreciation/assets/{asset}'
-*/
-const showForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\DepreciationAssetController::show
-* @see app/Http/Controllers/DepreciationAssetController.php:15
-* @route '/depreciation/assets/{asset}'
-*/
-showForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\DepreciationAssetController::show
-* @see app/Http/Controllers/DepreciationAssetController.php:15
-* @route '/depreciation/assets/{asset}'
-*/
-showForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: show.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-show.form = showForm
-
-/**
 * @see \App\Http\Controllers\DepreciationExportController::exportMethod
 * @see app/Http/Controllers/DepreciationExportController.php:17
 * @route '/assets/{asset}/depreciation/export'
@@ -172,43 +135,6 @@ exportMethod.head = (args: { asset: number | { id: number } } | [asset: number |
     url: exportMethod.url(args, options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\DepreciationExportController::exportMethod
-* @see app/Http/Controllers/DepreciationExportController.php:17
-* @route '/assets/{asset}/depreciation/export'
-*/
-const exportMethodForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportMethod.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\DepreciationExportController::exportMethod
-* @see app/Http/Controllers/DepreciationExportController.php:17
-* @route '/assets/{asset}/depreciation/export'
-*/
-exportMethodForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportMethod.url(args, options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\DepreciationExportController::exportMethod
-* @see app/Http/Controllers/DepreciationExportController.php:17
-* @route '/assets/{asset}/depreciation/export'
-*/
-exportMethodForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: exportMethod.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-exportMethod.form = exportMethodForm
 
 const assets = {
     show: Object.assign(show, show),
