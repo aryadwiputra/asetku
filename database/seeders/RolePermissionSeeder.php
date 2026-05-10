@@ -11,6 +11,12 @@ use Spatie\Permission\PermissionRegistrar;
 class RolePermissionSeeder extends Seeder
 {
     /**
+     * Platform roles/permissions are seeded for bootstrap, development, tests, and demo users.
+     *
+     * Organization-role permission fallback is resolved in application code via
+     * OrganizationRolePermissionMap and is intentionally not stored in database seed data.
+     */
+    /**
      * The permissions to create.
      *
      * @var array<string, list<string>>
@@ -43,6 +49,7 @@ class RolePermissionSeeder extends Seeder
         'maintenance_checklist' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'technician' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'report_inventory' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
+        'report_maintenance' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'invitation' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'delegation' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
         'access_policy' => ['view', 'create', 'update', 'delete', 'approve', 'export'],
@@ -98,6 +105,7 @@ class RolePermissionSeeder extends Seeder
             'maintenance_checklist.view', 'maintenance_checklist.create', 'maintenance_checklist.update', 'maintenance_checklist.delete', 'maintenance_checklist.approve', 'maintenance_checklist.export',
             'technician.view', 'technician.create', 'technician.update', 'technician.delete', 'technician.approve', 'technician.export',
             'report_inventory.view', 'report_inventory.create', 'report_inventory.update', 'report_inventory.delete', 'report_inventory.approve', 'report_inventory.export',
+            'report_maintenance.view', 'report_maintenance.create', 'report_maintenance.update', 'report_maintenance.delete', 'report_maintenance.approve', 'report_maintenance.export',
             'invitation.view', 'invitation.create', 'invitation.update', 'invitation.delete', 'invitation.approve', 'invitation.export',
             'delegation.view', 'delegation.create', 'delegation.update', 'delegation.delete', 'delegation.approve', 'delegation.export',
             'access_policy.view', 'access_policy.create', 'access_policy.update', 'access_policy.delete', 'access_policy.approve', 'access_policy.export',

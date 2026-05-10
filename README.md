@@ -12,7 +12,7 @@ Repository ini berisi modul inti untuk: organisasi & cabang, master data aset, r
 - **Frontend**: Inertia.js v3 + React 19 + Vite
 - **UI**: Tailwind CSS v4 + Radix UI primitives
 - **Auth**: Laravel Fortify (termasuk 2FA TOTP) + Socialite (SSO)
-- **RBAC**: Spatie Laravel Permission (platform-wide) + role org-level via pivot `organization_user`
+- **RBAC**: Spatie Laravel Permission (platform-wide) + org-role permission fallback via pivot `organization_user`
 - **Audit log**: Spatie Activitylog + event history aset (`asset_histories`)
 - **Media & Upload**: Spatie Media Library + `MediaAsset` + chunked uploads
 - **Import/Export**: Maatwebsite Excel + DomPDF
@@ -71,7 +71,7 @@ composer run dev
 
 ## Akun Default (Seeder)
 
-`php artisan migrate --seed` akan membuat roles, permissions, dan sample users.
+`php artisan migrate --seed` akan membuat platform roles, permissions, dan sample users untuk local/dev/test. Effective permission user tetap berasal dari kombinasi role/permission platform dan org role aktif di `organization_user`.
 
 - **Super Admin**
   - Email: `superadmin@example.com`
@@ -81,6 +81,8 @@ composer run dev
   - Password: `password`
 
 > Role `super-admin` punya akses penuh via rule `Gate::before`.
+>
+> Org role `Owner`, `Admin`, `Manager`, dan `Member` memberi permission efektif tambahan melalui `App\Services\OrganizationRolePermissionMap`. Mapping ini hardcoded di aplikasi untuk menjaga behavior policy tetap konsisten; seeder hanya menyiapkan role/permission platform yang dibutuhkan untuk bootstrap dev/test/demo.
 
 ---
 
@@ -118,7 +120,7 @@ Path: `GET /settings/master-data`
 - Public page: `GET /q/{token}` menampilkan detail aset + foto + dokumen (read-only, tanpa login)
 - Scan page: `GET /scan` (kamera browser)
 
-**Security note**: halaman `/q/{token}` menggunakan akses berbasis token (“possession-based”). Anggap `qr_token` sebagai “secret link” — jangan disebarkan publik. Jika token bocor, lakukan rotasi token (fitur rotasi bisa ditambahkan) dan cetak ulang label.
+**Security note**: halaman `/q/{token}` menggunakan akses berbasis token (“possession-based”). Anggap `qr_token` sebagai “secret link” — jangan disebarkan publik. Jika token bocor, lakukan rotasi token dari halaman detail aset lalu cetak ulang label; token lama akan langsung tidak valid.
 
 ### Asset Lifecycle (Audit Trail Immutable)
 
