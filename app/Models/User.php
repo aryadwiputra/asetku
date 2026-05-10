@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\OrganizationMemberRole;
+use App\Models\Traits\HasOrganizationRolePermissions;
 use App\Services\OrganizationContext;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -28,7 +29,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, HasOrganizationRolePermissions, HasRoles, LogsActivity, Notifiable, SoftDeletes, TwoFactorAuthenticatable {
+        HasOrganizationRolePermissions::checkPermissionTo insteadof HasRoles;
+    }
 
     /**
      * Get the attributes that should be cast.
