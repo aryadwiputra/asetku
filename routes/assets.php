@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssetAttachmentController;
+use App\Http\Controllers\AssetBulkStatusController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AssetDisposalApprovalController;
 use App\Http\Controllers\AssetDisposalBaController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\AssetLifecycleController;
 use App\Http\Controllers\AssetLifecycleEventController;
 use App\Http\Controllers\AssetLifecycleStatusController;
 use App\Http\Controllers\AssetMovementController;
+use App\Http\Controllers\AssetQrTokenController;
 use App\Http\Controllers\AssetSavedFilterController;
 use App\Http\Controllers\AssetUsageLogController;
 use App\Http\Controllers\AssetWarrantyClaimController;
@@ -55,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('maintenance-calendar.feed-token');
 
     Route::resource('assets', AssetController::class);
+    Route::post('assets/bulk-status', [AssetBulkStatusController::class, 'store'])->name('assets.bulk-status.store');
+    Route::patch('assets/{asset}/qr-token', [AssetQrTokenController::class, 'update'])->name('assets.qr-token.update');
     Route::resource('vendor-contracts', VendorContractController::class);
     Route::post('vendor-contracts/{vendorContract}/renew', [VendorContractController::class, 'renew'])->name('vendor-contracts.renew');
     Route::post('vendor-contracts/{vendorContract}/documents', [VendorContractController::class, 'storeDocument'])->name('vendor-contracts.documents.store');

@@ -60,9 +60,15 @@ return [
         'edit' => 'Edit asset',
         'export' => 'Export',
         'delete_confirm' => 'Delete asset :code?',
+        'change_status' => 'Change status',
+        'bulk_change_status' => 'Bulk change status',
+        'bulk_change_status_confirm' => 'Change the status for :count selected assets?',
         'show_advanced' => 'Show advanced fields',
         'open_qr' => 'Open QR page',
         'copy_qr_link' => 'Copy QR link',
+        'regenerate_qr_token' => 'Regenerate QR token',
+        'regenerate_qr_token_confirm' => 'Regenerate the QR token for asset :code? Existing public QR links and labels will stop working immediately.',
+        'regenerate_qr_token_submit' => 'Regenerate token',
     ],
 
     'views' => [
@@ -207,6 +213,8 @@ return [
         'created' => 'Asset created.',
         'updated' => 'Asset updated.',
         'deleted' => 'Asset deleted.',
+        'bulk_status_updated' => ':count asset statuses updated.',
+        'qr_token_regenerated' => 'QR token regenerated. Old public links are no longer valid.',
     ],
 
     'history' => [
@@ -219,6 +227,8 @@ return [
         'branch_required' => 'Branch is required.',
         'department_branch_mismatch' => 'Department must belong to the selected branch.',
         'location_branch_mismatch' => 'Location must belong to the selected branch.',
+        'status_transition_blocked' => 'This status transition is not allowed.',
+        'bulk_status_transition_blocked' => 'Some assets cannot use this transition: :assets.',
     ],
     'warranty' => [
         'unknown' => 'Unknown',
@@ -247,7 +257,7 @@ return [
     ],
 
     'attachments' => [
-        'max_photos' => 'Maximum 10 photos per asset.',
+        'max_photos' => 'Maximum 20 photos per asset.',
         'primary' => 'Primary',
         'empty' => 'No attachments yet.',
         'kinds' => [
@@ -294,6 +304,14 @@ return [
         'actions' => [
             'record_event' => 'Record lifecycle event',
             'record_movement' => 'Record movement',
+        ],
+
+        'transitions' => [
+            'allowed' => 'This transition is valid.',
+            'discouraged' => 'This transition is allowed, but not recommended.',
+            'blocked' => 'This transition is blocked by status rules.',
+            'discouraged_direct_disposal' => 'Directly moving to disposed should go through the disposal flow to keep the audit trail complete.',
+            'blocked_from_disposed' => 'Disposed assets cannot be reactivated directly.',
         ],
 
         'fields' => [
@@ -357,6 +375,11 @@ return [
             'transferred' => 'Transferred.',
             'borrowed' => 'Borrowed.',
             'returned' => 'Returned.',
+        ],
+
+        'notes' => [
+            'moved_to_maintenance' => 'Automatically moved to maintenance status from work order :number.',
+            'restored_after_maintenance' => 'Automatically restored after work order :number was closed.',
         ],
 
         'validation' => [

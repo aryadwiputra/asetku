@@ -12,6 +12,7 @@ use App\Services\OrganizationContext;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
 use function Pest\Laravel\actingAs;
@@ -335,4 +336,96 @@ test('asset show includes history actor name', function () {
             ->has('computedBookValue')
             ->has('histories.0.actor.name')
         );
+});
+
+test('authorized user can regenerate asset qr token and invalidate old token routes', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Owner')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    $asset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-QR1',
+        'name' => 'Tablet A',
+        'branch_id' => Branch::factory()->create(['organization_id' => $organization->id])->id,
+        'qr_token' => Str::lower(Str::random(40)),
+    ]);
+
+    $oldToken = $asset->qr_token;
+
+    actingAs($user)
+        ->patch(route('assets.qr-token.update', $asset))
+        ->assertRedirect(route('assets.show', $asset));
+
+    $asset->refresh();
+
+    expect($asset->qr_token)
+        ->not->toBe($oldToken)
+        ->and(strlen($asset->qr_token))->toBe(40);
+
+    $this->get(route('qr.show', ['token' => $oldToken]))->assertNotFound();
+    $this->get(route('qr.show', ['token' => $asset->qr_token]))->assertOk();
+
+    actingAs($user)
+        ->get(route('assets.lifecycle.by-token', ['token' => $oldToken]))
+        ->assertNotFound();
+
+    actingAs($user)
+        ->get(route('assets.lifecycle.by-token', ['token' => $asset->qr_token]))
+        ->assertRedirect(route('assets.lifecycle.show', $asset));
+
+    actingAs($user)
+        ->get(route('disposals.by-token', ['token' => $oldToken]))
+        ->assertNotFound();
+
+    actingAs($user)
+        ->get(route('disposals.by-token', ['token' => $asset->qr_token]))
+        ->assertRedirect(route('disposals.create', ['asset_id' => $asset->id]));
+
+    actingAs($user)
+        ->get(route('work-orders.by-token', ['token' => $oldToken]))
+        ->assertNotFound();
+
+    actingAs($user)
+        ->get(route('work-orders.by-token', ['token' => $asset->qr_token]))
+        ->assertRedirect(route('work-orders.create', ['asset_id' => $asset->id]));
+
+    expect(
+        AssetHistory::query()
+            ->where('asset_id', $asset->id)
+            ->where('action', 'updated')
+            ->where('payload->before->qr_token', $oldToken)
+            ->where('payload->after->qr_token', $asset->qr_token)
+            ->exists()
+    )->toBeTrue();
+});
+
+test('user without asset update permission cannot regenerate asset qr token', function () {
+    $organization = Organization::factory()->create();
+    app(OrganizationContext::class)->setCurrentOrganizationId($organization->id);
+
+    $user = User::factory()->inOrganization($organization, role: 'Member')->create([
+        'email_verified_at' => now(),
+        'current_organization_id' => $organization->id,
+    ]);
+
+    $asset = Asset::query()->create([
+        'organization_id' => $organization->id,
+        'code' => 'AST-JKT-2026-QR2',
+        'name' => 'Tablet B',
+        'branch_id' => Branch::factory()->create(['organization_id' => $organization->id])->id,
+        'qr_token' => Str::lower(Str::random(40)),
+    ]);
+
+    $originalToken = $asset->qr_token;
+
+    actingAs($user)
+        ->patch(route('assets.qr-token.update', $asset))
+        ->assertForbidden();
+
+    expect($asset->fresh()?->qr_token)->toBe($originalToken);
 });

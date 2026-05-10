@@ -1,8 +1,10 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    Activity,
     Archive,
     Copy,
     Download,
+    MoreHorizontal,
     FileText,
     History,
     MapPin,
@@ -10,6 +12,7 @@ import {
     Pencil,
     Printer,
     QrCode,
+    RefreshCw,
     Receipt,
     Trash2,
     Truck,
@@ -21,6 +24,7 @@ import { useMemo, useState } from 'react';
 import AssetAttachmentController from '@/actions/App/Http/Controllers/AssetAttachmentController';
 import AssetController from '@/actions/App/Http/Controllers/AssetController';
 import AssetLifecycleEventController from '@/actions/App/Http/Controllers/AssetLifecycleEventController';
+import AssetLifecycleStatusController from '@/actions/App/Http/Controllers/AssetLifecycleStatusController';
 import AssetMovementController from '@/actions/App/Http/Controllers/AssetMovementController';
 import AssetWarrantyClaimController from '@/actions/App/Http/Controllers/AssetWarrantyClaimController';
 import VendorContractController from '@/actions/App/Http/Controllers/VendorContractController';
@@ -31,15 +35,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AssetQrTokenController from '@/actions/App/Http/Controllers/AssetQrTokenController';
 import { chunk, complete, destroy as destroyUpload, store as storeUpload } from '@/routes/media-uploads';
 import { print as printLabels } from '@/routes/assets/labels';
 import { show as qrShow } from '@/routes/qr';
 import { index as assetsIndex } from '@/routes/assets';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 type Attachment = {
     id: number;
@@ -169,6 +176,15 @@ type Props = {
         locations: Array<{ id: number; name: string; code: string; branch_id: number; parent_id: number | null; type: string | null }>;
         assetUsers: Array<{ id: number; name: string }>;
     };
+    statusMeta: {
+        availableStatuses: Array<{
+            id: number;
+            name: string;
+            code: string;
+            transition_type: 'allowed' | 'discouraged' | 'blocked';
+            transition_reason: string | null;
+        }>;
+    };
     computedBookValue: number;
     warrantyStatus: { status: string; warranty_end: string | null; days_remaining: number | null };
     warrantyClaims: Array<{
@@ -209,6 +225,7 @@ export default function AssetShow({
     audits,
     depreciationEntries,
     formMeta,
+    statusMeta,
     computedBookValue,
     warrantyStatus,
     warrantyClaims,
@@ -227,9 +244,14 @@ export default function AssetShow({
 
     const qrUrl = qrShow(asset.qr_token).url;
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [regenerateQrOpen, setRegenerateQrOpen] = useState(false);
+    const [statusOpen, setStatusOpen] = useState(false);
     const [lifecycleOpen, setLifecycleOpen] = useState(false);
     const [movementOpen, setMovementOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
+    const [statusId, setStatusId] = useState<string>(asset.status ? String(asset.status.id) : '__none__');
+    const [statusPerformedAt, setStatusPerformedAt] = useState<string>('');
+    const [statusNotes, setStatusNotes] = useState<string>('');
 
     const [lifecycleStage, setLifecycleStage] = useState<string>('receiving');
     const [lifecyclePerformedAt, setLifecyclePerformedAt] = useState<string>('');
@@ -242,6 +264,11 @@ export default function AssetShow({
     const [toAssetUserId, setToAssetUserId] = useState<string>('');
     const [movementPerformedAt, setMovementPerformedAt] = useState<string>('');
     const [movementNotes, setMovementNotes] = useState<string>('');
+
+    const selectedStatusOption = useMemo(
+        () => statusMeta.availableStatuses.find((status) => String(status.id) === statusId) ?? null,
+        [statusId, statusMeta.availableStatuses],
+    );
 
     const movementHasDestination = Boolean(toBranchId || toDepartmentId || toLocationId || toAssetUserId);
     const movementCanSubmit =
@@ -308,6 +335,39 @@ export default function AssetShow({
                                 {t('assets.actions.open_qr')}
                             </Button>
                         </Link>
+
+                        {canUpdate ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-full sm:w-auto">
+                                        <MoreHorizontal className="mr-2 h-4 w-4" />
+                                        {t('common.actions')}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuItem onClick={() => setRegenerateQrOpen(true)}>
+                                        <RefreshCw className="mr-2 h-4 w-4" />
+                                        {t('assets.actions.regenerate_qr_token')}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : null}
+
+                        {canUpdate ? (
+                            <Button
+                                variant="outline"
+                                className="w-full sm:w-auto"
+                                onClick={() => {
+                                    setStatusId(asset.status ? String(asset.status.id) : '__none__');
+                                    setStatusPerformedAt('');
+                                    setStatusNotes('');
+                                    setStatusOpen(true);
+                                }}
+                            >
+                                <Activity className="mr-2 h-4 w-4" />
+                                {t('assets.actions.change_status')}
+                            </Button>
+                        ) : null}
 
                         {canUpdate ? (
                             <Link href={AssetController.edit.url({ asset: asset.id })}>
@@ -424,6 +484,86 @@ export default function AssetShow({
                 </Tabs>
             </div>
 
+            <Dialog open={statusOpen} onOpenChange={setStatusOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('assets.actions.change_status')}</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label>{t('assets.fields.status')}</Label>
+                            <Select value={statusId} onValueChange={setStatusId}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder={t('assets.placeholders.status')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="__none__">{t('common.none')}</SelectItem>
+                                    {statusMeta.availableStatuses.map((status) => (
+                                        <SelectItem key={status.id} value={String(status.id)}>
+                                            {status.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {selectedStatusOption?.transition_reason ? (
+                            <div
+                                className={cn(
+                                    'rounded-lg border px-3 py-2 text-sm',
+                                    selectedStatusOption.transition_type === 'discouraged'
+                                        ? 'border-amber-300 bg-amber-50 text-amber-900'
+                                        : selectedStatusOption.transition_type === 'blocked'
+                                          ? 'border-destructive/30 bg-destructive/5 text-destructive'
+                                          : 'border-border bg-muted/50 text-muted-foreground',
+                                )}
+                            >
+                                {selectedStatusOption.transition_reason}
+                            </div>
+                        ) : null}
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.performed_at')}</Label>
+                            <Input type="datetime-local" value={statusPerformedAt} onChange={(e) => setStatusPerformedAt(e.target.value)} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>{t('assets.lifecycle.fields.notes')}</Label>
+                            <Input value={statusNotes} onChange={(e) => setStatusNotes(e.target.value)} />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setStatusOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            className="w-full sm:w-auto"
+                            disabled={selectedStatusOption?.transition_type === 'blocked'}
+                            onClick={() => {
+                                router.post(
+                                    AssetLifecycleStatusController.store.url({ asset: asset.id }),
+                                    {
+                                        asset_status_id: statusId === '__none__' ? null : Number(statusId),
+                                        performed_at: statusPerformedAt || null,
+                                        notes: statusNotes || null,
+                                    },
+                                    {
+                                        preserveScroll: true,
+                                        onSuccess: () => {
+                                            setStatusOpen(false);
+                                        },
+                                    },
+                                );
+                            }}
+                        >
+                            {t('common.save')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -440,6 +580,36 @@ export default function AssetShow({
                             className="w-full sm:w-auto"
                         >
                             {t('common.delete')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={regenerateQrOpen} onOpenChange={setRegenerateQrOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('assets.actions.regenerate_qr_token')}</DialogTitle>
+                    </DialogHeader>
+                    <div className="text-sm text-muted-foreground">{t('assets.actions.regenerate_qr_token_confirm', { code: asset.code })}</div>
+                    <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button variant="outline" onClick={() => setRegenerateQrOpen(false)} className="w-full sm:w-auto">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={() =>
+                                router.patch(
+                                    AssetQrTokenController.update.url({ asset: asset.id }),
+                                    {},
+                                    {
+                                        preserveScroll: true,
+                                        onSuccess: () => setRegenerateQrOpen(false),
+                                    },
+                                )
+                            }
+                            className="w-full sm:w-auto"
+                        >
+                            {t('assets.actions.regenerate_qr_token_submit')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

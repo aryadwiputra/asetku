@@ -60,9 +60,15 @@ return [
         'edit' => 'Edit aset',
         'export' => 'Ekspor',
         'delete_confirm' => 'Hapus aset :code?',
+        'change_status' => 'Ubah status',
+        'bulk_change_status' => 'Ubah status massal',
+        'bulk_change_status_confirm' => 'Ubah status untuk :count aset terpilih?',
         'show_advanced' => 'Tampilkan field lanjutan',
         'open_qr' => 'Buka halaman QR',
         'copy_qr_link' => 'Salin link QR',
+        'regenerate_qr_token' => 'Regenerasi token QR',
+        'regenerate_qr_token_confirm' => 'Regenerasi token QR untuk aset :code? Link QR publik dan label lama akan langsung berhenti bekerja.',
+        'regenerate_qr_token_submit' => 'Regenerasi token',
     ],
 
     'views' => [
@@ -207,6 +213,8 @@ return [
         'created' => 'Aset berhasil dibuat.',
         'updated' => 'Aset berhasil diperbarui.',
         'deleted' => 'Aset berhasil dihapus.',
+        'bulk_status_updated' => 'Status :count aset berhasil diperbarui.',
+        'qr_token_regenerated' => 'Token QR berhasil diregenerasi. Link publik lama tidak lagi berlaku.',
     ],
 
     'history' => [
@@ -219,6 +227,8 @@ return [
         'branch_required' => 'Cabang wajib diisi.',
         'department_branch_mismatch' => 'Departemen harus berada pada cabang yang dipilih.',
         'location_branch_mismatch' => 'Lokasi harus berada pada cabang yang dipilih.',
+        'status_transition_blocked' => 'Transisi status ini tidak diizinkan.',
+        'bulk_status_transition_blocked' => 'Beberapa aset tidak bisa memakai transisi ini: :assets.',
     ],
 
     'warranty' => [
@@ -248,7 +258,7 @@ return [
     ],
 
     'attachments' => [
-        'max_photos' => 'Maksimal 10 foto per aset.',
+        'max_photos' => 'Maksimal 20 foto per aset.',
         'primary' => 'Utama',
         'empty' => 'Belum ada lampiran.',
         'kinds' => [
@@ -295,6 +305,14 @@ return [
         'actions' => [
             'record_event' => 'Catat event siklus hidup',
             'record_movement' => 'Catat mutasi/peminjaman',
+        ],
+
+        'transitions' => [
+            'allowed' => 'Transisi ini valid.',
+            'discouraged' => 'Transisi ini bisa dilakukan, tetapi tidak direkomendasikan.',
+            'blocked' => 'Transisi ini diblokir oleh aturan status.',
+            'discouraged_direct_disposal' => 'Transisi langsung ke status disposed sebaiknya lewat proses disposal agar audit trail tetap lengkap.',
+            'blocked_from_disposed' => 'Aset yang sudah disposed tidak bisa diaktifkan kembali langsung.',
         ],
 
         'fields' => [
@@ -358,6 +376,11 @@ return [
             'transferred' => 'Dipindahkan.',
             'borrowed' => 'Dipinjamkan.',
             'returned' => 'Dikembalikan.',
+        ],
+
+        'notes' => [
+            'moved_to_maintenance' => 'Status otomatis dipindahkan ke maintenance dari work order :number.',
+            'restored_after_maintenance' => 'Status otomatis dipulihkan setelah work order :number ditutup.',
         ],
 
         'validation' => [
