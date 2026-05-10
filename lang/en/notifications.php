@@ -39,6 +39,10 @@ return [
         'slack' => 'Slack',
     ],
     'types' => [
+        'audit_finding_submitted' => [
+            'title' => 'Audit finding submitted',
+            'description' => 'Notifies you when a new audit finding is submitted for review.',
+        ],
         'security_important' => [
             'title' => 'Important security alerts',
             'description' => 'High priority security events that may require your attention.',

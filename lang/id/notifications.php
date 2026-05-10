@@ -39,6 +39,10 @@ return [
         'slack' => 'Slack',
     ],
     'types' => [
+        'audit_finding_submitted' => [
+            'title' => 'Temuan audit diajukan',
+            'description' => 'Memberi tahu saat temuan audit baru diajukan untuk ditinjau.',
+        ],
         'security_important' => [
             'title' => 'Peringatan keamanan penting',
             'description' => 'Peristiwa keamanan prioritas tinggi yang mungkin butuh perhatian Anda.',

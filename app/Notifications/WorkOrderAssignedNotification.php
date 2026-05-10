@@ -48,13 +48,13 @@ class WorkOrderAssignedNotification extends Notification implements ShouldQueue
     public function toMail(mixed $notifiable): MailMessage
     {
         $subject = __('work_orders.notifications.assigned.subject', [
-            'id' => $this->workOrder->id,
+            'number' => $this->workOrder->work_order_number,
         ]);
 
         return (new MailMessage)
             ->subject($subject)
             ->line(__('work_orders.notifications.assigned.line1', [
-                'id' => $this->workOrder->id,
+                'number' => $this->workOrder->work_order_number,
             ]))
             ->line(__('work_orders.notifications.assigned.line2', [
                 'description' => $this->workOrder->description,

@@ -34,7 +34,7 @@ class SettingsTestMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.settings-test',
+            markdown: 'mail.settings-test',
         );
     }
 

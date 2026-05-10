@@ -2,6 +2,7 @@
 
 use App\Notifications\AssetResidualValueReachedNotification;
 use App\Notifications\AssetWarrantyExpiringSoonNotification;
+use App\Notifications\AuditFindingSubmittedNotification;
 use App\Notifications\ContractExpiringSoonNotification;
 use App\Notifications\ImportantSecurityNotification;
 use App\Notifications\MaintenanceScheduleDueInOneDayNotification;
@@ -12,6 +13,17 @@ use App\Notifications\WorkOrderResolutionSlaBreachedNotification;
 use App\Notifications\WorkOrderResponseSlaBreachedNotification;
 
 return [
+    [
+        'key' => 'audit.finding_submitted',
+        'title_key' => 'notifications.types.audit_finding_submitted.title',
+        'description_key' => 'notifications.types.audit_finding_submitted.description',
+        'class' => AuditFindingSubmittedNotification::class,
+        'default_channels' => [
+            'database' => true,
+            'mail' => true,
+            'slack' => false,
+        ],
+    ],
     [
         'key' => 'security.important',
         'title_key' => 'notifications.types.security_important.title',

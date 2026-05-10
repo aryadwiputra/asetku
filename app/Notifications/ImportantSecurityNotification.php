@@ -4,10 +4,12 @@ namespace App\Notifications;
 
 use App\Notifications\Channels\SlackWebhookChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ImportantSecurityNotification extends Notification
+class ImportantSecurityNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -27,6 +29,10 @@ class ImportantSecurityNotification extends Notification
      */
     public function via(object $notifiable): array
     {
+        if ($notifiable instanceof AnonymousNotifiable) {
+            return ['mail'];
+        }
+
         return ['database', 'mail', SlackWebhookChannel::class];
     }
 

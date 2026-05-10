@@ -49,13 +49,13 @@ class WorkOrderResponseSlaBreachedNotification extends Notification implements S
     public function toMail(mixed $notifiable): MailMessage
     {
         $subject = __('work_orders.notifications.sla_breached.subject', [
-            'id' => $this->workOrder->id,
+            'number' => $this->workOrder->work_order_number,
         ]);
 
         return (new MailMessage)
             ->subject($subject)
             ->line(__('work_orders.notifications.sla_breached.line1', [
-                'id' => $this->workOrder->id,
+                'number' => $this->workOrder->work_order_number,
             ]))
             ->line(__('work_orders.notifications.sla_breached.line2', [
                 'kind' => __('work_orders.sla.kind.response'),
