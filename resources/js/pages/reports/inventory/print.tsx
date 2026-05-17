@@ -3,6 +3,7 @@ import { Printer } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { useTranslation } from '@/hooks/use-translation';
+import { toAbsoluteUrl } from '@/lib/utils';
 import { show as qrShow } from '@/routes/qr';
 import { index as inventoryIndex } from '@/routes/reports/inventory';
 
@@ -104,7 +105,7 @@ export default function InventoryStocktakePrint({ branch, assets, meta }: Props)
                                 <td className="border p-2" />
                                 <td className="border p-2" />
                                 <td className="border p-2">
-                                    <div className="text-[10px]">{qrShow(asset.qr_token).url}</div>
+                                    <div className="text-[10px]">{toAbsoluteUrl(qrShow(asset.qr_token).url)}</div>
                                 </td>
                             </tr>
                         ))}

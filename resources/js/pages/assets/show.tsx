@@ -46,7 +46,7 @@ import { print as printLabels } from '@/routes/assets/labels';
 import { show as qrShow } from '@/routes/qr';
 import { index as assetsIndex } from '@/routes/assets';
 import { useTranslation } from '@/hooks/use-translation';
-import { cn } from '@/lib/utils';
+import { cn, toAbsoluteUrl } from '@/lib/utils';
 
 type Attachment = {
     id: number;
@@ -242,7 +242,8 @@ export default function AssetShow({
     const canUpdate = moduleAbilities.assets.update;
     const canDelete = moduleAbilities.assets.delete;
 
-    const qrUrl = qrShow(asset.qr_token).url;
+    const qrPath = qrShow(asset.qr_token).url;
+    const qrUrl = toAbsoluteUrl(qrPath);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [regenerateQrOpen, setRegenerateQrOpen] = useState(false);
     const [statusOpen, setStatusOpen] = useState(false);
@@ -329,7 +330,7 @@ export default function AssetShow({
                             {t('assets.actions.copy_qr_link')}
                         </Button>
 
-                        <Link href={qrUrl}>
+                        <Link href={qrPath}>
                             <Button variant="secondary" className="w-full sm:w-auto">
                                 <QrCode className="mr-2 h-4 w-4" />
                                 {t('assets.actions.open_qr')}

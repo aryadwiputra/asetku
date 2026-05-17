@@ -10,3 +10,15 @@ export function cn(...inputs: ClassValue[]) {
 export function toUrl(url: NonNullable<InertiaLinkProps['href']>): string {
     return typeof url === 'string' ? url : url.url;
 }
+
+export function toAbsoluteUrl(url: string): string {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+
+    if (typeof window === 'undefined') {
+        return url;
+    }
+
+    return new URL(url, window.location.origin).toString();
+}

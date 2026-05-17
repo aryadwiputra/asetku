@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 
 import { show as qrShow } from '@/routes/qr';
 import { useTranslation } from '@/hooks/use-translation';
+import { toAbsoluteUrl } from '@/lib/utils';
 
 type Asset = {
     id: number;
@@ -34,7 +35,7 @@ export default function AssetLabelsPrint({ assets }: Props) {
                 }
 
                 for (const asset of assets) {
-                    const qrUrl = qrShow(asset.qr_token).url;
+                    const qrUrl = toAbsoluteUrl(qrShow(asset.qr_token).url);
 
                     const qrCanvas = document.querySelector<HTMLCanvasElement>(`canvas[data-qr="${asset.id}"]`);
                     const barcodeSvg = document.querySelector<SVGSVGElement>(`svg[data-barcode="${asset.id}"]`);
@@ -81,7 +82,7 @@ export default function AssetLabelsPrint({ assets }: Props) {
                                 <canvas data-qr={asset.id} className="h-[120px] w-[120px] border" />
                                 <div className="flex-1">
                                     <svg data-barcode={asset.id} className="h-10 w-full" />
-                                    <div className="mt-1 text-[10px] text-muted-foreground">{qrShow(asset.qr_token).url}</div>
+                                    <div className="mt-1 text-[10px] text-muted-foreground">{toAbsoluteUrl(qrShow(asset.qr_token).url)}</div>
                                 </div>
                             </div>
                         </div>
