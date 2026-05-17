@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Asset;
 use App\Models\AssetCodeSequence;
 use App\Models\Branch;
 use App\Models\Organization;
@@ -22,7 +23,7 @@ class AssetCodeGenerator
 
         $year = $year ?? (int) now()->format('Y');
 
-        $next = DB::transaction(function () use ($branch, $year, $organizationId): int {
+        return DB::transaction(function () use ($branch, $year, $organizationId, $organization): string {
             $sequence = AssetCodeSequence::query()
                 ->where('organization_id', $organizationId)
                 ->where('branch_id', $branch->id)
@@ -39,18 +40,33 @@ class AssetCodeGenerator
                 ]);
             }
 
-            $sequence->forceFill(['last_number' => $sequence->last_number + 1])->save();
+            $next = (int) $sequence->last_number;
 
-            return (int) $sequence->last_number;
+            do {
+                $next++;
+
+                $candidate = $this->formatCode(
+                    format: (string) $organization->asset_code_format,
+                    prefix: (string) $organization->asset_code_prefix,
+                    branchCode: (string) $branch->code,
+                    year: $year,
+                    sequence: $next,
+                );
+            } while ($this->codeExists($organizationId, $candidate));
+
+            $sequence->forceFill(['last_number' => $next])->save();
+
+            return $candidate;
         });
+    }
 
-        return $this->formatCode(
-            format: (string) $organization->asset_code_format,
-            prefix: (string) $organization->asset_code_prefix,
-            branchCode: (string) $branch->code,
-            year: $year,
-            sequence: $next,
-        );
+    private function codeExists(int $organizationId, string $code): bool
+    {
+        return Asset::query()
+            ->withoutGlobalScopes()
+            ->where('organization_id', $organizationId)
+            ->where('code', $code)
+            ->exists();
     }
 
     private function formatCode(string $format, string $prefix, string $branchCode, int $year, int $sequence): string
