@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AuditScheduleController::index
 * @see app/Http/Controllers/AuditScheduleController.php:25
@@ -42,6 +42,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::index
+* @see app/Http/Controllers/AuditScheduleController.php:25
+* @route '/audit/schedules'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::index
+* @see app/Http/Controllers/AuditScheduleController.php:25
+* @route '/audit/schedules'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::index
+* @see app/Http/Controllers/AuditScheduleController.php:25
+* @route '/audit/schedules'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\AuditScheduleController::create
@@ -88,6 +125,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\AuditScheduleController::create
+* @see app/Http/Controllers/AuditScheduleController.php:84
+* @route '/audit/schedules/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::create
+* @see app/Http/Controllers/AuditScheduleController.php:84
+* @route '/audit/schedules/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::create
+* @see app/Http/Controllers/AuditScheduleController.php:84
+* @route '/audit/schedules/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\AuditScheduleController::store
 * @see app/Http/Controllers/AuditScheduleController.php:122
 * @route '/audit/schedules'
@@ -120,6 +194,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::store
+* @see app/Http/Controllers/AuditScheduleController.php:122
+* @route '/audit/schedules'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::store
+* @see app/Http/Controllers/AuditScheduleController.php:122
+* @route '/audit/schedules'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\AuditScheduleController::show
@@ -190,6 +286,43 @@ show.head = (args: { auditSchedule: number | { id: number } } | [auditSchedule: 
 })
 
 /**
+* @see \App\Http\Controllers\AuditScheduleController::show
+* @see app/Http/Controllers/AuditScheduleController.php:155
+* @route '/audit/schedules/{auditSchedule}'
+*/
+const showForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::show
+* @see app/Http/Controllers/AuditScheduleController.php:155
+* @route '/audit/schedules/{auditSchedule}'
+*/
+showForm.get = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::show
+* @see app/Http/Controllers/AuditScheduleController.php:155
+* @route '/audit/schedules/{auditSchedule}'
+*/
+showForm.head = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\AuditScheduleController::edit
 * @see app/Http/Controllers/AuditScheduleController.php:222
 * @route '/audit/schedules/{auditSchedule}/edit'
@@ -258,6 +391,43 @@ edit.head = (args: { auditSchedule: number | { id: number } } | [auditSchedule: 
 })
 
 /**
+* @see \App\Http\Controllers\AuditScheduleController::edit
+* @see app/Http/Controllers/AuditScheduleController.php:222
+* @route '/audit/schedules/{auditSchedule}/edit'
+*/
+const editForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::edit
+* @see app/Http/Controllers/AuditScheduleController.php:222
+* @route '/audit/schedules/{auditSchedule}/edit'
+*/
+editForm.get = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::edit
+* @see app/Http/Controllers/AuditScheduleController.php:222
+* @route '/audit/schedules/{auditSchedule}/edit'
+*/
+editForm.head = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\AuditScheduleController::update
 * @see app/Http/Controllers/AuditScheduleController.php:263
 * @route '/audit/schedules/{auditSchedule}'
@@ -314,6 +484,38 @@ update.patch = (args: { auditSchedule: number | { id: number } } | [auditSchedul
     url: update.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::update
+* @see app/Http/Controllers/AuditScheduleController.php:263
+* @route '/audit/schedules/{auditSchedule}'
+*/
+const updateForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::update
+* @see app/Http/Controllers/AuditScheduleController.php:263
+* @route '/audit/schedules/{auditSchedule}'
+*/
+updateForm.patch = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\AuditScheduleController::destroy
@@ -374,6 +576,38 @@ destroy.delete = (args: { auditSchedule: number | { id: number } } | [auditSched
 })
 
 /**
+* @see \App\Http\Controllers\AuditScheduleController::destroy
+* @see app/Http/Controllers/AuditScheduleController.php:305
+* @route '/audit/schedules/{auditSchedule}'
+*/
+const destroyForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::destroy
+* @see app/Http/Controllers/AuditScheduleController.php:305
+* @route '/audit/schedules/{auditSchedule}'
+*/
+destroyForm.delete = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+/**
 * @see \App\Http\Controllers\AuditScheduleController::start
 * @see app/Http/Controllers/AuditScheduleController.php:316
 * @route '/audit/schedules/{auditSchedule}/start'
@@ -432,6 +666,28 @@ start.post = (args: { auditSchedule: number | { id: number } } | [auditSchedule:
 })
 
 /**
+* @see \App\Http\Controllers\AuditScheduleController::start
+* @see app/Http/Controllers/AuditScheduleController.php:316
+* @route '/audit/schedules/{auditSchedule}/start'
+*/
+const startForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: start.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::start
+* @see app/Http/Controllers/AuditScheduleController.php:316
+* @route '/audit/schedules/{auditSchedule}/start'
+*/
+startForm.post = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: start.url(args, options),
+    method: 'post',
+})
+
+start.form = startForm
+
+/**
 * @see \App\Http\Controllers\AuditScheduleController::complete
 * @see app/Http/Controllers/AuditScheduleController.php:331
 * @route '/audit/schedules/{auditSchedule}/complete'
@@ -488,6 +744,28 @@ complete.post = (args: { auditSchedule: number | { id: number } } | [auditSchedu
     url: complete.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::complete
+* @see app/Http/Controllers/AuditScheduleController.php:331
+* @route '/audit/schedules/{auditSchedule}/complete'
+*/
+const completeForm = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: complete.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AuditScheduleController::complete
+* @see app/Http/Controllers/AuditScheduleController.php:331
+* @route '/audit/schedules/{auditSchedule}/complete'
+*/
+completeForm.post = (args: { auditSchedule: number | { id: number } } | [auditSchedule: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: complete.url(args, options),
+    method: 'post',
+})
+
+complete.form = completeForm
 
 const schedules = {
     index: Object.assign(index, index),

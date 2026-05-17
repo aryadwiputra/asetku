@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../wayfinder'
 /**
 * @see routes/web.php:42
 * @route '/api/docs.json'
@@ -38,6 +38,40 @@ document.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: document.url(options),
     method: 'head',
 })
+
+/**
+* @see routes/web.php:42
+* @route '/api/docs.json'
+*/
+const documentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: document.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:42
+* @route '/api/docs.json'
+*/
+documentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: document.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/web.php:42
+* @route '/api/docs.json'
+*/
+documentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: document.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+document.form = documentForm
 
 const docs = {
     document: Object.assign(document, document),

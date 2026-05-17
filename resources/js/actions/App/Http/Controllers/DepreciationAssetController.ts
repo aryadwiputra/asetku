@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\DepreciationAssetController::show
 * @see app/Http/Controllers/DepreciationAssetController.php:15
@@ -66,6 +66,43 @@ show.head = (args: { asset: number | { id: number } } | [asset: number | { id: n
     url: show.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\DepreciationAssetController::show
+* @see app/Http/Controllers/DepreciationAssetController.php:15
+* @route '/depreciation/assets/{asset}'
+*/
+const showForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\DepreciationAssetController::show
+* @see app/Http/Controllers/DepreciationAssetController.php:15
+* @route '/depreciation/assets/{asset}'
+*/
+showForm.get = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\DepreciationAssetController::show
+* @see app/Http/Controllers/DepreciationAssetController.php:15
+* @route '/depreciation/assets/{asset}'
+*/
+showForm.head = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
 
 const DepreciationAssetController = { show }
 

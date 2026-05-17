@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkOrderCostLineController::store
 * @see app/Http/Controllers/WorkOrderCostLineController.php:15
@@ -58,6 +58,28 @@ store.post = (args: { workOrder: number | { id: number } } | [workOrder: number 
 })
 
 /**
+* @see \App\Http\Controllers\WorkOrderCostLineController::store
+* @see app/Http/Controllers/WorkOrderCostLineController.php:15
+* @route '/work-orders/{workOrder}/cost-lines'
+*/
+const storeForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderCostLineController::store
+* @see app/Http/Controllers/WorkOrderCostLineController.php:15
+* @route '/work-orders/{workOrder}/cost-lines'
+*/
+storeForm.post = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\WorkOrderCostLineController::update
 * @see app/Http/Controllers/WorkOrderCostLineController.php:51
 * @route '/work-orders/{workOrder}/cost-lines/{costLine}'
@@ -113,6 +135,38 @@ update.patch = (args: { workOrder: number | { id: number }, costLine: number | {
 })
 
 /**
+* @see \App\Http\Controllers\WorkOrderCostLineController::update
+* @see app/Http/Controllers/WorkOrderCostLineController.php:51
+* @route '/work-orders/{workOrder}/cost-lines/{costLine}'
+*/
+const updateForm = (args: { workOrder: number | { id: number }, costLine: number | { id: number } } | [workOrder: number | { id: number }, costLine: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderCostLineController::update
+* @see app/Http/Controllers/WorkOrderCostLineController.php:51
+* @route '/work-orders/{workOrder}/cost-lines/{costLine}'
+*/
+updateForm.patch = (args: { workOrder: number | { id: number }, costLine: number | { id: number } } | [workOrder: number | { id: number }, costLine: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\WorkOrderCostLineController::destroy
 * @see app/Http/Controllers/WorkOrderCostLineController.php:87
 * @route '/work-orders/{workOrder}/cost-lines/{costLine}'
@@ -166,6 +220,38 @@ destroy.delete = (args: { workOrder: number | { id: number }, costLine: number |
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\WorkOrderCostLineController::destroy
+* @see app/Http/Controllers/WorkOrderCostLineController.php:87
+* @route '/work-orders/{workOrder}/cost-lines/{costLine}'
+*/
+const destroyForm = (args: { workOrder: number | { id: number }, costLine: number | { id: number } } | [workOrder: number | { id: number }, costLine: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderCostLineController::destroy
+* @see app/Http/Controllers/WorkOrderCostLineController.php:87
+* @route '/work-orders/{workOrder}/cost-lines/{costLine}'
+*/
+destroyForm.delete = (args: { workOrder: number | { id: number }, costLine: number | { id: number } } | [workOrder: number | { id: number }, costLine: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const WorkOrderCostLineController = { store, update, destroy }
 

@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetWarrantyClaimController::store
 * @see app/Http/Controllers/AssetWarrantyClaimController.php:16
@@ -58,6 +58,28 @@ store.post = (args: { asset: number | { id: number } } | [asset: number | { id: 
 })
 
 /**
+* @see \App\Http\Controllers\AssetWarrantyClaimController::store
+* @see app/Http/Controllers/AssetWarrantyClaimController.php:16
+* @route '/assets/{asset}/warranty-claims'
+*/
+const storeForm = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetWarrantyClaimController::store
+* @see app/Http/Controllers/AssetWarrantyClaimController.php:16
+* @route '/assets/{asset}/warranty-claims'
+*/
+storeForm.post = (args: { asset: number | { id: number } } | [asset: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\AssetWarrantyClaimController::update
 * @see app/Http/Controllers/AssetWarrantyClaimController.php:40
 * @route '/assets/{asset}/warranty-claims/{claim}'
@@ -111,6 +133,38 @@ update.patch = (args: { asset: number | { id: number }, claim: number | { id: nu
     url: update.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\AssetWarrantyClaimController::update
+* @see app/Http/Controllers/AssetWarrantyClaimController.php:40
+* @route '/assets/{asset}/warranty-claims/{claim}'
+*/
+const updateForm = (args: { asset: number | { id: number }, claim: number | { id: number } } | [asset: number | { id: number }, claim: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetWarrantyClaimController::update
+* @see app/Http/Controllers/AssetWarrantyClaimController.php:40
+* @route '/assets/{asset}/warranty-claims/{claim}'
+*/
+updateForm.patch = (args: { asset: number | { id: number }, claim: number | { id: number } } | [asset: number | { id: number }, claim: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
 
 const warrantyClaims = {
     store: Object.assign(store, store),

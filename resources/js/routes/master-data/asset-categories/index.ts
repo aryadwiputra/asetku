@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::index
 * @see app/Http/Controllers/MasterData/AssetCategoryController.php:16
@@ -42,6 +42,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::index
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:16
+* @route '/settings/master-data/asset-categories'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::index
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:16
+* @route '/settings/master-data/asset-categories'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::index
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:16
+* @route '/settings/master-data/asset-categories'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::create
@@ -88,6 +125,43 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::create
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:48
+* @route '/settings/master-data/asset-categories/create'
+*/
+const createForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::create
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:48
+* @route '/settings/master-data/asset-categories/create'
+*/
+createForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::create
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:48
+* @route '/settings/master-data/asset-categories/create'
+*/
+createForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: create.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+create.form = createForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::store
 * @see app/Http/Controllers/MasterData/AssetCategoryController.php:61
 * @route '/settings/master-data/asset-categories'
@@ -120,6 +194,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::store
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:61
+* @route '/settings/master-data/asset-categories'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::store
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:61
+* @route '/settings/master-data/asset-categories'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::edit
@@ -190,6 +286,43 @@ edit.head = (args: { asset_category: number | { id: number } } | [asset_category
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::edit
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:72
+* @route '/settings/master-data/asset-categories/{asset_category}/edit'
+*/
+const editForm = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::edit
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:72
+* @route '/settings/master-data/asset-categories/{asset_category}/edit'
+*/
+editForm.get = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::edit
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:72
+* @route '/settings/master-data/asset-categories/{asset_category}/edit'
+*/
+editForm.head = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: edit.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+edit.form = editForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::update
 * @see app/Http/Controllers/MasterData/AssetCategoryController.php:87
 * @route '/settings/master-data/asset-categories/{asset_category}'
@@ -258,6 +391,53 @@ update.patch = (args: { asset_category: number | { id: number } } | [asset_categ
 })
 
 /**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::update
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:87
+* @route '/settings/master-data/asset-categories/{asset_category}'
+*/
+const updateForm = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::update
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:87
+* @route '/settings/master-data/asset-categories/{asset_category}'
+*/
+updateForm.put = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::update
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:87
+* @route '/settings/master-data/asset-categories/{asset_category}'
+*/
+updateForm.patch = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\MasterData\AssetCategoryController::destroy
 * @see app/Http/Controllers/MasterData/AssetCategoryController.php:98
 * @route '/settings/master-data/asset-categories/{asset_category}'
@@ -314,6 +494,38 @@ destroy.delete = (args: { asset_category: number | { id: number } } | [asset_cat
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::destroy
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:98
+* @route '/settings/master-data/asset-categories/{asset_category}'
+*/
+const destroyForm = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\MasterData\AssetCategoryController::destroy
+* @see app/Http/Controllers/MasterData/AssetCategoryController.php:98
+* @route '/settings/master-data/asset-categories/{asset_category}'
+*/
+destroyForm.delete = (args: { asset_category: number | { id: number } } | [asset_category: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const assetCategories = {
     index: Object.assign(index, index),

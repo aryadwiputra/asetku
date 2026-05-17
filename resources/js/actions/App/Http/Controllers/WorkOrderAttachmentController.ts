@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkOrderAttachmentController::store
 * @see app/Http/Controllers/WorkOrderAttachmentController.php:15
@@ -58,6 +58,28 @@ store.post = (args: { workOrder: number | { id: number } } | [workOrder: number 
 })
 
 /**
+* @see \App\Http\Controllers\WorkOrderAttachmentController::store
+* @see app/Http/Controllers/WorkOrderAttachmentController.php:15
+* @route '/work-orders/{workOrder}/attachments'
+*/
+const storeForm = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderAttachmentController::store
+* @see app/Http/Controllers/WorkOrderAttachmentController.php:15
+* @route '/work-orders/{workOrder}/attachments'
+*/
+storeForm.post = (args: { workOrder: number | { id: number } } | [workOrder: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(args, options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\WorkOrderAttachmentController::destroy
 * @see app/Http/Controllers/WorkOrderAttachmentController.php:48
 * @route '/work-orders/{workOrder}/attachments/{attachment}'
@@ -111,6 +133,38 @@ destroy.delete = (args: { workOrder: number | { id: number }, attachment: number
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\WorkOrderAttachmentController::destroy
+* @see app/Http/Controllers/WorkOrderAttachmentController.php:48
+* @route '/work-orders/{workOrder}/attachments/{attachment}'
+*/
+const destroyForm = (args: { workOrder: number | { id: number }, attachment: number | { id: number } } | [workOrder: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\WorkOrderAttachmentController::destroy
+* @see app/Http/Controllers/WorkOrderAttachmentController.php:48
+* @route '/work-orders/{workOrder}/attachments/{attachment}'
+*/
+destroyForm.delete = (args: { workOrder: number | { id: number }, attachment: number | { id: number } } | [workOrder: number | { id: number }, attachment: number | { id: number } ], options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const WorkOrderAttachmentController = { store, destroy }
 

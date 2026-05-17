@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AssetImportController::index
 * @see app/Http/Controllers/AssetImportController.php:18
@@ -44,6 +44,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\AssetImportController::index
+* @see app/Http/Controllers/AssetImportController.php:18
+* @route '/assets-import'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetImportController::index
+* @see app/Http/Controllers/AssetImportController.php:18
+* @route '/assets-import'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AssetImportController::index
+* @see app/Http/Controllers/AssetImportController.php:18
+* @route '/assets-import'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\AssetImportController::validate
 * @see app/Http/Controllers/AssetImportController.php:33
 * @route '/assets-import/validate'
@@ -76,6 +113,28 @@ validate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: validate.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AssetImportController::validate
+* @see app/Http/Controllers/AssetImportController.php:33
+* @route '/assets-import/validate'
+*/
+const validateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: validate.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetImportController::validate
+* @see app/Http/Controllers/AssetImportController.php:33
+* @route '/assets-import/validate'
+*/
+validateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: validate.url(options),
+    method: 'post',
+})
+
+validate.form = validateForm
 
 /**
 * @see \App\Http\Controllers\AssetImportController::apply
@@ -136,6 +195,28 @@ apply.post = (args: { importRun: number | { id: number } } | [importRun: number 
 })
 
 /**
+* @see \App\Http\Controllers\AssetImportController::apply
+* @see app/Http/Controllers/AssetImportController.php:69
+* @route '/assets-import/{importRun}/apply'
+*/
+const applyForm = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: apply.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetImportController::apply
+* @see app/Http/Controllers/AssetImportController.php:69
+* @route '/assets-import/{importRun}/apply'
+*/
+applyForm.post = (args: { importRun: number | { id: number } } | [importRun: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: apply.url(args, options),
+    method: 'post',
+})
+
+apply.form = applyForm
+
+/**
 * @see \App\Http\Controllers\AssetImportController::photosZip
 * @see app/Http/Controllers/AssetImportController.php:87
 * @route '/assets-import/photos-zip'
@@ -168,6 +249,28 @@ photosZip.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: photosZip.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AssetImportController::photosZip
+* @see app/Http/Controllers/AssetImportController.php:87
+* @route '/assets-import/photos-zip'
+*/
+const photosZipForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: photosZip.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AssetImportController::photosZip
+* @see app/Http/Controllers/AssetImportController.php:87
+* @route '/assets-import/photos-zip'
+*/
+photosZipForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: photosZip.url(options),
+    method: 'post',
+})
+
+photosZip.form = photosZipForm
 
 const importMethod = {
     index: Object.assign(index, index),

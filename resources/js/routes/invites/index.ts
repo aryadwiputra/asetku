@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\InvitationAcceptController::show
 * @see app/Http/Controllers/InvitationAcceptController.php:16
@@ -62,6 +62,43 @@ show.head = (args: { token: string | number } | [token: string | number ] | stri
 })
 
 /**
+* @see \App\Http\Controllers\InvitationAcceptController::show
+* @see app/Http/Controllers/InvitationAcceptController.php:16
+* @route '/invites/{token}'
+*/
+const showForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvitationAcceptController::show
+* @see app/Http/Controllers/InvitationAcceptController.php:16
+* @route '/invites/{token}'
+*/
+showForm.get = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvitationAcceptController::show
+* @see app/Http/Controllers/InvitationAcceptController.php:16
+* @route '/invites/{token}'
+*/
+showForm.head = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\InvitationAcceptController::accept
 * @see app/Http/Controllers/InvitationAcceptController.php:44
 * @route '/invites/{token}'
@@ -112,6 +149,28 @@ accept.post = (args: { token: string | number } | [token: string | number ] | st
     url: accept.url(args, options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\InvitationAcceptController::accept
+* @see app/Http/Controllers/InvitationAcceptController.php:44
+* @route '/invites/{token}'
+*/
+const acceptForm = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: accept.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\InvitationAcceptController::accept
+* @see app/Http/Controllers/InvitationAcceptController.php:44
+* @route '/invites/{token}'
+*/
+acceptForm.post = (args: { token: string | number } | [token: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: accept.url(args, options),
+    method: 'post',
+})
+
+accept.form = acceptForm
 
 const invites = {
     show: Object.assign(show, show),
