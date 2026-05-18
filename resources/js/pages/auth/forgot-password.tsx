@@ -19,7 +19,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
             <Head title={t('auth.forgot_password_title')} />
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-medium text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-200">
                     {status}
                 </div>
             )}
@@ -44,7 +44,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
                             <div className="my-6 flex items-center justify-start">
                                 <Button
-                                    className="w-full"
+                                    className="h-11 w-full rounded-full"
                                     disabled={processing}
                                     data-test="email-password-reset-link-button"
                                 >

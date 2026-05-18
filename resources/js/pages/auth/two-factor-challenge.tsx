@@ -79,7 +79,7 @@ export default function TwoFactorChallenge() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="w-full"
+                                        className="h-11 w-full rounded-full"
                                         onClick={() =>
                                             router.post(
                                                 smsRecovery().url,
@@ -121,7 +121,7 @@ export default function TwoFactorChallenge() {
 
                             <Button
                                 type="submit"
-                                className="w-full"
+                                className="h-11 w-full rounded-full"
                                 disabled={processing}
                             >
                                 {t('common.continue')}
@@ -131,7 +131,7 @@ export default function TwoFactorChallenge() {
                                 <span>{t('auth.two_factor.toggle_prefix')} </span>
                                 <button
                                     type="button"
-                                    className="cursor-pointer text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                    className="cursor-pointer text-foreground underline decoration-border underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current dark:decoration-border"
                                     onClick={() =>
                                         toggleRecoveryMode(clearErrors)
                                     }

@@ -90,7 +90,7 @@ export default function Register() {
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full"
+                                className="mt-2 h-11 w-full rounded-full"
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >

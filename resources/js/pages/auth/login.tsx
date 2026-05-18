@@ -32,7 +32,7 @@ export default function Login({
             <Head title={t('auth.login')} />
 
             {status ? (
-                <div className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700 dark:border-green-900/40 dark:bg-green-950/30 dark:text-green-200">
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-200">
                     {status}
                 </div>
             ) : null}
@@ -95,7 +95,7 @@ export default function Login({
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                className="mt-4 h-11 w-full rounded-full"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
@@ -116,12 +116,12 @@ export default function Login({
                             </div>
 
                             <div className="grid gap-2">
-                                <Button asChild variant="outline" className="w-full">
+                                <Button asChild variant="outline" className="h-11 w-full rounded-full">
                                     <a href={ssoRedirect('google').url}>
                                         {t('auth.sso.google')}
                                     </a>
                                 </Button>
-                                <Button asChild variant="outline" className="w-full">
+                                <Button asChild variant="outline" className="h-11 w-full rounded-full">
                                     <a href={ssoRedirect('microsoft').url}>
                                         {t('auth.sso.microsoft')}
                                     </a>

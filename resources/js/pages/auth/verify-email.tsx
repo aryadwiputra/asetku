@@ -16,7 +16,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Head title={t('auth.verify_email_title')} />
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-medium text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-200">
                     {t('auth.verify_email_sent')}
                 </div>
             )}
@@ -24,7 +24,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Form {...toForm(send())} className="space-y-6 text-center">
                 {({ processing }) => (
                     <>
-                        <Button disabled={processing} variant="secondary">
+                        <Button disabled={processing} variant="secondary" className="h-11 rounded-full px-6">
                             {processing && <Spinner />}
                             {t('auth.resend_verification')}
                         </Button>
