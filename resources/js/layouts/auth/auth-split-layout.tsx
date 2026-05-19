@@ -19,7 +19,7 @@ export default function AuthSplitLayout({
     const descriptionText = description ? t(description) : '';
     const isRegisterPage = page.url.includes('/register');
 
-    const showcaseImage = isRegisterPage ? '/assets/images/assets (5).jpg' : '/assets/images/assets (2).jpg';
+    const showcaseImage = isRegisterPage ? '/assets-image/images/assets (5).jpg' : '/assets-image/images/assets (2).jpg';
     const showcaseTitle = isRegisterPage
         ? 'Mulai bangun pengelolaan aset yang lebih rapi dari awal.'
         : 'Masuk lagi dan lanjutkan pengelolaan aset yang sudah berjalan.';

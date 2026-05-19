@@ -173,7 +173,7 @@ export default function Welcome({ canRegister = true }: WelcomeProps) {
                             </div>
 
                             <div className="overflow-hidden rounded-[32px] border border-border bg-card shadow-sm">
-                                <img src="/assets/images/assets (1).jpg" alt="Pengelolaan aset perusahaan" className="h-[320px] w-full object-cover sm:h-[420px] lg:h-[520px]" />
+                                <img src="/assets-image/images/assets (1).jpg" alt="Pengelolaan aset perusahaan" className="h-[320px] w-full object-cover sm:h-[420px] lg:h-[520px]" />
                             </div>
                         </div>
                     </SectionContainer>
@@ -232,7 +232,7 @@ export default function Welcome({ canRegister = true }: WelcomeProps) {
                             </div>
 
                             <div className="overflow-hidden rounded-[32px] border border-border bg-card shadow-sm">
-                                <img src="/assets/images/assets (2).jpg" alt="Tim operasional aset" className="h-[320px] w-full object-cover sm:h-[420px]" />
+                                <img src="/assets-image/images/assets (2).jpg" alt="Tim operasional aset" className="h-[320px] w-full object-cover sm:h-[420px]" />
                             </div>
                         </div>
                     </SectionContainer>
@@ -240,7 +240,7 @@ export default function Welcome({ canRegister = true }: WelcomeProps) {
                     <SectionContainer className="py-16 sm:py-20">
                         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                             <div className="order-2 overflow-hidden rounded-[32px] border border-border bg-card shadow-sm lg:order-1">
-                                <img src="/assets/images/assets (4).jpg" alt="Dokumentasi aset lapangan" className="h-[320px] w-full object-cover sm:h-[420px]" />
+                                <img src="/assets-image/images/assets (4).jpg" alt="Dokumentasi aset lapangan" className="h-[320px] w-full object-cover sm:h-[420px]" />
                             </div>
 
                             <div className="order-1 max-w-2xl lg:order-2">
