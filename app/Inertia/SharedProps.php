@@ -123,6 +123,14 @@ class SharedProps
                 'maintenanceView' => $user ? Gate::forUser($user)->allows('viewMaintenanceReport') : false,
                 'maintenanceExport' => $user ? Gate::forUser($user)->allows('exportMaintenanceReport') : false,
             ],
+            'admin' => [
+                'usersView' => $user ? Gate::forUser($user)->allows('viewAny', \App\Models\User::class) : false,
+                'mediaManage' => $user ? Gate::forUser($user)->allows('viewAny', \App\Models\MediaAsset::class) : false,
+                'settingsAppManage' => $user ? Gate::forUser($user)->allows('settings.app.manage') : false,
+                'settingsMailManage' => $user ? Gate::forUser($user)->allows('settings.mail.manage') : false,
+                'settingsFlagsManage' => $user ? Gate::forUser($user)->allows('settings.flags.manage') : false,
+                'activityView' => $user ? Gate::forUser($user)->allows('activity.view') : false,
+            ],
             'audit' => [
                 'view' => $user ? Gate::forUser($user)->allows('viewAny', AuditSchedule::class) : false,
                 'create' => $user ? Gate::forUser($user)->allows('create', AuditSchedule::class) : false,
@@ -280,7 +288,16 @@ declare module '@inertiajs/core' {
                 assets: { view: boolean; create: boolean; update: boolean; delete: boolean; import: boolean; export: boolean };
                 workOrders: { viewIndex: boolean; viewAssigned: boolean; create: boolean; update: boolean; updateProgress: boolean; delete: boolean };
                 maintenanceSchedules: { view: boolean; create: boolean; update: boolean; delete: boolean; reschedule: boolean };
-                reports: { inventoryView: boolean; inventoryExport: boolean };
+                reports: { inventoryView: boolean; inventoryExport: boolean; maintenanceView: boolean; maintenanceExport: boolean };
+                admin: {
+                    usersView: boolean;
+                    mediaManage: boolean;
+                    settingsAppManage: boolean;
+                    settingsMailManage: boolean;
+                    settingsFlagsManage: boolean;
+                    activityView: boolean;
+                };
+                audit: { view: boolean; create: boolean; update: boolean; delete: boolean };
             };
             masterDataAbilities: Record<string, { view: boolean; create: boolean; update: boolean; delete: boolean }>;
             permissions: string[];

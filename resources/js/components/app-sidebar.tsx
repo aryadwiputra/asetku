@@ -62,12 +62,19 @@ export function AppSidebar() {
             maintenanceSchedules?: { view?: boolean };
             audit?: { view?: boolean; create?: boolean };
             reports?: { inventoryView?: boolean; maintenanceView?: boolean };
+            admin?: {
+                usersView?: boolean;
+                mediaManage?: boolean;
+                settingsAppManage?: boolean;
+                settingsMailManage?: boolean;
+                settingsFlagsManage?: boolean;
+                activityView?: boolean;
+            };
         };
     };
     const { masterDataAbilities } = usePage().props as {
         masterDataAbilities?: Record<string, { view: boolean }>;
     };
-    const userPermissions = permissions as string[];
     const { isCurrentOrParentUrl } = useCurrentUrl();
     const { t } = useTranslation();
 
@@ -79,6 +86,12 @@ export function AppSidebar() {
     const canViewAssignedWorkOrders = moduleAbilities?.workOrders?.viewAssigned === true;
     const canViewMaintenanceSchedules = moduleAbilities?.maintenanceSchedules?.view === true;
     const canViewAudit = moduleAbilities?.audit?.view === true;
+    const canViewUsers = moduleAbilities?.admin?.usersView === true;
+    const canManageMedia = moduleAbilities?.admin?.mediaManage === true;
+    const canManageApp = moduleAbilities?.admin?.settingsAppManage === true;
+    const canManageMail = moduleAbilities?.admin?.settingsMailManage === true;
+    const canManageFlags = moduleAbilities?.admin?.settingsFlagsManage === true;
+    const canViewActivity = moduleAbilities?.admin?.activityView === true;
 
     const workspaceNavItems: NavItem[] = [
         {
@@ -204,7 +217,7 @@ export function AppSidebar() {
         : [];
 
     const adminNavItems: NavItem[] = [
-        ...(userPermissions.includes('user.view')
+        ...(canViewUsers
             ? [
                   {
                       title: t('common.user_management'),
@@ -213,7 +226,7 @@ export function AppSidebar() {
                       },
               ]
             : []),
-        ...(userPermissions.includes('media.manage')
+        ...(canManageMedia
             ? [
                   {
                       title: t('common.media'),
@@ -224,10 +237,6 @@ export function AppSidebar() {
             : []),
     ];
 
-    const canManageApp = userPermissions.includes('settings.app.manage');
-    const canManageMail = userPermissions.includes('settings.mail.manage');
-    const canManageFlags = userPermissions.includes('settings.flags.manage');
-    const canViewActivity = userPermissions.includes('activity.view');
     const canViewMasterData = masterDataAbilities?.asset_statuses?.view === true;
     const canViewInventoryReport = moduleAbilities?.reports?.inventoryView === true;
     const canViewMaintenanceReport = moduleAbilities?.reports?.maintenanceView === true;
